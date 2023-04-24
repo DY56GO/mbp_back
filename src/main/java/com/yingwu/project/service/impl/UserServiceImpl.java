@@ -49,10 +49,19 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
             throw new BusinessException(ErrorCode.PARAMS_ERROR, "参数为空");
         }
         if (userAccount.length() < 4) {
-            throw new BusinessException(ErrorCode.PARAMS_ERROR, "用户账号过短");
+            throw new BusinessException(ErrorCode.PARAMS_ERROR, "账号过短");
+        }
+        if (userAccount.length() > 16) {
+            throw new BusinessException(ErrorCode.PARAMS_ERROR, "账号过长");
         }
         if (userPassword.length() < 8 || checkPassword.length() < 8) {
-            throw new BusinessException(ErrorCode.PARAMS_ERROR, "用户密码过短");
+            throw new BusinessException(ErrorCode.PARAMS_ERROR, "密码过短");
+        }
+        if (userPassword.length() > 16) {
+            throw new BusinessException(ErrorCode.PARAMS_ERROR, "密码过长");
+        }
+        if (checkPassword.length() > 16) {
+            throw new BusinessException(ErrorCode.PARAMS_ERROR, "确认密码过长");
         }
         // 密码和校验密码相同
         if (!userPassword.equals(checkPassword)) {
