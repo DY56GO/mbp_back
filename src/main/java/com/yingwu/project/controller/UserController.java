@@ -1,5 +1,6 @@
 package com.yingwu.project.controller;
 
+import cn.hutool.core.bean.BeanUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.plugins.pagination.PageDTO;
@@ -12,8 +13,8 @@ import com.yingwu.project.model.dto.user.*;
 import com.yingwu.project.model.entity.User;
 import com.yingwu.project.model.vo.UserVO;
 import com.yingwu.project.service.UserService;
+import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.BeanUtils;
 import org.springframework.util.DigestUtils;
 import org.springframework.web.bind.annotation.*;
 
@@ -110,7 +111,6 @@ public class UserController {
     }
 
 
-
     // endregion
 
     // region 增删改查
@@ -128,7 +128,7 @@ public class UserController {
             throw new BusinessException(ErrorCode.PARAMS_ERROR);
         }
         User user = new User();
-        BeanUtils.copyProperties(userAddRequest, user);
+        BeanUtil.copyProperties(userAddRequest, user);
         user.setUserPassword(DigestUtils.md5DigestAsHex((SALT + user.getUserPassword()).getBytes()));
         boolean result = userService.save(user);
         if (!result) {
@@ -162,11 +162,55 @@ public class UserController {
      */
     @PostMapping("/update")
     public BaseResponse<Boolean> updateUser(@RequestBody UserUpdateRequest userUpdateRequest, HttpServletRequest request) {
-        if (userUpdateRequest == null || userUpdateRequest.getId() == null) {
+        UserVO userVo = userService.getLoginUser(request);
+        if (userUpdateRequest == null) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR);
         }
         User user = new User();
-        BeanUtils.copyProperties(userUpdateRequest, user);
+        BeanUtil.copyProperties(userUpdateRequest, user);
+        user.setId(userVo.getId());
+        boolean result = userService.updateById(user);
+        if (result) {
+            userService.updateRedisUser(userVo.getId(), request);
+        }
+        return ResultUtils.success(result);
+    }
+
+    /**
+     * 更新用户密码
+     *
+     * @param userUpdatePasswordRequest
+     * @param request
+     * @return
+     */
+    @PostMapping("/updatePassword")
+    public BaseResponse<Boolean> updateUser(@RequestBody UserUpdatePasswordRequest userUpdatePasswordRequest, HttpServletRequest request) {
+        UserVO userVo = userService.getLoginUser(request);
+        if (userUpdatePasswordRequest == null || userUpdatePasswordRequest.getUserOldPassword() == null || userUpdatePasswordRequest.getUserNewPassword() == null) {
+            throw new BusinessException(ErrorCode.PARAMS_ERROR);
+        }
+        String userOldPasswod = userUpdatePasswordRequest.getUserOldPassword();
+        String userNewPasswod = userUpdatePasswordRequest.getUserNewPassword();
+        String newCheckPassword = userUpdatePasswordRequest.getNewCheckPassword();
+
+        // 验证旧密码
+        User userQuery = new User();
+        userQuery.setId(userVo.getId());
+        userQuery.setUserPassword(DigestUtils.md5DigestAsHex((SALT + userOldPasswod).getBytes()));
+        QueryWrapper<User> queryWrapper = new QueryWrapper<>(userQuery);
+        long count = userService.count(queryWrapper);
+        if (count == 0) {
+            throw new BusinessException(ErrorCode.PARAMS_ERROR, "旧密码错误");
+        }
+
+        // 验证新密码和确认密码是否否一致
+        if (!userNewPasswod.equals(newCheckPassword)) {
+            throw new BusinessException(ErrorCode.PARAMS_ERROR, "新密码和新确认密码不一致");
+        }
+
+        User user = new User();
+        user.setId(userVo.getId());
+        user.setUserPassword(DigestUtils.md5DigestAsHex((SALT + userNewPasswod).getBytes()));
         boolean result = userService.updateById(user);
         return ResultUtils.success(result);
     }
@@ -185,7 +229,7 @@ public class UserController {
         }
         User user = userService.getById(id);
         UserVO userVO = new UserVO();
-        BeanUtils.copyProperties(user, userVO);
+        BeanUtil.copyProperties(user, userVO);
         return ResultUtils.success(userVO);
     }
 
@@ -200,13 +244,13 @@ public class UserController {
     public BaseResponse<List<UserVO>> listUser(UserQueryRequest userQueryRequest, HttpServletRequest request) {
         User userQuery = new User();
         if (userQueryRequest != null) {
-            BeanUtils.copyProperties(userQueryRequest, userQuery);
+            BeanUtil.copyProperties(userQueryRequest, userQuery);
         }
         QueryWrapper<User> queryWrapper = new QueryWrapper<>(userQuery);
         List<User> userList = userService.list(queryWrapper);
         List<UserVO> userVOList = userList.stream().map(user -> {
             UserVO userVO = new UserVO();
-            BeanUtils.copyProperties(user, userVO);
+            BeanUtil.copyProperties(user, userVO);
             return userVO;
         }).collect(Collectors.toList());
         return ResultUtils.success(userVOList);
@@ -225,7 +269,7 @@ public class UserController {
         long size = 10;
         User userQuery = new User();
         if (userQueryRequest != null) {
-            BeanUtils.copyProperties(userQueryRequest, userQuery);
+            BeanUtil.copyProperties(userQueryRequest, userQuery);
             current = userQueryRequest.getCurrent();
             size = userQueryRequest.getPageSize();
         }
@@ -234,7 +278,7 @@ public class UserController {
         Page<UserVO> userVOPage = new PageDTO<>(userPage.getCurrent(), userPage.getSize(), userPage.getTotal());
         List<UserVO> userVOList = userPage.getRecords().stream().map(user -> {
             UserVO userVO = new UserVO();
-            BeanUtils.copyProperties(user, userVO);
+            BeanUtil.copyProperties(user, userVO);
             return userVO;
         }).collect(Collectors.toList());
         userVOPage.setRecords(userVOList);

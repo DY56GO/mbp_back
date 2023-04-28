@@ -125,7 +125,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
 
         // 写入redis
         redisTemplate.opsForHash().putAll(tokenKey, BeanUtil.beanToMap(userVo));
-        redisTemplate.expire(tokenKey,  USER_EXPIRATION_TIME, TimeUnit.MINUTES);
+        redisTemplate.expire(tokenKey, USER_EXPIRATION_TIME, TimeUnit.MINUTES);
 
         return tokenKey;
     }
@@ -138,9 +138,9 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
      */
     @Override
     public UserVO getLoginUser(HttpServletRequest request) {
-        String tokenKey = request.getParameter("token");
+        String tokenKey = request.getHeader("token");
         // 判断是否登录
-        if(tokenKey == null || !redisTemplate.hasKey(tokenKey)) {
+        if (tokenKey == null || !redisTemplate.hasKey(tokenKey)) {
             throw new BusinessException(ErrorCode.NOT_LOGIN_ERROR);
         }
 
@@ -161,9 +161,9 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
      */
     @Override
     public boolean userLogout(HttpServletRequest request) {
-        String tokenKey = request.getParameter("token");
+        String tokenKey = request.getHeader("token");
         // 判断是否登录
-        if(tokenKey == null || !redisTemplate.hasKey(tokenKey)) {
+        if (tokenKey == null || !redisTemplate.hasKey(tokenKey)) {
             throw new BusinessException(ErrorCode.NOT_LOGIN_ERROR);
         }
 
@@ -172,6 +172,22 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
 
         return true;
     }
+
+    /**
+     * 用户Redis数据刷新
+     *
+     * @param userId  用户Id
+     * @param request
+     * @return
+     */
+    public boolean updateRedisUser(Long userId, HttpServletRequest request) {
+        String tokenKey = request.getHeader("token");
+        User user = userMapper.selectById(userId);
+        UserVO userVo = BeanUtil.copyProperties(user, UserVO.class);
+        redisTemplate.opsForHash().putAll(tokenKey, BeanUtil.beanToMap(userVo));
+        return true;
+    }
+
 
     /**
      * 是否为管理员

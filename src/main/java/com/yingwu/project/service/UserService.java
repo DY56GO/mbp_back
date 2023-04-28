@@ -50,6 +50,16 @@ public interface UserService extends IService<User> {
      */
     boolean userLogout(HttpServletRequest request);
 
+
+    /**
+     * 用户Redis数据刷新
+     *
+     * @param userId 用户Id
+     * @param request
+     */
+    boolean updateRedisUser(Long userId, HttpServletRequest request);
+
+
     /**
      * 是否为管理员
      *
