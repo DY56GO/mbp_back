@@ -4,8 +4,9 @@ import com.baomidou.mybatisplus.extension.service.IService;
 import com.yingwu.project.model.entity.Post;
 
 /**
- * @author yingwuli
- * @description 针对表【post(帖子)】的数据库操作Service
+ * 帖子服务
+ *
+ * @author Dy56li
  */
 public interface PostService extends IService<Post> {
 

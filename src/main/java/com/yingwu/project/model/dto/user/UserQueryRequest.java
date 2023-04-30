@@ -10,7 +10,7 @@ import java.util.Date;
 /**
  * 用户查询请求
  *
- * @author yingwu
+ * @author Dy56
  */
 @EqualsAndHashCode(callSuper = true)
 @Data
@@ -40,10 +40,6 @@ public class UserQueryRequest extends PageRequest implements Serializable {
      */
     private Integer gender;
 
-    /**
-     * 用户角色: user, admin
-     */
-    private String userRole;
 
     /**
      * 创建时间

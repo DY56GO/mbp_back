@@ -29,7 +29,7 @@ import static com.yingwu.project.constant.PasswordConstant.SALT;
 /**
  * 用户接口
  *
- * @author yingwu
+ * @author Dy56
  */
 @CrossOrigin // 跨域
 @RestController

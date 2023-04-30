@@ -29,7 +29,7 @@ import static com.yingwu.project.constant.UserConstant.USER_LOGIN_STATE;
 /**
  * 用户服务实现类
  *
- * @author yingwu
+ * @author Dy56
  */
 @Service
 @Slf4j

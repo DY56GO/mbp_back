@@ -3,7 +3,7 @@ package com.yingwu.project.common;
 /**
  * 错误码
  *
- * @author yingwu
+ * @author Dy56
  */
 public enum ErrorCode {
 

@@ -29,7 +29,7 @@ import java.util.List;
 /**
  * 帖子接口
  *
- * @author yingwu
+ * @author Dy56
  */
 @RestController
 @RequestMapping("/post")

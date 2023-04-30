@@ -8,7 +8,7 @@ import java.io.Serializable;
 /**
  * 用户更新密码请求
  *
- * @author yingwu
+ * @author Dy56
  */
 @Data
 public class UserUpdatePasswordRequest implements Serializable {

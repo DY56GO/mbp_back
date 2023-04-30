@@ -8,7 +8,7 @@ import java.io.Serializable;
 /**
  * 用户更新请求
  *
- * @author yingwu
+ * @author Dy56
  */
 @Data
 public class UserUpdateRequest implements Serializable {
@@ -33,10 +33,6 @@ public class UserUpdateRequest implements Serializable {
      */
     private Integer gender;
 
-    /**
-     * 用户角色
-     */
-    private String userRole;
 
     @TableField(exist = false)
     private static final long serialVersionUID = 1L;

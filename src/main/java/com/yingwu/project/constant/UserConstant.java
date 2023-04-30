@@ -3,7 +3,7 @@ package com.yingwu.project.constant;
 /**
  * 用户常量
  *
- * @author yingwu
+ * @author Dy56
  */
 public interface UserConstant {
 
