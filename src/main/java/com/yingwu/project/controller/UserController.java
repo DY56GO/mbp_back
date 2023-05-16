@@ -13,7 +13,6 @@ import com.yingwu.project.model.dto.user.*;
 import com.yingwu.project.model.entity.User;
 import com.yingwu.project.model.vo.UserVO;
 import com.yingwu.project.service.UserService;
-import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.util.DigestUtils;
 import org.springframework.web.bind.annotation.*;
@@ -149,8 +148,8 @@ public class UserController {
         if (deleteRequest == null || deleteRequest.getId() <= 0) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR);
         }
-        boolean b = userService.removeById(deleteRequest.getId());
-        return ResultUtils.success(b);
+        boolean result = userService.removeById(deleteRequest.getId());
+        return ResultUtils.success(result);
     }
 
     /**
@@ -171,7 +170,7 @@ public class UserController {
         user.setId(userVo.getId());
         boolean result = userService.updateById(user);
         if (result) {
-            userService.updateRedisUser(userVo.getId(), request);
+            userService.updateRedisUser(userVo.getId(), request); // 更新Redis中的用户信息
         }
         return ResultUtils.success(result);
     }
@@ -184,7 +183,7 @@ public class UserController {
      * @return
      */
     @PostMapping("/updatePassword")
-    public BaseResponse<Boolean> updateUser(@RequestBody UserUpdatePasswordRequest userUpdatePasswordRequest, HttpServletRequest request) {
+    public BaseResponse<Boolean> updateUserPassword(@RequestBody UserUpdatePasswordRequest userUpdatePasswordRequest, HttpServletRequest request) {
         UserVO userVo = userService.getLoginUser(request);
         if (userUpdatePasswordRequest == null || userUpdatePasswordRequest.getUserOldPassword() == null || userUpdatePasswordRequest.getUserNewPassword() == null) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR);

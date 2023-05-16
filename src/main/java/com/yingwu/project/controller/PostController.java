@@ -13,7 +13,6 @@ import com.yingwu.project.model.dto.post.PostAddRequest;
 import com.yingwu.project.model.dto.post.PostQueryRequest;
 import com.yingwu.project.model.dto.post.PostUpdateRequest;
 import com.yingwu.project.model.entity.Post;
-import com.yingwu.project.model.entity.User;
 import com.yingwu.project.model.vo.UserVO;
 import com.yingwu.project.service.PostService;
 import com.yingwu.project.service.UserService;
@@ -93,8 +92,8 @@ public class PostController {
         if (!oldPost.getUserId().equals(user.getId()) && !userService.isAdmin(request)) {
             throw new BusinessException(ErrorCode.NO_AUTH_ERROR);
         }
-        boolean b = postService.removeById(id);
-        return ResultUtils.success(b);
+        boolean result = postService.removeById(id);
+        return ResultUtils.success(result);
     }
 
     /**
@@ -189,8 +188,7 @@ public class PostController {
         }
         QueryWrapper<Post> queryWrapper = new QueryWrapper<>(postQuery);
         queryWrapper.like(StringUtils.isNotBlank(content), "content", content);
-        queryWrapper.orderBy(StringUtils.isNotBlank(sortField),
-                sortOrder.equals(CommonConstant.SORT_ORDER_ASC), sortField);
+        queryWrapper.orderBy(StringUtils.isNotBlank(sortField), sortOrder.equals(CommonConstant.SORT_ORDER_ASC), sortField);
         Page<Post> postPage = postService.page(new Page<>(current, size), queryWrapper);
         return ResultUtils.success(postPage);
     }
