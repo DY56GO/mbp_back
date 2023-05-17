@@ -13,12 +13,12 @@ import java.io.Serializable;
 public class UserAddRequest implements Serializable {
 
     /**
-     * 用户昵称
+     * 用户名称
      */
     private String userName;
 
     /**
-     * 账号
+     * 用户账号
      */
     private String userAccount;
 

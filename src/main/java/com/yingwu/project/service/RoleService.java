@@ -10,4 +10,10 @@ import com.yingwu.project.model.entity.Role;
  */
 public interface RoleService extends IService<Role> {
 
+    /**
+     * 校验
+     *
+     * @param role
+     */
+    void validRole(Role role);
 }

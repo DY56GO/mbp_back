@@ -43,13 +43,24 @@ public class MenuController {
 
     // region 增删改查
 
+    /**
+     * 新增菜单
+     *
+     * @param menuAddRequest
+     * @param request
+     * @return
+     */
     @PostMapping("/add")
     public BaseResponse<Long> addUser(@RequestBody MenuAddRequest menuAddRequest, HttpServletRequest request) {
+        // 校验
         if (menuAddRequest == null) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR);
         }
         Menu menu = new Menu();
         BeanUtil.copyProperties(menuAddRequest, menu);
+        menuService.validMenu(menu);
+
+        // 新增
         boolean result = menuService.save(menu);
         if (!result) {
             throw new BusinessException(ErrorCode.OPERATION_ERROR);
@@ -91,11 +102,15 @@ public class MenuController {
      */
     @PostMapping("/update")
     public BaseResponse<Boolean> updateUser(@RequestBody MenuUpdateRequest menuUpdateRequest, HttpServletRequest request) {
+        // 校验
         if (menuUpdateRequest == null) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR);
         }
         Menu menu = new Menu();
         BeanUtil.copyProperties(menuUpdateRequest, menu);
+        menuService.validMenu(menu);
+
+        // 更新
         boolean result = menuService.updateById(menu);
         return ResultUtils.success(result);
     }

@@ -3,7 +3,6 @@ package com.yingwu.project.model.vo;
 import lombok.Data;
 
 import java.io.Serializable;
-import java.util.Date;
 
 /**
  * 用户视图
@@ -18,12 +17,12 @@ public class UserVO implements Serializable {
     private Long id;
 
     /**
-     * 用户昵称
+     * 用户名称
      */
     private String userName;
 
     /**
-     * 账号
+     * 用户账号
      */
     private String userAccount;
 

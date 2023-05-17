@@ -21,12 +21,12 @@ public class UserQueryRequest extends PageRequest implements Serializable {
     private Long id;
 
     /**
-     * 用户昵称
+     * 用户名称
      */
     private String userName;
 
     /**
-     * 账号
+     * 用户账号
      */
     private String userAccount;
 
@@ -39,17 +39,6 @@ public class UserQueryRequest extends PageRequest implements Serializable {
      * 性别
      */
     private Integer gender;
-
-
-    /**
-     * 创建时间
-     */
-    private Date createTime;
-
-    /**
-     * 更新时间
-     */
-    private Date updateTime;
 
     private static final long serialVersionUID = 1L;
 }

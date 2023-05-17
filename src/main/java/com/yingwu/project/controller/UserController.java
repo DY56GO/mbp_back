@@ -3,7 +3,6 @@ package com.yingwu.project.controller;
 import cn.hutool.core.bean.BeanUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.baomidou.mybatisplus.extension.plugins.pagination.PageDTO;
 import com.yingwu.project.common.BaseResponse;
 import com.yingwu.project.common.DeleteRequest;
 import com.yingwu.project.common.ErrorCode;
@@ -14,13 +13,13 @@ import com.yingwu.project.model.entity.User;
 import com.yingwu.project.model.vo.UserVO;
 import com.yingwu.project.service.UserService;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.BeanUtils;
 import org.springframework.util.DigestUtils;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import static com.yingwu.project.constant.PasswordConstant.SALT;
 
@@ -48,16 +47,16 @@ public class UserController {
      */
     @PostMapping("/register")
     public BaseResponse<Long> userRegister(@RequestBody UserRegisterRequest userRegisterRequest) {
+        // 校验
         if (userRegisterRequest == null) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR);
         }
-        String userAccount = userRegisterRequest.getUserAccount();
-        String userPassword = userRegisterRequest.getUserPassword();
-        String checkPassword = userRegisterRequest.getCheckPassword();
-        if (StringUtils.isAnyBlank(userAccount, userPassword, checkPassword)) {
-            return null;
-        }
-        long result = userService.userRegister(userAccount, userPassword, checkPassword);
+        User user = new User();
+        BeanUtils.copyProperties(userRegisterRequest, user);
+        userService.validUserRegister(user);
+
+        // 注册
+        long result = userService.userRegister(user);
         return ResultUtils.success(result);
     }
 
@@ -70,15 +69,16 @@ public class UserController {
      */
     @PostMapping("/login")
     public BaseResponse<String> userLogin(@RequestBody UserLoginRequest userLoginRequest, HttpServletRequest request) {
+        // 校验
         if (userLoginRequest == null) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR);
         }
-        String userAccount = userLoginRequest.getUserAccount();
-        String userPassword = userLoginRequest.getUserPassword();
-        if (StringUtils.isAnyBlank(userAccount, userPassword)) {
-            throw new BusinessException(ErrorCode.PARAMS_ERROR);
-        }
-        String tokenKey = userService.userLogin(userAccount, userPassword, request);
+        User user = new User();
+        BeanUtils.copyProperties(userLoginRequest, user);
+        userService.validUserLogin(user);
+
+        // 登陆返回tokenKey
+        String tokenKey = userService.userLogin(user, request);
         return ResultUtils.success(tokenKey);
     }
 
@@ -123,12 +123,18 @@ public class UserController {
      */
     @PostMapping("/add")
     public BaseResponse<Long> addUser(@RequestBody UserAddRequest userAddRequest, HttpServletRequest request) {
+        // 校验
         if (userAddRequest == null) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR);
         }
         User user = new User();
         BeanUtil.copyProperties(userAddRequest, user);
+        userService.validAddUser(user);
+
+        // 加密
         user.setUserPassword(DigestUtils.md5DigestAsHex((SALT + user.getUserPassword()).getBytes()));
+
+        // 创建
         boolean result = userService.save(user);
         if (!result) {
             throw new BusinessException(ErrorCode.OPERATION_ERROR);
@@ -161,6 +167,24 @@ public class UserController {
      */
     @PostMapping("/update")
     public BaseResponse<Boolean> updateUser(@RequestBody UserUpdateRequest userUpdateRequest, HttpServletRequest request) {
+        if (userUpdateRequest == null) {
+            throw new BusinessException(ErrorCode.PARAMS_ERROR);
+        }
+        User user = new User();
+        BeanUtil.copyProperties(userUpdateRequest, user);
+        boolean result = userService.updateById(user);
+        return ResultUtils.success(result);
+    }
+
+    /**
+     * 更新用户（仅能更新自己的信息）
+     *
+     * @param userUpdateRequest
+     * @param request
+     * @return
+     */
+    @PostMapping("/updateOneself")
+    public BaseResponse<Boolean> updateUserOneself(@RequestBody UserUpdateRequest userUpdateRequest, HttpServletRequest request) {
         UserVO userVo = userService.getLoginUser(request);
         if (userUpdateRequest == null) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR);
@@ -185,31 +209,19 @@ public class UserController {
     @PostMapping("/updatePassword")
     public BaseResponse<Boolean> updateUserPassword(@RequestBody UserUpdatePasswordRequest userUpdatePasswordRequest, HttpServletRequest request) {
         UserVO userVo = userService.getLoginUser(request);
-        if (userUpdatePasswordRequest == null || userUpdatePasswordRequest.getUserOldPassword() == null || userUpdatePasswordRequest.getUserNewPassword() == null) {
-            throw new BusinessException(ErrorCode.PARAMS_ERROR);
-        }
-        String userOldPasswod = userUpdatePasswordRequest.getUserOldPassword();
-        String userNewPasswod = userUpdatePasswordRequest.getUserNewPassword();
-        String newCheckPassword = userUpdatePasswordRequest.getNewCheckPassword();
+        Long userId = userVo.getId();
 
-        // 验证旧密码
-        User userQuery = new User();
-        userQuery.setId(userVo.getId());
-        userQuery.setUserPassword(DigestUtils.md5DigestAsHex((SALT + userOldPasswod).getBytes()));
-        QueryWrapper<User> queryWrapper = new QueryWrapper<>(userQuery);
-        long count = userService.count(queryWrapper);
-        if (count == 0) {
-            throw new BusinessException(ErrorCode.PARAMS_ERROR, "旧密码错误");
-        }
+        // 校验
+        userService.validUpdateUserPassword(userUpdatePasswordRequest, userId);
 
-        // 验证新密码和确认密码是否否一致
-        if (!userNewPasswod.equals(newCheckPassword)) {
-            throw new BusinessException(ErrorCode.PARAMS_ERROR, "新密码和新确认密码不一致");
-        }
-
+        // 加密
         User user = new User();
-        user.setId(userVo.getId());
-        user.setUserPassword(DigestUtils.md5DigestAsHex((SALT + userNewPasswod).getBytes()));
+        BeanUtil.copyProperties(userUpdatePasswordRequest, user);
+        String userNewPassword = userUpdatePasswordRequest.getUserNewPassword();
+        user.setUserPassword(DigestUtils.md5DigestAsHex((SALT + userNewPassword).getBytes()));
+        user.setId(userId);
+
+        // 更新
         boolean result = userService.updateById(user);
         return ResultUtils.success(result);
     }
@@ -240,19 +252,14 @@ public class UserController {
      * @return
      */
     @GetMapping("/list")
-    public BaseResponse<List<UserVO>> listUser(UserQueryRequest userQueryRequest, HttpServletRequest request) {
+    public BaseResponse<List<User>> listUser(UserQueryRequest userQueryRequest, HttpServletRequest request) {
         User userQuery = new User();
         if (userQueryRequest != null) {
             BeanUtil.copyProperties(userQueryRequest, userQuery);
         }
         QueryWrapper<User> queryWrapper = new QueryWrapper<>(userQuery);
         List<User> userList = userService.list(queryWrapper);
-        List<UserVO> userVOList = userList.stream().map(user -> {
-            UserVO userVO = new UserVO();
-            BeanUtil.copyProperties(user, userVO);
-            return userVO;
-        }).collect(Collectors.toList());
-        return ResultUtils.success(userVOList);
+        return ResultUtils.success(userList);
     }
 
     /**
@@ -263,7 +270,7 @@ public class UserController {
      * @return
      */
     @GetMapping("/list/page")
-    public BaseResponse<Page<UserVO>> listUserByPage(UserQueryRequest userQueryRequest, HttpServletRequest request) {
+    public BaseResponse<Page<User>> listUserByPage(UserQueryRequest userQueryRequest, HttpServletRequest request) {
         long current = 1;
         long size = 10;
         User userQuery = new User();
@@ -274,14 +281,7 @@ public class UserController {
         }
         QueryWrapper<User> queryWrapper = new QueryWrapper<>(userQuery);
         Page<User> userPage = userService.page(new Page<>(current, size), queryWrapper);
-        Page<UserVO> userVOPage = new PageDTO<>(userPage.getCurrent(), userPage.getSize(), userPage.getTotal());
-        List<UserVO> userVOList = userPage.getRecords().stream().map(user -> {
-            UserVO userVO = new UserVO();
-            BeanUtil.copyProperties(user, userVO);
-            return userVO;
-        }).collect(Collectors.toList());
-        userVOPage.setRecords(userVOList);
-        return ResultUtils.success(userVOPage);
+        return ResultUtils.success(userPage);
     }
 
     // endregion

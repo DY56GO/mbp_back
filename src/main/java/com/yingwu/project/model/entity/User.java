@@ -22,12 +22,12 @@ public class User implements Serializable {
     private Long id;
 
     /**
-     * 用户昵称
+     * 用户名称
      */
     private String userName;
 
     /**
-     * 账号
+     * 用户账号
      */
     private String userAccount;
 
@@ -45,6 +45,11 @@ public class User implements Serializable {
      * 密码
      */
     private String userPassword;
+
+    /**
+     * 是否启用（（0：否；1：是））
+     */
+    private Integer isUsing;
 
     /**
      * 创建时间

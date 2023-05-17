@@ -1,7 +1,8 @@
 package com.yingwu.project.service;
 
-
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.yingwu.project.model.dto.user.UserUpdatePasswordRequest;
+import com.yingwu.project.model.entity.Post;
 import com.yingwu.project.model.entity.User;
 import com.yingwu.project.model.vo.UserVO;
 
@@ -17,22 +18,33 @@ public interface UserService extends IService<User> {
     /**
      * 用户注册
      *
-     * @param userAccount   用户账户
-     * @param userPassword  用户密码
-     * @param checkPassword 校验密码
+     * @param user
      * @return 新用户 id
      */
-    long userRegister(String userAccount, String userPassword, String checkPassword);
+    long userRegister(User user);
+
+
+    /**
+     * 用户注册校验
+     *
+     * @param user
+     */
+    void validUserRegister(User user);
 
     /**
      * 用户登录
      *
-     * @param userAccount  用户账户
-     * @param userPassword 用户密码
-     * @param request
+     * @param user
      * @return 生成的tonkenKey
      */
-    String userLogin(String userAccount, String userPassword, HttpServletRequest request);
+    String userLogin(User user, HttpServletRequest request);
+
+    /**
+     * 用户登陆校验
+     *
+     * @param user
+     */
+    void validUserLogin(User user);
 
     /**
      * 获取当前登录用户
@@ -52,6 +64,27 @@ public interface UserService extends IService<User> {
 
 
     /**
+     * 创建用户校验
+     *
+     * @param user
+     */
+    void validAddUser(User user);
+
+    /**
+     * 用户更新校验
+     *
+     * @param user
+     */
+    void validUserUpdate(User user);
+
+    /**
+     * 用户更新密码校验
+     *
+     * @param user
+     */
+    void validUpdateUserPassword(UserUpdatePasswordRequest userUpdatePasswordRequest, Long userId);
+
+    /**
      * 用户Redis数据刷新
      *
      * @param userId 用户Id
@@ -67,4 +100,6 @@ public interface UserService extends IService<User> {
      * @return
      */
     boolean isAdmin(HttpServletRequest request);
+
+
 }
