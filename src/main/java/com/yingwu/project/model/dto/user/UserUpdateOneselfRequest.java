@@ -1,25 +1,17 @@
 package com.yingwu.project.model.dto.user;
 
-import com.yingwu.project.common.PageRequest;
+import com.baomidou.mybatisplus.annotation.TableField;
 import lombok.Data;
-import lombok.EqualsAndHashCode;
 
 import java.io.Serializable;
-import java.util.Date;
 
 /**
- * 用户查询请求
+ * 用户更新请求
  *
  * @author Dy56
  */
-@EqualsAndHashCode(callSuper = true)
 @Data
-public class UserQueryRequest extends PageRequest implements Serializable {
-
-    /**
-     * id
-     */
-    private Long id;
+public class UserUpdateOneselfRequest implements Serializable {
 
     /**
      * 用户名称
@@ -41,5 +33,12 @@ public class UserQueryRequest extends PageRequest implements Serializable {
      */
     private Integer gender;
 
+    /**
+     * 是否启用（（0：否；1：是））
+     */
+    private Integer isUsing;
+
+
+    @TableField(exist = false)
     private static final long serialVersionUID = 1L;
 }

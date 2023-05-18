@@ -2,7 +2,6 @@ package com.yingwu.project.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.yingwu.project.model.dto.user.UserUpdatePasswordRequest;
-import com.yingwu.project.model.entity.Post;
 import com.yingwu.project.model.entity.User;
 import com.yingwu.project.model.vo.UserVO;
 
@@ -80,7 +79,7 @@ public interface UserService extends IService<User> {
     /**
      * 用户更新密码校验
      *
-     * @param user
+     * @param userUpdatePasswordRequest
      */
     void validUpdateUserPassword(UserUpdatePasswordRequest userUpdatePasswordRequest, Long userId);
 
@@ -88,9 +87,8 @@ public interface UserService extends IService<User> {
      * 用户Redis数据刷新
      *
      * @param userId 用户Id
-     * @param request
      */
-    boolean updateRedisUser(Long userId, HttpServletRequest request);
+    boolean updateRedisUser(Long userId);
 
 
     /**

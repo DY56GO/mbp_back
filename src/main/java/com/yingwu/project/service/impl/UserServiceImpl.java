@@ -1,7 +1,8 @@
 package com.yingwu.project.service.impl;
 
 import cn.hutool.core.bean.BeanUtil;
-import cn.hutool.core.util.RandomUtil;
+import cn.hutool.core.lang.Snowflake;
+import cn.hutool.core.util.IdUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.yingwu.project.common.ErrorCode;
@@ -12,7 +13,9 @@ import com.yingwu.project.model.entity.User;
 import com.yingwu.project.model.vo.UserVO;
 import com.yingwu.project.service.UserService;
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.util.DigestUtils;
@@ -20,6 +23,7 @@ import org.springframework.util.DigestUtils;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 import static com.yingwu.project.constant.PasswordConstant.SALT;
@@ -34,8 +38,13 @@ import static com.yingwu.project.constant.UserConstant.USER_LOGIN_STATE;
  */
 @Service
 @Slf4j
-public class UserServiceImpl extends ServiceImpl<UserMapper, User>
-        implements UserService {
+public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements UserService {
+
+    @Value("${snowflake.workerId}")
+    private long workerId;
+
+    @Value("${snowflake.datacenterId}")
+    private long datacenterId;
 
     @Resource
     private UserMapper userMapper;
@@ -71,7 +80,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
 
     @Override
     public void validUserRegister(User user) {
-        if(user == null) {
+        if (user == null) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR);
         }
 
@@ -120,23 +129,40 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
             throw new BusinessException(ErrorCode.PARAMS_ERROR, "用户不存在或密码错误");
         }
 
-        // 2. 数据脱敏
+        // 2. 判断Redis中是否存在，存在为已登录，直接返回tokenKey
+        String userAccountKey = DigestUtils.md5DigestAsHex((SALT + userAccount).getBytes());
+        Set<String> tokenKeys = redisTemplate.keys( userAccountKey + "_*");
+        if (!tokenKeys.isEmpty()) {
+            String tokenKey = tokenKeys.iterator().next();
+            return tokenKey;
+        }
+
+        // Redis中不存在，开始生成tokenKey
+        // 3. 数据脱敏
         UserVO userVo = BeanUtil.copyProperties(newUser, UserVO.class);
 
-        // 3. 生成token，写入redis中
-        // 生成token（todo 更改为雪花）
-        String token = RandomUtil.randomString(16);    // 随机生成token，作为登录令牌
-        String tokenKey = token + userVo.getUserAccount();
+        // 4. 生成token
+        //参数1为终端ID
+        //参数2为数据中心ID
+        Snowflake snowflake = IdUtil.getSnowflake(workerId, datacenterId);
+        String token = snowflake.nextIdStr();
 
-        // 4. 写入redis
-        redisTemplate.opsForHash().putAll(tokenKey, BeanUtil.beanToMap(userVo));
+        // 5. 自定义tokenKey
+        String tokenKey = userAccountKey + "_" + token;
+
+        // 5. 写入redis
+        Map<String, Object> userMap = BeanUtil.beanToMap(userVo);
+        userMap.forEach((key, value) -> {
+            if (null != value) userMap.put(key, String.valueOf(value));
+        });
+        redisTemplate.opsForHash().putAll(tokenKey, userMap);
         redisTemplate.expire(tokenKey, USER_EXPIRATION_TIME, TimeUnit.MINUTES);
 
         return tokenKey;
     }
 
     public void validUserLogin(User user) {
-        if(user == null) {
+        if (user == null) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR);
         }
 
@@ -168,7 +194,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
             throw new BusinessException(ErrorCode.NOT_LOGIN_ERROR);
         }
 
-        // 从redis中获取用户数据
+        // 从Redis中获取用户数据
         Map userVoMap = redisTemplate.boundHashOps(tokenKey).entries();
         if (userVoMap.size() == 0) {
             throw new BusinessException(ErrorCode.NOT_LOGIN_ERROR);
@@ -191,14 +217,14 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
             throw new BusinessException(ErrorCode.NOT_LOGIN_ERROR);
         }
 
-        // 从redis中删除token
+        // 从Redis中删除tokenKey
         redisTemplate.delete(tokenKey);
 
         return true;
     }
 
     public void validAddUser(User user) {
-        if(user == null) {
+        if (user == null) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR);
         }
 
@@ -238,7 +264,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
      */
     @Override
     public void validUserUpdate(User user) {
-        if(user == null) {
+        if (user == null) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR);
         }
 
@@ -259,7 +285,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
      * @param userId
      */
     @Override
-    public void validUpdateUserPassword(UserUpdatePasswordRequest userUpdatePasswordRequest, Long userId){
+    public void validUpdateUserPassword(UserUpdatePasswordRequest userUpdatePasswordRequest, Long userId) {
         if (userUpdatePasswordRequest == null) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR);
         }
@@ -303,15 +329,20 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
      * 用户Redis数据刷新
      *
      * @param userId  用户Id
-     * @param request
      * @return
      */
-    public boolean updateRedisUser(Long userId, HttpServletRequest request) {
-        String tokenKey = request.getHeader("token");
+    public boolean updateRedisUser(Long userId) {
         User user = userMapper.selectById(userId);
         UserVO userVo = BeanUtil.copyProperties(user, UserVO.class);
-        redisTemplate.opsForHash().putAll(tokenKey, BeanUtil.beanToMap(userVo));
-        return true;
+
+        String userAccountKey = DigestUtils.md5DigestAsHex((SALT + userVo.getUserAccount()).getBytes());
+        Set<String> tokenKeys = redisTemplate.keys(userAccountKey + "_*");
+        if (!tokenKeys.isEmpty()) {
+            String tokenKey = tokenKeys.iterator().next();
+            redisTemplate.opsForHash().putAll(tokenKey, BeanUtil.beanToMap(userVo));
+            return true;
+        }
+        return false;
     }
 
 

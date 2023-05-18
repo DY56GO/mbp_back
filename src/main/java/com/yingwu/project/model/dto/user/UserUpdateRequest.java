@@ -14,6 +14,11 @@ import java.io.Serializable;
 public class UserUpdateRequest implements Serializable {
 
     /**
+     * id
+     */
+    private Long id;
+
+    /**
      * 用户名称
      */
     private String userName;
@@ -32,6 +37,11 @@ public class UserUpdateRequest implements Serializable {
      * 性别
      */
     private Integer gender;
+
+    /**
+     * 是否启用（（0：否；1：是））
+     */
+    private Integer isUsing;
 
 
     @TableField(exist = false)

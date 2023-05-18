@@ -12,7 +12,6 @@ import com.yingwu.project.model.dto.user.*;
 import com.yingwu.project.model.entity.User;
 import com.yingwu.project.model.vo.UserVO;
 import com.yingwu.project.service.UserService;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.util.DigestUtils;
 import org.springframework.web.bind.annotation.*;
@@ -184,17 +183,17 @@ public class UserController {
      * @return
      */
     @PostMapping("/updateOneself")
-    public BaseResponse<Boolean> updateUserOneself(@RequestBody UserUpdateRequest userUpdateRequest, HttpServletRequest request) {
+    public BaseResponse<Boolean> updateUserOneself(@RequestBody UserUpdateOneselfRequest userUpdateOneselfRequest, HttpServletRequest request) {
         UserVO userVo = userService.getLoginUser(request);
-        if (userUpdateRequest == null) {
+        if (userUpdateOneselfRequest == null) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR);
         }
         User user = new User();
-        BeanUtil.copyProperties(userUpdateRequest, user);
+        BeanUtil.copyProperties(userUpdateOneselfRequest, user);
         user.setId(userVo.getId());
         boolean result = userService.updateById(user);
         if (result) {
-            userService.updateRedisUser(userVo.getId(), request); // 更新Redis中的用户信息
+            userService.updateRedisUser(userVo.getId()); // 更新Redis中的用户信息
         }
         return ResultUtils.success(result);
     }
