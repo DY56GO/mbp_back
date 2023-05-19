@@ -1,4 +1,4 @@
-package com.yingwu.project.handlerInterceptor;
+package com.yingwu.project.interceptor;
 
 import com.yingwu.project.common.ErrorCode;
 import com.yingwu.project.exception.BusinessException;

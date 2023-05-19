@@ -22,7 +22,7 @@ import java.util.UUID;
 @Aspect
 @Component
 @Slf4j
-public class RequestInterceptor {
+public class RequestAOP {
 
     /**
      * 执行拦截

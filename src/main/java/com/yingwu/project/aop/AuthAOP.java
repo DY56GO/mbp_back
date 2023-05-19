@@ -26,7 +26,7 @@ import java.util.stream.Collectors;
  */
 @Aspect
 @Component
-public class AuthInterceptor {
+public class AuthAOP {
 
     @Resource
     private UserService userService;

@@ -1,6 +1,6 @@
 package com.yingwu.project.config;
 
-import com.yingwu.project.handlerInterceptor.LoginInterceptor;
+import com.yingwu.project.interceptor.LoginInterceptor;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
