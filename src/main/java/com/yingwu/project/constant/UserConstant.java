@@ -1,5 +1,7 @@
 package com.yingwu.project.constant;
 
+import sun.security.util.Length;
+
 /**
  * 用户常量
  *
@@ -8,31 +10,19 @@ package com.yingwu.project.constant;
 public interface UserConstant {
 
     /**
-     * 用户登录态键
-     */
-    String USER_LOGIN_STATE = "userLoginState";
-
-    /**
      * 用户过期时间
      */
     long USER_EXPIRATION_TIME = 30;
 
-    /**
-     * 系统用户 id（虚拟用户）
-     */
-    long SYSTEM_USER_ID = 0;
+    //  region 校验
 
-    //  region 权限
+    long USER_ACCOUNT_MIN_LENGTH = 4;
 
-    /**
-     * 默认权限
-     */
-    String DEFAULT_ROLE = "user";
+    long USER_ACCOUNT_MAX_LENGTH = 16;
 
-    /**
-     * 管理员权限
-     */
-    String ADMIN_ROLE = "admin";
+    long USER_PASSWORD_MIN_LENGTH = 8;
+
+    long USER_PASSWORD_MAX_LENGTH = 16;
 
     // endregion
 }

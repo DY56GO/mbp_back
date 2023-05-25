@@ -16,8 +16,13 @@ import org.springframework.stereotype.Service;
 @Service
 public class MenuServiceImpl extends ServiceImpl<MenuMapper, Menu> implements MenuService {
 
+    /**
+     * 菜单信息校验
+     *
+     * @param menu
+     */
     @Override
-    public void validMenu(Menu menu) {
+    public void validMenuInfo(Menu menu) {
         if (menu == null) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR);
         }
@@ -29,6 +34,7 @@ public class MenuServiceImpl extends ServiceImpl<MenuMapper, Menu> implements Me
             throw new BusinessException(ErrorCode.PARAMS_ERROR, "参数为空");
         }
     }
+
 }
 
 

@@ -1,9 +1,9 @@
 package com.yingwu.project.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
-import com.yingwu.project.model.dto.user.UserUpdatePasswordRequest;
+import com.yingwu.project.model.dto.user.UserPasswordUpdateRequest;
 import com.yingwu.project.model.entity.User;
-import com.yingwu.project.model.vo.UserVO;
+import com.yingwu.project.model.vo.UserInfoVO;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -15,6 +15,14 @@ import javax.servlet.http.HttpServletRequest;
 public interface UserService extends IService<User> {
 
     /**
+     * 加密密码
+     *
+     * @param password
+     * @return
+     */
+    String encryptPassword(String password);
+
+    /**
      * 用户注册
      *
      * @param user
@@ -24,34 +32,42 @@ public interface UserService extends IService<User> {
 
 
     /**
-     * 用户注册校验
+     * 用户注册信息校验
      *
      * @param user
      */
-    void validUserRegister(User user);
+    void validUserRegisterInfo(User user);
 
     /**
      * 用户登录
      *
      * @param user
-     * @return 生成的tonkenKey
+     * @param request
+     * @return 生成的tokenKey
      */
     String userLogin(User user, HttpServletRequest request);
 
     /**
-     * 用户登陆校验
+     * 用户登陆信息校验
      *
      * @param user
      */
-    void validUserLogin(User user);
+    void validUserLoginInfo(User user);
+
+    /**
+     * 用户登陆校验
+     *
+     * @param request
+     */
+    void validUserLogin(HttpServletRequest request);
 
     /**
      * 获取当前登录用户
      *
      * @param request
-     * @return
+     * @return 用户信息
      */
-    UserVO getLoginUser(HttpServletRequest request);
+    UserInfoVO getLoginUser(HttpServletRequest request);
 
     /**
      * 用户注销
@@ -61,43 +77,42 @@ public interface UserService extends IService<User> {
      */
     boolean userLogout(HttpServletRequest request);
 
-
     /**
-     * 创建用户校验
+     * 创建用户信息校验
      *
      * @param user
      */
-    void validAddUser(User user);
+    void validAddUserInfo(User user);
 
     /**
-     * 用户更新校验
+     * 用户更新信息校验
      *
      * @param user
      */
-    void validUserUpdate(User user);
+    void validUserUpdateInfo(User user);
 
     /**
-     * 用户更新密码校验
+     * 用户更新密码信息校验
      *
-     * @param userUpdatePasswordRequest
+     * @param userPasswordUpdateRequest
+     * @param userId
      */
-    void validUpdateUserPassword(UserUpdatePasswordRequest userUpdatePasswordRequest, Long userId);
+    void validUpdateUserPasswordInfo(UserPasswordUpdateRequest userPasswordUpdateRequest, Long userId);
+
+    /**
+     * 获取用户信息通过用户id
+     *
+     * @param userId
+     * @return 用户信息
+     */
+    UserInfoVO getUserInfoById(Long userId);
 
     /**
      * 用户Redis数据刷新
      *
-     * @param userId 用户Id
-     */
-    boolean updateRedisUser(Long userId);
-
-
-    /**
-     * 是否为管理员
-     *
-     * @param request
+     * @param userId 用户id
      * @return
      */
-    boolean isAdmin(HttpServletRequest request);
-
+    boolean updateRedisUser(Long userId);
 
 }

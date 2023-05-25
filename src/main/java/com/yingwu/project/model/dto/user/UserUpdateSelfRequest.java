@@ -1,6 +1,5 @@
 package com.yingwu.project.model.dto.user;
 
-import com.baomidou.mybatisplus.annotation.TableField;
 import lombok.Data;
 
 import java.io.Serializable;
@@ -11,12 +10,7 @@ import java.io.Serializable;
  * @author Dy56
  */
 @Data
-public class UserUpdateRequest implements Serializable {
-
-    /**
-     * id
-     */
-    private Long id;
+public class UserUpdateSelfRequest implements Serializable {
 
     /**
      * 用户名称
@@ -37,11 +31,6 @@ public class UserUpdateRequest implements Serializable {
      * 性别
      */
     private Integer gender;
-
-    /**
-     * 密码
-     */
-    private String userPassword;
 
     /**
      * 是否启用（（0：否；1：是））

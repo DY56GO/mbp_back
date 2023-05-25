@@ -51,14 +51,14 @@ public class MenuController {
      * @return
      */
     @PostMapping("/add")
-    public BaseResponse<Long> addUser(@RequestBody MenuAddRequest menuAddRequest, HttpServletRequest request) {
+    public BaseResponse<Long> addMenu(@RequestBody MenuAddRequest menuAddRequest, HttpServletRequest request) {
         // 校验
         if (menuAddRequest == null) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR);
         }
         Menu menu = new Menu();
         BeanUtil.copyProperties(menuAddRequest, menu);
-        menuService.validMenu(menu);
+        menuService.validMenuInfo(menu);
 
         // 新增
         boolean result = menuService.save(menu);
@@ -76,7 +76,7 @@ public class MenuController {
      * @return
      */
     @PostMapping("/delete")
-    public BaseResponse<Boolean> deleteUser(@RequestBody DeleteRequest deleteRequest, HttpServletRequest request) {
+    public BaseResponse<Boolean> deleteMenu(@RequestBody DeleteRequest deleteRequest, HttpServletRequest request) {
         if (deleteRequest == null || deleteRequest.getId() <= 0) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR);
         }
@@ -101,14 +101,14 @@ public class MenuController {
      * @return
      */
     @PostMapping("/update")
-    public BaseResponse<Boolean> updateUser(@RequestBody MenuUpdateRequest menuUpdateRequest, HttpServletRequest request) {
+    public BaseResponse<Boolean> updateMenu(@RequestBody MenuUpdateRequest menuUpdateRequest, HttpServletRequest request) {
         // 校验
         if (menuUpdateRequest == null) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR);
         }
         Menu menu = new Menu();
         BeanUtil.copyProperties(menuUpdateRequest, menu);
-        menuService.validMenu(menu);
+        menuService.validMenuInfo(menu);
 
         // 更新
         boolean result = menuService.updateById(menu);
@@ -130,46 +130,13 @@ public class MenuController {
         }
         String menuName = MenuQuery.getMenuName();
         QueryWrapper<Menu> queryWrapper = new QueryWrapper<>();
-        queryWrapper.like(StringUtils.isNotBlank(menuName), "menuName", menuName);
-        queryWrapper.orderByAsc("parentId");
+        queryWrapper.like(StringUtils.isNotBlank(menuName), "menu_name", menuName);
+        queryWrapper.orderByAsc("parent_id");
+
         List<Menu> menuList = menuService.list(queryWrapper);
+        List<Tree<String>> menuTree = buildMenuTree(menuList);
 
-        // 获取当前list中的根节点
-        Long parentId = 0L;
-        if (!menuList.isEmpty()) {
-            parentId = menuList.stream().min((Comparator.comparing(Menu::getParentId))).get().getParentId();
-        }
-
-        // 树形结构转换
-        TreeNodeConfig treeNodeConfig = new TreeNodeConfig();
-        treeNodeConfig.setIdKey("id");
-        treeNodeConfig.setParentIdKey("parentId");
-
-        List<TreeNode<String>> treeNodes = menuList.stream()
-                .map(menu -> {
-                    TreeNode<String> node = new TreeNode<>();
-                    // 下面四个属性是树型结构必有的属性
-                    node.setId(String.valueOf(menu.getId()));
-                    node.setName(menu.getMenuName());
-                    node.setParentId(String.valueOf(menu.getParentId()));
-                    node.setWeight(menu.getMenuSort());
-                    // 以下为扩展属性
-                    Map<String, Object> extra = new HashMap<>();
-                    extra.put("menuName", menu.getMenuName());
-                    extra.put("menuIcon", menu.getMenuIcon());
-                    extra.put("routeUrl", menu.getRouteUrl());
-                    extra.put("componentName", menu.getComponentName());
-                    extra.put("componentPath", menu.getComponentPath());
-                    extra.put("description", menu.getDescription());
-                    extra.put("hidden", menu.getIsHidden());
-                    extra.put("menuSort", menu.getMenuSort());
-                    node.setExtra(extra);
-                    return node;
-                }).collect(Collectors.toList());
-
-        List<Tree<String>> result = TreeUtil.build(treeNodes, parentId.toString());
-
-        return ResultUtils.success(result);
+        return ResultUtils.success(menuTree);
     }
 
     /**
@@ -191,19 +158,34 @@ public class MenuController {
         }
         String menuName = MenuQuery.getMenuName();
         QueryWrapper<Menu> queryWrapper = new QueryWrapper<>();
-        queryWrapper.like(StringUtils.isNotBlank(menuName), "menuName", menuName);
-        queryWrapper.orderByAsc("parentId");
-        Page<Menu> menuPage = menuService.page(new Page<>(current, size), queryWrapper);
+        queryWrapper.like(StringUtils.isNotBlank(menuName), "menu_ame", menuName);
+        queryWrapper.orderByAsc("parent_id");
+        Page<Menu> menuListPage = menuService.page(new Page<>(current, size), queryWrapper);
 
-        List<Menu> menuList = menuPage.getRecords();
+        List<Menu> menuList = menuListPage.getRecords();
+        List<Tree<String>> menuTree = buildMenuTree(menuList);
 
+        // 构建新的分页类，因为要传递的records为List<Tree<String>>类型
+        Page<Tree<String>> newMenuListPage = new Page<>(menuListPage.getCurrent(), menuListPage.getSize(), menuListPage.getTotal());
+        newMenuListPage.setRecords(menuTree);
+
+        return ResultUtils.success(newMenuListPage);
+    }
+
+    /**
+     * 构建菜单树
+     *
+     * @param menuList
+     * @return
+     */
+    List<Tree<String>> buildMenuTree(List<Menu> menuList) {
         // 获取当前list中的根节点
         Long parentId = 0L;
         if (!menuList.isEmpty()) {
             parentId = menuList.stream().min((Comparator.comparing(Menu::getParentId))).get().getParentId();
         }
 
-        // 树形结构转换
+        // 树形结构构建
         TreeNodeConfig treeNodeConfig = new TreeNodeConfig();
         treeNodeConfig.setIdKey("id");
         treeNodeConfig.setParentIdKey("parentId");
@@ -224,7 +206,7 @@ public class MenuController {
                     extra.put("componentName", menu.getComponentName());
                     extra.put("componentPath", menu.getComponentPath());
                     extra.put("description", menu.getDescription());
-                    extra.put("hidden", menu.getIsHidden());
+                    extra.put("hidden", menu.getHidden());
                     extra.put("menuSort", menu.getMenuSort());
                     node.setExtra(extra);
                     return node;
@@ -232,11 +214,7 @@ public class MenuController {
 
         List<Tree<String>> result = TreeUtil.build(treeNodes, parentId.toString());
 
-        // 构建新的分页类，因为要传递的records为List<Tree<String>>类型
-        Page<Tree<String>> newMenuPage = new Page<Tree<String>>(menuPage.getCurrent(), menuPage.getSize(), menuPage.getTotal());
-        newMenuPage.setRecords(result);
-
-        return ResultUtils.success(newMenuPage);
+        return result;
     }
 
     // endregion

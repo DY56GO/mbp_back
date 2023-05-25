@@ -1,6 +1,5 @@
 package com.yingwu.project.model.dto.menu;
 
-import com.baomidou.mybatisplus.annotation.TableField;
 import lombok.Data;
 
 import java.io.Serializable;
@@ -56,7 +55,7 @@ public class MenuUpdateRequest implements Serializable {
     /**
      * 是否隐藏（0：否；1：是）
      */
-    private Integer isHidden;
+    private Integer hidden;
 
     /**
      * 菜单排序
@@ -64,4 +63,5 @@ public class MenuUpdateRequest implements Serializable {
     private Double menuSort;
 
     private static final long serialVersionUID = 1L;
+
 }

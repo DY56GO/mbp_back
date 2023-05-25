@@ -1,11 +1,10 @@
-package com.yingwu.project.model.dto.Role;
+package com.yingwu.project.model.dto.role;
 
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import lombok.Data;
 
 import java.io.Serializable;
-import java.util.Date;
 
 /**
  * 角色更新请求
@@ -34,15 +33,13 @@ public class RoleUpdateRequest implements Serializable {
     /**
      * 是否启用（（0：否；1：是））
      */
-    private Integer isUsing;
+    private Integer usingStart;
 
     /**
      * 描述
      */
     private String description;
 
-    /**
-     * 是否删除（0：否；1：是）
-     */
-    private Integer isDelete;
+    private static final long serialVersionUID = 1L;
+
 }

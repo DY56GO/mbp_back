@@ -58,7 +58,7 @@ public class MenuQueryRequest extends PageRequest implements Serializable {
     /**
      * 是否隐藏（0：否；1：是）
      */
-    private Integer isHidden;
+    private Integer hidden;
 
     /**
      * 菜单排序
@@ -66,4 +66,5 @@ public class MenuQueryRequest extends PageRequest implements Serializable {
     private Double menuSort;
 
     private static final long serialVersionUID = 1L;
+
 }

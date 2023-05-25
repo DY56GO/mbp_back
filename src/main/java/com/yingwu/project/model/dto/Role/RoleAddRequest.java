@@ -1,4 +1,4 @@
-package com.yingwu.project.model.dto.Role;
+package com.yingwu.project.model.dto.role;
 
 import lombok.Data;
 
@@ -25,11 +25,13 @@ public class RoleAddRequest implements Serializable {
     /**
      * 是否启用（（0：否；1：是））
      */
-    private Integer isUsing;
+    private Integer usingStart;
 
     /**
      * 描述
      */
     private String description;
+
+    private static final long serialVersionUID = 1L;
 
 }

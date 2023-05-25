@@ -1,4 +1,4 @@
-package com.yingwu.project.model.dto.Role;
+package com.yingwu.project.model.dto.role;
 
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
@@ -37,7 +37,7 @@ public class RoleQueryRequest extends PageRequest implements Serializable {
     /**
      * 是否启用（（0：否；1：是））
      */
-    private Integer isUsing;
+    private Integer usingStart;
 
     /**
      * 描述
@@ -47,5 +47,8 @@ public class RoleQueryRequest extends PageRequest implements Serializable {
     /**
      * 创建时间
      */
-    private Date createTime;
+    private Date gmtCreate;
+
+    private static final long serialVersionUID = 1L;
+
 }

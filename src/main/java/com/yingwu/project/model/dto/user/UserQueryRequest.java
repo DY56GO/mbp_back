@@ -5,7 +5,6 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 
 import java.io.Serializable;
-import java.util.Date;
 
 /**
  * 用户查询请求
@@ -42,4 +41,5 @@ public class UserQueryRequest extends PageRequest implements Serializable {
     private Integer gender;
 
     private static final long serialVersionUID = 1L;
+
 }

@@ -1,7 +1,7 @@
 package com.yingwu.project.aop;
 
 import com.yingwu.project.annotation.AuthCheck;
-import com.yingwu.project.model.vo.UserVO;
+import com.yingwu.project.model.vo.UserInfoVO;
 import com.yingwu.project.service.UserService;
 import org.apache.commons.lang3.StringUtils;
 import org.aspectj.lang.ProceedingJoinPoint;
@@ -45,7 +45,7 @@ public class AuthAOP {
         RequestAttributes requestAttributes = RequestContextHolder.currentRequestAttributes();
         HttpServletRequest request = ((ServletRequestAttributes) requestAttributes).getRequest();
         // 当前登录用户
-        UserVO userVo = userService.getLoginUser(request);
+        UserInfoVO userVo = userService.getLoginUser(request);
         // 拥有任意权限即通过
 //        if (CollectionUtils.isNotEmpty(anyRole)) {
 //            String userRole = user.getUserRole();

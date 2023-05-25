@@ -38,4 +38,5 @@ public class UserAddRequest implements Serializable {
     private String userPassword;
 
     private static final long serialVersionUID = 1L;
+
 }

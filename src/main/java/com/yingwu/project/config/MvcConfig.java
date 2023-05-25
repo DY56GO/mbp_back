@@ -6,9 +6,13 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
-
 import javax.annotation.Resource;
 
+/**
+ * 拦截器配置
+ *
+ * @author Dy56
+ */
 @Configuration
 public class MvcConfig implements WebMvcConfigurer {
 

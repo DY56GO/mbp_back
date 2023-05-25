@@ -7,7 +7,7 @@ import org.springframework.data.redis.serializer.RedisSerializer;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
 
 /**
- * 修改redis序列化
+ * redis序列化配置
  *
  * @author Dy56
  */

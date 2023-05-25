@@ -8,10 +8,10 @@ import com.yingwu.project.common.DeleteRequest;
 import com.yingwu.project.common.ErrorCode;
 import com.yingwu.project.common.ResultUtils;
 import com.yingwu.project.exception.BusinessException;
-import com.yingwu.project.model.dto.Role.RoleAddRequest;
-import com.yingwu.project.model.dto.Role.RoleQueryRequest;
-import com.yingwu.project.model.dto.Role.RoleUpdateRequest;
+import com.yingwu.project.model.dto.role.*;
 import com.yingwu.project.model.entity.Role;
+import com.yingwu.project.model.vo.MenuOptionVO;
+import com.yingwu.project.service.RoleMenuService;
 import com.yingwu.project.service.RoleService;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.web.bind.annotation.*;
@@ -33,15 +33,29 @@ public class RoleController {
     @Resource
     private RoleService roleService;
 
+    @Resource
+    private RoleMenuService roleMenuService;
+
     // region 增删改查
 
+    /**
+     * 新增角色
+     *
+     * @param roleAddRequest
+     * @param request
+     * @return
+     */
     @PostMapping("/add")
-    public BaseResponse<Long> addUser(@RequestBody RoleAddRequest roleAddRequest, HttpServletRequest request) {
+    public BaseResponse<Long> addRole(@RequestBody RoleAddRequest roleAddRequest, HttpServletRequest request) {
+        // 校验
         if (roleAddRequest == null) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR);
         }
         Role role = new Role();
         BeanUtil.copyProperties(roleAddRequest, role);
+        roleService.validRoleInfo(role);
+
+        // 新增
         boolean result = roleService.save(role);
         if (!result) {
             throw new BusinessException(ErrorCode.OPERATION_ERROR);
@@ -57,10 +71,13 @@ public class RoleController {
      * @return
      */
     @PostMapping("/delete")
-    public BaseResponse<Boolean> deleteUser(@RequestBody DeleteRequest deleteRequest, HttpServletRequest request) {
+    public BaseResponse<Boolean> deleteRole(@RequestBody DeleteRequest deleteRequest, HttpServletRequest request) {
+        // 校验
         if (deleteRequest == null || deleteRequest.getId() <= 0) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR);
         }
+
+        // 删除
         boolean result = roleService.removeById(deleteRequest.getId());
         return ResultUtils.success(result);
     }
@@ -73,12 +90,15 @@ public class RoleController {
      * @return
      */
     @PostMapping("/update")
-    public BaseResponse<Boolean> updateUser(@RequestBody RoleUpdateRequest roleUpdateRequest, HttpServletRequest request) {
+    public BaseResponse<Boolean> updateRole(@RequestBody RoleUpdateRequest roleUpdateRequest, HttpServletRequest request) {
+        // 校验
         if (roleUpdateRequest == null) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR);
         }
         Role role = new Role();
         BeanUtil.copyProperties(roleUpdateRequest, role);
+
+        // 更新
         boolean result = roleService.updateById(role);
         return ResultUtils.success(result);
     }
@@ -92,12 +112,13 @@ public class RoleController {
      */
     @GetMapping("/list")
     public BaseResponse<List<Role>> listRole(RoleQueryRequest roleQueryRequest, HttpServletRequest request) {
-        Role RoleQuery = new Role();
+        Role roleQuery = new Role();
         if (roleQueryRequest != null) {
-            BeanUtil.copyProperties(roleQueryRequest, RoleQuery);
+            BeanUtil.copyProperties(roleQueryRequest, roleQuery);
         }
-        String roleName = RoleQuery.getRoleName();
-        QueryWrapper<Role> queryWrapper = new QueryWrapper<>();
+        String roleName = roleQuery.getRoleName();
+        roleQuery.setRoleName(null);
+        QueryWrapper<Role> queryWrapper = new QueryWrapper<>(roleQuery);
         queryWrapper.like(StringUtils.isNotBlank(roleName), "roleName", roleName);
         List<Role> roleList = roleService.list(queryWrapper);
         return ResultUtils.success(roleList);
@@ -111,7 +132,7 @@ public class RoleController {
      * @return
      */
     @GetMapping("/list/page")
-    public BaseResponse<Page<Role>> listUserByPage(RoleQueryRequest roleQueryRequest, HttpServletRequest request) {
+    public BaseResponse<Page<Role>> listRoleByPage(RoleQueryRequest roleQueryRequest, HttpServletRequest request) {
         long current = 1;
         long size = 10;
         Role RoleQuery = new Role();
@@ -123,9 +144,48 @@ public class RoleController {
         String roleName = RoleQuery.getRoleName();
         QueryWrapper<Role> queryWrapper = new QueryWrapper<>();
         queryWrapper.like(StringUtils.isNotBlank(roleName), "roleName", roleName);
-        Page<Role> rolePage = roleService.page(new Page<>(current, size), queryWrapper);
-        return ResultUtils.success(rolePage);
+        Page<Role> roleListPage = roleService.page(new Page<>(current, size), queryWrapper);
+        return ResultUtils.success(roleListPage);
     }
 
     // endregion
+
+    /**
+     * 获取角色菜单通过角色id
+     *
+     * @param roleMenuQueryRequest
+     * @param request
+     * @return
+     */
+    @GetMapping("/menu")
+    public BaseResponse<List<MenuOptionVO>> getRoleMenuByRoleId(RoleMenuQueryRequest roleMenuQueryRequest, HttpServletRequest request) {
+        if (roleMenuQueryRequest == null) {
+            throw new BusinessException(ErrorCode.PARAMS_ERROR);
+        }
+        List<MenuOptionVO> menuOption = roleService.getRoleMenuByRoleId(roleMenuQueryRequest.getId());
+        return ResultUtils.success(menuOption);
+    }
+
+    /**
+     * 更新角色菜单
+     *
+     * @param roleMenuUpdateRequest
+     * @param request
+     * @return
+     */
+    @PostMapping("/updateMenu")
+    public BaseResponse<Boolean> updateRoleMenu(@RequestBody RoleMenuUpdateRequest roleMenuUpdateRequest, HttpServletRequest request) {
+        // 校验
+        if (roleMenuUpdateRequest == null) {
+            throw new BusinessException(ErrorCode.PARAMS_ERROR);
+        }
+
+        roleMenuService.updateRoleMenu(roleMenuUpdateRequest);
+
+        return ResultUtils.success(true);
+    }
+
+    // region 菜单相关
+
+
 }

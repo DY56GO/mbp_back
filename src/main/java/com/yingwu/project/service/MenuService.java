@@ -11,9 +11,10 @@ import com.yingwu.project.model.entity.Menu;
 public interface MenuService extends IService<Menu> {
 
     /**
-     * 校验
+     * 菜单信息校验
      *
      * @param menu
      */
-    void validMenu(Menu menu);
+    void validMenuInfo(Menu menu);
+
 }
