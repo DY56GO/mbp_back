@@ -1,9 +1,11 @@
 package com.yingwu.project.model.entity;
 
 import com.baomidou.mybatisplus.annotation.*;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
 
 import java.io.Serializable;
+import java.util.Date;
 
 /**
  * 菜单
@@ -57,7 +59,8 @@ public class Menu implements Serializable {
     /**
      * 是否隐藏（0：否；1：是）
      */
-    private Integer isHidden;
+    @TableField(value = "is_hidden")
+    private Integer hidden;
 
     /**
      * 菜单排序
@@ -65,10 +68,23 @@ public class Menu implements Serializable {
     private Double menuSort;
 
     /**
-     * 是否删除
+     * 创建时间
+     */
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", locale = "zh", timezone = "GMT+8")
+    private Date gmtCreate;
+
+    /**
+     * 修改时间
+     */
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", locale = "zh", timezone = "GMT+8")
+    private Date gmtModified;
+
+    /**
+     * 是否删除（0：否；1：是）
      */
     @TableLogic
-    private Integer isDelete;
+    @TableField(value = "is_delete")
+    private Integer del;
 
     @TableField(exist = false)
     private static final long serialVersionUID = 1L;

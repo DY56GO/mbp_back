@@ -5,14 +5,15 @@ import lombok.Data;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
 
 /**
- * 用户视图
+ * 用户信息视图
  *
  * @author Dy56
  */
 @Data
-public class UserVO implements Serializable {
+public class UserInfoVO implements Serializable {
 
     /**
      * id
@@ -40,15 +41,20 @@ public class UserVO implements Serializable {
     private Integer gender;
 
     /**
-     * 是否启用（（0：否；1：是））
-     */
-    private Integer usingStart;
-
-    /**
      * 创建时间
      */
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", locale = "zh", timezone = "GMT+8")
     private Date gmtCreate;
+
+    /**
+     * 角色id列表
+     */
+    private List<Long> roleIdList;
+
+    /**
+     * 角色标识列表
+     */
+    private List<String> roleIdentityList;
 
     private static final long serialVersionUID = 1L;
 

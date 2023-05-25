@@ -6,21 +6,38 @@
 
     <resultMap id="BaseResultMap" type="com.yingwu.project.model.entity.Menu">
             <id property="id" column="id" jdbcType="INTEGER"/>
-            <result property="parentId" column="parentId" jdbcType="INTEGER"/>
-            <result property="menuName" column="menuName" jdbcType="VARCHAR"/>
-            <result property="menuIcon" column="menuIcon" jdbcType="VARCHAR"/>
-            <result property="routeUrl" column="routeUrl" jdbcType="VARCHAR"/>
-            <result property="componentName" column="componentName" jdbcType="VARCHAR"/>
-            <result property="componentPath" column="componentPath" jdbcType="VARCHAR"/>
+            <result property="parentId" column="parent_id" jdbcType="INTEGER"/>
+            <result property="menuName" column="menu_name" jdbcType="VARCHAR"/>
+            <result property="menuIcon" column="menu_icon" jdbcType="VARCHAR"/>
+            <result property="routeUrl" column="route_url" jdbcType="VARCHAR"/>
+            <result property="componentName" column="component_name" jdbcType="VARCHAR"/>
+            <result property="componentPath" column="component_path" jdbcType="VARCHAR"/>
             <result property="description" column="description" jdbcType="VARCHAR"/>
-            <result property="isHidden" column="isHidden" jdbcType="TINYINT"/>
-            <result property="menuSort" column="menuSort" jdbcType="DOUBLE"/>
+            <result property="hidden" column="is_hidden" jdbcType="TINYINT"/>
+            <result property="menuSort" column="menu_sort" jdbcType="DOUBLE"/>
+            <result property="gmtCreate" column="gmt_create" jdbcType="TIMESTAMP"/>
+            <result property="gmtModified" column="gmt_modified" jdbcType="TIMESTAMP"/>
+            <result property="del" column="is_delete" jdbcType="TINYINT"/>
     </resultMap>
 
     <sql id="Base_Column_List">
-        id,parentId,menuName,
-        menuIcon,routeUrl,componentName,
-        componentPath,description,isHidden,
-        menuSort
+        id,parent_id,menu_name,
+        menu_icon,route_url,component_name,
+        component_path,description,is_hidden,
+        menu_sort,gmt_create,gmt_modified,
+        is_delete
     </sql>
+
+    <resultMap id="roleMenu" type="com.yingwu.project.model.vo.MenuOptionVO">
+        <id property="id" column="id" jdbcType="BIGINT"/>
+        <result property="menuName" column="menu_name" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <select id="getRoleMenuByRoleId" resultMap="roleMenu">
+        SELECT id, menu_name FROM menu t1
+                             WHERE is_delete != 1
+                               AND NOT EXISTS(SELECT 1 FROM menu t2 WHERE t2.parent_id = t1.id)
+                               AND t1.id IN (SELECT menu_id FROM role_menu WHERE role_id = #{roleId}) ORDER BY t1.parent_id, t1.menu_sort
+    </select>
+
 </mapper>

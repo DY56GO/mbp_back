@@ -10,11 +10,13 @@ import java.util.Date;
 /**
  * 用户
  *
+ * @author Dy56
  * @TableName user
  */
 @TableName(value = "user")
 @Data
 public class User implements Serializable {
+
     /**
      * id
      */
@@ -24,6 +26,7 @@ public class User implements Serializable {
     /**
      * 用户名称
      */
+    @TableField(value = "user_name")
     private String userName;
 
     /**
@@ -47,27 +50,29 @@ public class User implements Serializable {
     private String userPassword;
 
     /**
-     * 是否启用（（0：否；1：是））
+     * 是否启用（0：否；1：是）
      */
-    private Integer isUsing;
+    @TableField(value = "is_using")
+    private Integer usingStart;
 
     /**
      * 创建时间
      */
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", locale = "zh", timezone = "GMT+8")
-    private Date createTime;
+    private Date gmtCreate;
 
     /**
-     * 更新时间
+     * 修改时间
      */
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", locale = "zh", timezone = "GMT+8")
-    private Date updateTime;
+    private Date gmtModified;
 
     /**
-     * 是否删除
+     * 是否删除（0：否；1：是）
      */
     @TableLogic
-    private Integer isDelete;
+    @TableField(value = "is_delete")
+    private Integer del;
 
     @TableField(exist = false)
     private static final long serialVersionUID = 1L;

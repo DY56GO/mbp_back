@@ -1,6 +1,9 @@
 package com.yingwu.project.model.entity;
 
-import com.baomidou.mybatisplus.annotation.*;
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.annotation.TableName;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
 
@@ -8,12 +11,15 @@ import java.io.Serializable;
 import java.util.Date;
 
 /**
- * 
- * @TableName role
+ * 用户角色
+ *
+ * @author Dy56
+ * @TableName userRole
  */
-@TableName(value ="role")
+@TableName(value ="user_role")
 @Data
-public class Role implements Serializable {
+public class UserRole implements Serializable {
+
     /**
      * id
      */
@@ -21,26 +27,14 @@ public class Role implements Serializable {
     private Long id;
 
     /**
-     * 角色名称
+     * 用户id
      */
-    private String roleName;
+    private Long userId;
 
     /**
-     * 角色标识
+     * 角色id
      */
-    private String roleIdentity;
-
-    /**
-     * 是否启用（（0：否；1：是））
-     */
-    @TableField(value = "is_using")
-    private Integer usingStart;
-
-    /**
-     * 描述
-     */
-    private String description;
-
+    private Long roleId;
 
     /**
      * 创建时间
@@ -53,13 +47,6 @@ public class Role implements Serializable {
      */
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", locale = "zh", timezone = "GMT+8")
     private Date gmtModified;
-
-    /**
-     * 是否删除（0：否；1：是）
-     */
-    @TableLogic
-    @TableField(value = "is_delete")
-    private Integer del;
 
     @TableField(exist = false)
     private static final long serialVersionUID = 1L;
