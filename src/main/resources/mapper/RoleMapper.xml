@@ -21,14 +21,10 @@
         gmt_modified,is_delete
     </sql>
 
-    <resultMap id="roleOption" type="com.yingwu.project.model.vo.RoleOptionVO">
-        <id property="id" column="id" jdbcType="BIGINT"/>
-        <result property="roleIdentity" column="role_identity" jdbcType="VARCHAR"/>
-    </resultMap>
-
-    <select id="getUserRoleByUserId" resultMap="roleOption">
+    <select id="getUserRoleByUserId" resultType="com.yingwu.project.model.vo.UserRoleVO">
         SELECT id, role_identity FROM role
                                  WHERE is_delete != 1
+                                   AND is_using = 1
                                    AND id IN (SELECT role_id FROM user_role WHERE user_id = #{userId})
     </select>
 </mapper>

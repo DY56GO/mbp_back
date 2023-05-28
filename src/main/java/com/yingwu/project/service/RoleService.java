@@ -2,7 +2,7 @@ package com.yingwu.project.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.yingwu.project.model.entity.Role;
-import com.yingwu.project.model.vo.MenuOptionVO;
+import com.yingwu.project.model.vo.RoleMenuVO;
 
 import java.util.List;
 
@@ -24,8 +24,9 @@ public interface RoleService extends IService<Role> {
      * 获取角色菜单通过角色id
      *
      * @param roleId
+     * @param notParent
      * @return
      */
-    List<MenuOptionVO> getRoleMenuByRoleId(Long roleId);
+    List<RoleMenuVO> getRoleMenuByRoleId(Long roleId, boolean notParent);
 
 }

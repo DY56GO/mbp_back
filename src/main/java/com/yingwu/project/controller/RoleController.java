@@ -10,7 +10,7 @@ import com.yingwu.project.common.ResultUtils;
 import com.yingwu.project.exception.BusinessException;
 import com.yingwu.project.model.dto.role.*;
 import com.yingwu.project.model.entity.Role;
-import com.yingwu.project.model.vo.MenuOptionVO;
+import com.yingwu.project.model.vo.RoleMenuVO;
 import com.yingwu.project.service.RoleMenuService;
 import com.yingwu.project.service.RoleService;
 import org.apache.commons.lang3.StringUtils;
@@ -158,11 +158,11 @@ public class RoleController {
      * @return
      */
     @GetMapping("/menu")
-    public BaseResponse<List<MenuOptionVO>> getRoleMenuByRoleId(RoleMenuQueryRequest roleMenuQueryRequest, HttpServletRequest request) {
+    public BaseResponse<List<RoleMenuVO>> getRoleMenuByRoleId(RoleMenuQueryRequest roleMenuQueryRequest, HttpServletRequest request) {
         if (roleMenuQueryRequest == null) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR);
         }
-        List<MenuOptionVO> menuOption = roleService.getRoleMenuByRoleId(roleMenuQueryRequest.getId());
+        List<RoleMenuVO> menuOption = roleService.getRoleMenuByRoleId(roleMenuQueryRequest.getId(), true);
         return ResultUtils.success(menuOption);
     }
 

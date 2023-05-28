@@ -10,8 +10,10 @@ import com.yingwu.project.common.ResultUtils;
 import com.yingwu.project.exception.BusinessException;
 import com.yingwu.project.model.dto.user.*;
 import com.yingwu.project.model.entity.User;
-import com.yingwu.project.model.vo.UserInfoVO;
-import com.yingwu.project.model.vo.UserVO;
+import com.yingwu.project.model.vo.UserInfoListVO;
+import com.yingwu.project.model.vo.UserRoleVO;
+import com.yingwu.project.model.vo.UserInfoRedisVO;
+import com.yingwu.project.model.vo.UserInfoFrontVO;
 import com.yingwu.project.service.UserRoleService;
 import com.yingwu.project.service.UserService;
 import org.springframework.beans.BeanUtils;
@@ -24,6 +26,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static com.yingwu.project.constant.PasswordConstant.SALT;
+import static com.yingwu.project.util.Utils.encryptPassword;
 
 
 /**
@@ -88,15 +91,17 @@ public class UserController {
     }
 
     /**
-     * 获取当前登录用户
+     * 当前登录用户获取信息
      *
      * @param request
      * @return
      */
     @GetMapping("/info")
-    public BaseResponse<UserInfoVO> getLoginUser(HttpServletRequest request) {
-        UserInfoVO userInfo = userService.getLoginUser(request);
-        return ResultUtils.success(userInfo);
+    public BaseResponse<UserInfoFrontVO> getLoginUser(HttpServletRequest request) {
+        UserInfoRedisVO userInfoRedisVO = userService.getLoginUser(request);
+        UserInfoFrontVO userInfoFrontVO = new UserInfoFrontVO();
+        BeanUtils.copyProperties(userInfoRedisVO, userInfoFrontVO);
+        return ResultUtils.success(userInfoFrontVO);
     }
 
     /**
@@ -110,7 +115,6 @@ public class UserController {
         boolean result = userService.userLogout(request);
         return ResultUtils.success(result);
     }
-
 
     // endregion
 
@@ -182,7 +186,7 @@ public class UserController {
 
         if (user.getUserPassword() != null) {
             String password = user.getUserPassword();
-            user.setUserPassword(userService.encryptPassword(password));
+            user.setUserPassword(encryptPassword(password));
         }
 
         // 更新
@@ -204,7 +208,7 @@ public class UserController {
     @PostMapping("/updateSelf")
     public BaseResponse<Boolean> updateUserOneself(@RequestBody UserUpdateSelfRequest userUpdateSelfRequest, HttpServletRequest request) {
         // 校验
-        UserInfoVO userInfo = userService.getLoginUser(request);
+        UserInfoRedisVO userInfo = userService.getLoginUser(request);
         if (userUpdateSelfRequest == null) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR);
         }
@@ -231,7 +235,7 @@ public class UserController {
      */
     @PostMapping("/updatePassword")
     public BaseResponse<Boolean> updateUserPassword(@RequestBody UserPasswordUpdateRequest userPasswordUpdateRequest, HttpServletRequest request) {
-        UserInfoVO userInfo = userService.getLoginUser(request);
+        UserInfoRedisVO userInfo = userService.getLoginUser(request);
         Long userId = userInfo.getId();
 
         // 校验
@@ -257,20 +261,22 @@ public class UserController {
      * @return
      */
     @GetMapping("/list")
-    public BaseResponse<List<UserVO>> getUserList(UserQueryRequest userQueryRequest, HttpServletRequest request) {
+    public BaseResponse<List<UserInfoListVO>> getUserList(UserQueryRequest userQueryRequest, HttpServletRequest request) {
         User userQuery = new User();
         if (userQueryRequest != null) {
             BeanUtil.copyProperties(userQueryRequest, userQuery);
         }
         QueryWrapper<User> queryWrapper = new QueryWrapper<>(userQuery);
         List<User> userList = userService.list(queryWrapper);
-        List<UserVO> userVOList = new ArrayList<>();
+        List<UserInfoListVO> userInfoList = new ArrayList<>();
         for(User user : userList) {
-            UserVO userVO = new UserVO();
-            BeanUtils.copyProperties(user, userVO);
-            userVOList.add(userVO);
+            UserInfoListVO userInfoListVO = new UserInfoListVO();
+            BeanUtils.copyProperties(user, userInfoListVO);
+            userInfoList.add(userInfoListVO);
         }
-        return ResultUtils.success(userVOList);
+
+
+        return ResultUtils.success(userInfoList);
     }
 
     /**
@@ -281,7 +287,7 @@ public class UserController {
      * @return
      */
     @GetMapping("/list/page")
-    public BaseResponse<Page<UserVO>> getUserListByPage(UserQueryRequest userQueryRequest, HttpServletRequest request) {
+    public BaseResponse<Page<UserInfoListVO>> getUserListByPage(UserQueryRequest userQueryRequest, HttpServletRequest request) {
         long current = 1;
         long size = 10;
         User userQuery = new User();
@@ -294,16 +300,18 @@ public class UserController {
         QueryWrapper<User> queryWrapper = new QueryWrapper<>(userQuery);
         Page<User> userPage = userService.page(new Page<>(current, size), queryWrapper);
 
-        List<UserVO> userVOList = new ArrayList<>();
-        for(User user : userPage.getRecords()) {
-            UserVO userVO = new UserVO();
-            BeanUtils.copyProperties(user, userVO);
-            userVOList.add(userVO);
+        List<User> userList = userService.list(queryWrapper);
+        List<UserInfoListVO> userInfoList = new ArrayList<>();
+        for(User user : userList) {
+            UserInfoListVO userInfoListVO = new UserInfoListVO();
+            BeanUtils.copyProperties(user, userInfoListVO);
+            userInfoList.add(userInfoListVO);
         }
-        Page<UserVO> userVOPage = new Page<>(current, size);
-        userVOPage.setRecords(userVOList);
 
-        return ResultUtils.success(userVOPage);
+        Page<UserInfoListVO> userInfoPage = new Page<>(userPage.getCurrent(), userPage.getSize());
+        userInfoPage.setRecords(userInfoList);
+
+        return ResultUtils.success(userInfoPage);
     }
 
     // endregion
@@ -318,12 +326,12 @@ public class UserController {
      * @return
      */
     @GetMapping("/role")
-    public BaseResponse<List<Long>> getUserRoleByUserId(UserRoleUpdateRequest userRoleQueryRequest, HttpServletRequest request) {
+    public BaseResponse<List<UserRoleVO>> getUserRoleByUserId(UserRoleUpdateRequest userRoleQueryRequest, HttpServletRequest request) {
         if (userRoleQueryRequest == null) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR);
         }
-        UserInfoVO user = userService.getUserInfoById(userRoleQueryRequest.getId());
-        return ResultUtils.success(user.getRoleIdList());
+        UserInfoRedisVO user = userService.getUserInfoById(userRoleQueryRequest.getId());
+        return ResultUtils.success(user.getUserRoleList());
     }
 
     /**

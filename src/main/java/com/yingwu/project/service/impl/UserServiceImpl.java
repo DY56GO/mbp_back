@@ -2,17 +2,20 @@ package com.yingwu.project.service.impl;
 
 import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.lang.Snowflake;
+import cn.hutool.core.lang.tree.Tree;
 import cn.hutool.core.util.IdUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.yingwu.project.common.ErrorCode;
 import com.yingwu.project.exception.BusinessException;
+import com.yingwu.project.mapper.MenuMapper;
 import com.yingwu.project.mapper.RoleMapper;
 import com.yingwu.project.mapper.UserMapper;
 import com.yingwu.project.model.dto.user.UserPasswordUpdateRequest;
 import com.yingwu.project.model.entity.User;
-import com.yingwu.project.model.vo.RoleOptionVO;
-import com.yingwu.project.model.vo.UserInfoVO;
+import com.yingwu.project.model.vo.UserMenuVO;
+import com.yingwu.project.model.vo.UserRoleVO;
+import com.yingwu.project.model.vo.UserInfoRedisVO;
 import com.yingwu.project.service.UserService;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
@@ -23,7 +26,6 @@ import org.springframework.util.DigestUtils;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -31,6 +33,8 @@ import java.util.concurrent.TimeUnit;
 
 import static com.yingwu.project.constant.PasswordConstant.SALT;
 import static com.yingwu.project.constant.UserConstant.*;
+import static com.yingwu.project.util.Utils.buildUserRouter;
+import static com.yingwu.project.util.Utils.encryptPassword;
 
 
 /**
@@ -53,17 +57,10 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     private RoleMapper roleMapper;
 
     @Resource
-    private RedisTemplate redisTemplate;
+    private MenuMapper menuMapper;
 
-    /**
-     * 加密密码
-     *
-     * @param password
-     * @return
-     */
-    public String encryptPassword(String password) {
-        return DigestUtils.md5DigestAsHex((SALT + password).getBytes());
-    }
+    @Resource
+    private RedisTemplate redisTemplate;
 
     /**
      * 用户注册
@@ -155,6 +152,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         QueryWrapper<User> queryWrapper = new QueryWrapper<>();
         queryWrapper.eq("user_account", userAccount);
         queryWrapper.eq("user_password", userPassword);
+        queryWrapper.eq("is_using", 1);
         User hasUser = userMapper.selectOne(queryWrapper);
         // 用户不存在
         if (hasUser == null) {
@@ -172,17 +170,17 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         // region Redis中不存在，开始生成tokenKey
         
         // 4. 数据脱敏和添加权限信息
-        UserInfoVO userInfo = new UserInfoVO();
+        UserInfoRedisVO userInfo = new UserInfoRedisVO();
         BeanUtils.copyProperties(hasUser, userInfo);
-        List<RoleOptionVO> roleOptionList = roleMapper.getUserRoleByUserId(userInfo.getId());
-        List<Long> roleIdList = new ArrayList<>();
-        List<String> roleIdentityList = new ArrayList<>();
-        for (RoleOptionVO roleOption : roleOptionList) {
-            roleIdList.add(roleOption.getId());
-            roleIdentityList.add(roleOption.getRoleIdentity());
-        }
-        userInfo.setRoleIdList(roleIdList);
-        userInfo.setRoleIdentityList(roleIdentityList);
+
+        // 角色信息
+        List<UserRoleVO> userRoleList = roleMapper.getUserRoleByUserId(userInfo.getId());
+        userInfo.setUserRoleList(userRoleList);
+
+        // 菜单信息（根据前台路由生成）
+        List<UserMenuVO> userMenuList = menuMapper.getUserMenuByUserId(userInfo.getId());
+        List<Tree<String>> userMenuTree = buildUserRouter(userMenuList);
+        userInfo.setUserMenuTree(userMenuTree);
 
         // 5. 生成token
         // workerId 为终端ID
@@ -197,11 +195,6 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         
         // 7. 写入redis
         Map<String, Object> userInfoMap = BeanUtil.beanToMap(userInfo);
-        userInfoMap.forEach((key, value) -> {
-            if (null != value) {
-                userInfoMap.put(key, String.valueOf(value));
-            }
-        });
         redisTemplate.opsForHash().putAll(tokenKey, userInfoMap);
         // 设置过期时间
         redisTemplate.expire(tokenKey, USER_EXPIRATION_TIME, TimeUnit.MINUTES);
@@ -248,13 +241,13 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     }
 
     /**
-     * 获取当前登录用户
+     * 当前登录用户获取信息
      *
      * @param request
      * @return 用户信息
      */
     @Override
-    public UserInfoVO getLoginUser(HttpServletRequest request) {
+    public UserInfoRedisVO getLoginUser(HttpServletRequest request) {
         // 用户登陆校验
         validUserLogin(request);
 
@@ -265,7 +258,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
             throw new BusinessException(ErrorCode.NOT_LOGIN_ERROR);
         }
 
-        UserInfoVO userInfo = BeanUtil.toBeanIgnoreCase(userInfoMap, UserInfoVO.class, false);
+        UserInfoRedisVO userInfo = BeanUtil.toBeanIgnoreCase(userInfoMap, UserInfoRedisVO.class, false);
 
         return userInfo;
     }
@@ -409,7 +402,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
      * @return 用户信息
      */
     @Override
-    public UserInfoVO getUserInfoById(Long userId) {
+    public UserInfoRedisVO getUserInfoById(Long userId) {
         // 查询用户是否存在
         QueryWrapper<User> queryWrapper = new QueryWrapper<>();
         queryWrapper.eq("id", userId);
@@ -421,17 +414,10 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         }
 
         // 数据脱敏和添加权限信息
-        UserInfoVO userInfo = new UserInfoVO();
+        UserInfoRedisVO userInfo = new UserInfoRedisVO();
         BeanUtils.copyProperties(hasUser, userInfo);
-        List<RoleOptionVO> roles = roleMapper.getUserRoleByUserId(userInfo.getId());
-        List<Long> roleIdList = new ArrayList<>();
-        List<String> roleIdentityList = new ArrayList<>();
-        for (RoleOptionVO roleVO : roles) {
-            roleIdList.add(roleVO.getId());
-            roleIdentityList.add(roleVO.getRoleIdentity());
-        }
-        userInfo.setRoleIdList(roleIdList);
-        userInfo.setRoleIdentityList(roleIdentityList);
+        List<UserRoleVO> userRoleList = roleMapper.getUserRoleByUserId(userInfo.getId());
+        userInfo.setUserRoleList(userRoleList);
 
         return userInfo;
     }
@@ -448,16 +434,9 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         User user = userMapper.selectById(userId);
 
         // 数据脱敏和添加权限信息
-        UserInfoVO userInfo = BeanUtil.copyProperties(user, UserInfoVO.class);
-        List<RoleOptionVO> roles = roleMapper.getUserRoleByUserId(userInfo.getId());
-        List<Long> roleIdList = new ArrayList<>();
-        List<String> roleIdentityList = new ArrayList<>();
-        for (RoleOptionVO roleVO : roles) {
-            roleIdList.add(roleVO.getId());
-            roleIdentityList.add(roleVO.getRoleIdentity());
-        }
-        userInfo.setRoleIdList(roleIdList);
-        userInfo.setRoleIdentityList(roleIdentityList);
+        UserInfoRedisVO userInfo = BeanUtil.copyProperties(user, UserInfoRedisVO.class);
+        List<UserRoleVO> userRoleList = roleMapper.getUserRoleByUserId(userInfo.getId());
+        userInfo.setUserRoleList(userRoleList);
 
         // 刷新用户Redis数据
         String userAccountKey = DigestUtils.md5DigestAsHex((SALT + userInfo.getUserAccount()).getBytes());

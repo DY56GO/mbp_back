@@ -5,12 +5,12 @@ import lombok.Data;
 import java.io.Serializable;
 
 /**
- * 角色选项视图
+ * 用户角色视图
  *
  * @author Dy56
  */
 @Data
-public class RoleOptionVO implements Serializable {
+public class UserRoleVO implements Serializable {
 
     /**
      * id

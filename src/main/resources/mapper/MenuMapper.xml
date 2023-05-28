@@ -5,39 +5,62 @@
 <mapper namespace="com.yingwu.project.mapper.MenuMapper">
 
     <resultMap id="BaseResultMap" type="com.yingwu.project.model.entity.Menu">
-            <id property="id" column="id" jdbcType="INTEGER"/>
-            <result property="parentId" column="parent_id" jdbcType="INTEGER"/>
-            <result property="menuName" column="menu_name" jdbcType="VARCHAR"/>
-            <result property="menuIcon" column="menu_icon" jdbcType="VARCHAR"/>
-            <result property="routeUrl" column="route_url" jdbcType="VARCHAR"/>
-            <result property="componentName" column="component_name" jdbcType="VARCHAR"/>
-            <result property="componentPath" column="component_path" jdbcType="VARCHAR"/>
-            <result property="description" column="description" jdbcType="VARCHAR"/>
-            <result property="hidden" column="is_hidden" jdbcType="TINYINT"/>
-            <result property="menuSort" column="menu_sort" jdbcType="DOUBLE"/>
-            <result property="gmtCreate" column="gmt_create" jdbcType="TIMESTAMP"/>
-            <result property="gmtModified" column="gmt_modified" jdbcType="TIMESTAMP"/>
-            <result property="del" column="is_delete" jdbcType="TINYINT"/>
+        <id property="id" column="id" jdbcType="INTEGER"/>
+        <result property="parentId" column="parent_id" jdbcType="INTEGER"/>
+        <result property="menuTitle" column="menu_title" jdbcType="VARCHAR"/>
+        <result property="menuIcon" column="menu_icon" jdbcType="VARCHAR"/>
+        <result property="routePath" column="route_path" jdbcType="VARCHAR"/>
+        <result property="componentName" column="component_name" jdbcType="VARCHAR"/>
+        <result property="componentPath" column="component_path" jdbcType="VARCHAR"/>
+        <result property="redirect" column="redirect" jdbcType="VARCHAR"/>
+        <result property="description" column="description" jdbcType="VARCHAR"/>
+        <result property="hidden" column="is_hidden" jdbcType="TINYINT"/>
+        <result property="menuSort" column="menu_sort" jdbcType="DOUBLE"/>
+        <result property="gmtCreate" column="gmt_create" jdbcType="TIMESTAMP"/>
+        <result property="gmtModified" column="gmt_modified" jdbcType="TIMESTAMP"/>
+        <result property="del" column="is_delete" jdbcType="TINYINT"/>
     </resultMap>
 
     <sql id="Base_Column_List">
-        id,parent_id,menu_name,
-        menu_icon,route_url,component_name,
-        component_path,description,is_hidden,
-        menu_sort,gmt_create,gmt_modified,
-        is_delete
+        id,parent_id,menu_title,
+        menu_icon,route_pathl,component_name,
+        component_path,redirect,description,
+        is_hidden,menu_sort,gmt_create,
+        gmt_modified,is_delete
     </sql>
 
-    <resultMap id="roleMenu" type="com.yingwu.project.model.vo.MenuOptionVO">
-        <id property="id" column="id" jdbcType="BIGINT"/>
-        <result property="menuName" column="menu_name" jdbcType="VARCHAR"/>
-    </resultMap>
+    <select id="getRoleMenuByRoleId" resultType="com.yingwu.project.model.vo.RoleMenuVO">
+        SELECT id, menu_title
+        FROM menu t1
+        WHERE is_delete != 1
+        <if test="notParent == true">
+            AND NOT EXISTS(SELECT 1 FROM menu t2 WHERE t2.parent_id = t1.id)
+        </if>
+        AND t1.id IN (SELECT menu_id FROM role_menu WHERE role_id = #{roleId})
+        ORDER BY t1.parent_id, t1.menu_sort
+    </select>
 
-    <select id="getRoleMenuByRoleId" resultMap="roleMenu">
-        SELECT id, menu_name FROM menu t1
-                             WHERE is_delete != 1
-                               AND NOT EXISTS(SELECT 1 FROM menu t2 WHERE t2.parent_id = t1.id)
-                               AND t1.id IN (SELECT menu_id FROM role_menu WHERE role_id = #{roleId}) ORDER BY t1.parent_id, t1.menu_sort
+    <select id="getUserMenuByUserId" resultType="com.yingwu.project.model.vo.UserMenuVO">
+        SELECT id,
+               parent_id,
+               menu_title,
+               menu_icon,
+               route_path,
+               component_name,
+               component_path,
+               redirect,
+               description,
+               menu_sort
+        FROM menu t1
+        WHERE is_delete != 1
+          AND is_hidden = 0
+          AND id IN (SELECT menu_id
+                     FROM role_menu t2
+                     WHERE role_id in (SELECT role_id
+                                       FROM user_role t3
+                                       WHERE user_id = #{userId}
+                                         AND EXISTS(SELECT 1 FROM role WHERE is_delete != 1 AND is_using = 1 AND id = t3.role_id)))
+        ORDER BY parent_id, menu_sort
     </select>
 
 </mapper>

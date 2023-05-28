@@ -6,7 +6,7 @@ import com.yingwu.project.exception.BusinessException;
 import com.yingwu.project.mapper.MenuMapper;
 import com.yingwu.project.mapper.RoleMapper;
 import com.yingwu.project.model.entity.Role;
-import com.yingwu.project.model.vo.MenuOptionVO;
+import com.yingwu.project.model.vo.RoleMenuVO;
 import com.yingwu.project.service.RoleService;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
@@ -50,8 +50,8 @@ public class RoleServiceImpl extends ServiceImpl<RoleMapper, Role> implements Ro
      * @return
      */
     @Override
-    public List<MenuOptionVO> getRoleMenuByRoleId(Long roleId) {
-        List<MenuOptionVO> menuOptionList = menuMapper.getRoleMenuByRoleId(roleId);
+    public List<RoleMenuVO> getRoleMenuByRoleId(Long roleId, boolean notParent) {
+        List<RoleMenuVO> menuOptionList = menuMapper.getRoleMenuByRoleId(roleId, notParent);
         return menuOptionList;
     }
 

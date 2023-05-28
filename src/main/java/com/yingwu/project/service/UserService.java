@@ -3,7 +3,7 @@ package com.yingwu.project.service;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.yingwu.project.model.dto.user.UserPasswordUpdateRequest;
 import com.yingwu.project.model.entity.User;
-import com.yingwu.project.model.vo.UserInfoVO;
+import com.yingwu.project.model.vo.UserInfoRedisVO;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -13,14 +13,6 @@ import javax.servlet.http.HttpServletRequest;
  * @author Dy56
  */
 public interface UserService extends IService<User> {
-
-    /**
-     * 加密密码
-     *
-     * @param password
-     * @return
-     */
-    String encryptPassword(String password);
 
     /**
      * 用户注册
@@ -62,12 +54,12 @@ public interface UserService extends IService<User> {
     void validUserLogin(HttpServletRequest request);
 
     /**
-     * 获取当前登录用户
+     * 当前登录用户获取信息
      *
      * @param request
      * @return 用户信息
      */
-    UserInfoVO getLoginUser(HttpServletRequest request);
+    UserInfoRedisVO getLoginUser(HttpServletRequest request);
 
     /**
      * 用户注销
@@ -105,7 +97,7 @@ public interface UserService extends IService<User> {
      * @param userId
      * @return 用户信息
      */
-    UserInfoVO getUserInfoById(Long userId);
+    UserInfoRedisVO getUserInfoById(Long userId);
 
     /**
      * 用户Redis数据刷新

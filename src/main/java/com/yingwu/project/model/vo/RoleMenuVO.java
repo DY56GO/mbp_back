@@ -5,12 +5,12 @@ import lombok.Data;
 import java.io.Serializable;
 
 /**
- * 菜单选项视图
+ * 角色菜单视图
  *
  * @author Dy56
  */
 @Data
-public class MenuOptionVO implements Serializable {
+public class RoleMenuVO implements Serializable {
 
     /**
      * id
@@ -18,9 +18,9 @@ public class MenuOptionVO implements Serializable {
     private Long id;
 
     /**
-     * 菜单名称
+     * 菜单标题
      */
-    private String menuName;
+    private String menuTitle;
 
     private static final long serialVersionUID = 1L;
 

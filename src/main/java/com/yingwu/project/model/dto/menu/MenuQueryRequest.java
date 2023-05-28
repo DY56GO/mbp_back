@@ -28,7 +28,7 @@ public class MenuQueryRequest extends PageRequest implements Serializable {
     /**
      * 菜单名称
      */
-    private String menuName;
+    private String menuTitle;
 
     /**
      * 菜单图标
@@ -38,7 +38,7 @@ public class MenuQueryRequest extends PageRequest implements Serializable {
     /**
      * 路由url
      */
-    private String routeUrl;
+    private String routePath;
 
     /**
      * 组件名称

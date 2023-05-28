@@ -27,10 +27,10 @@ public class MenuServiceImpl extends ServiceImpl<MenuMapper, Menu> implements Me
             throw new BusinessException(ErrorCode.PARAMS_ERROR);
         }
 
-        String menuName = menu.getMenuName();
-        String routeUrl = menu.getRouteUrl();
+        String menuTitle = menu.getMenuTitle();
+        String routePath = menu.getRoutePath();
 
-        if (StringUtils.isAnyBlank(menuName, routeUrl)) {
+        if (StringUtils.isAnyBlank(menuTitle, routePath)) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR, "参数为空");
         }
     }

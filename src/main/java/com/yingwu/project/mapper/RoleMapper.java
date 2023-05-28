@@ -2,7 +2,7 @@ package com.yingwu.project.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.yingwu.project.model.entity.Role;
-import com.yingwu.project.model.vo.RoleOptionVO;
+import com.yingwu.project.model.vo.UserRoleVO;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
@@ -18,7 +18,7 @@ public interface RoleMapper extends BaseMapper<Role> {
      * @param userId
      * @return
      */
-    List<RoleOptionVO> getUserRoleByUserId(@Param("userId")Long userId);
+    List<UserRoleVO> getUserRoleByUserId(@Param("userId")Long userId);
 
 }
 

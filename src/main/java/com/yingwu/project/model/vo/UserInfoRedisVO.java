@@ -1,5 +1,6 @@
 package com.yingwu.project.model.vo;
 
+import cn.hutool.core.lang.tree.Tree;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
 
@@ -8,12 +9,12 @@ import java.util.Date;
 import java.util.List;
 
 /**
- * 用户信息视图
+ * Redis用户信息视图
  *
  * @author Dy56
  */
 @Data
-public class UserInfoVO implements Serializable {
+public class UserInfoRedisVO implements Serializable {
 
     /**
      * id
@@ -47,14 +48,14 @@ public class UserInfoVO implements Serializable {
     private Date gmtCreate;
 
     /**
-     * 角色id列表
+     * 用户角色
      */
-    private List<Long> roleIdList;
+    private List<UserRoleVO> userRoleList;
 
     /**
-     * 角色标识列表
+     * 用户菜单树
      */
-    private List<String> roleIdentityList;
+    private List<Tree<String>> userMenuTree;
 
     private static final long serialVersionUID = 1L;
 

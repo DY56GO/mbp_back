@@ -28,6 +28,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import static com.yingwu.project.util.Utils.buildMenuTree;
+
 
 /**
  * 菜单接口
@@ -128,9 +130,9 @@ public class MenuController {
         if (menuQueryRequest != null) {
             BeanUtil.copyProperties(menuQueryRequest, MenuQuery);
         }
-        String menuName = MenuQuery.getMenuName();
+        String menuTitle = MenuQuery.getMenuTitle();
         QueryWrapper<Menu> queryWrapper = new QueryWrapper<>();
-        queryWrapper.like(StringUtils.isNotBlank(menuName), "menu_name", menuName);
+        queryWrapper.like(StringUtils.isNotBlank(menuTitle), "menu_title", menuTitle);
         queryWrapper.orderByAsc("parent_id");
 
         List<Menu> menuList = menuService.list(queryWrapper);
@@ -156,9 +158,9 @@ public class MenuController {
             current = menuQueryRequest.getCurrent();
             size = menuQueryRequest.getPageSize();
         }
-        String menuName = MenuQuery.getMenuName();
+        String menuTitle = MenuQuery.getMenuTitle();
         QueryWrapper<Menu> queryWrapper = new QueryWrapper<>();
-        queryWrapper.like(StringUtils.isNotBlank(menuName), "menu_ame", menuName);
+        queryWrapper.like(StringUtils.isNotBlank(menuTitle), "menu_title", menuTitle);
         queryWrapper.orderByAsc("parent_id");
         Page<Menu> menuListPage = menuService.page(new Page<>(current, size), queryWrapper);
 
@@ -170,51 +172,6 @@ public class MenuController {
         newMenuListPage.setRecords(menuTree);
 
         return ResultUtils.success(newMenuListPage);
-    }
-
-    /**
-     * 构建菜单树
-     *
-     * @param menuList
-     * @return
-     */
-    List<Tree<String>> buildMenuTree(List<Menu> menuList) {
-        // 获取当前list中的根节点
-        Long parentId = 0L;
-        if (!menuList.isEmpty()) {
-            parentId = menuList.stream().min((Comparator.comparing(Menu::getParentId))).get().getParentId();
-        }
-
-        // 树形结构构建
-        TreeNodeConfig treeNodeConfig = new TreeNodeConfig();
-        treeNodeConfig.setIdKey("id");
-        treeNodeConfig.setParentIdKey("parentId");
-
-        List<TreeNode<String>> treeNodes = menuList.stream()
-                .map(menu -> {
-                    TreeNode<String> node = new TreeNode<>();
-                    // 下面四个属性是树型结构必有的属性
-                    node.setId(String.valueOf(menu.getId()));
-                    node.setName(menu.getMenuName());
-                    node.setParentId(String.valueOf(menu.getParentId()));
-                    node.setWeight(menu.getMenuSort());
-                    // 以下为扩展属性
-                    Map<String, Object> extra = new HashMap<>();
-                    extra.put("menuName", menu.getMenuName());
-                    extra.put("menuIcon", menu.getMenuIcon());
-                    extra.put("routeUrl", menu.getRouteUrl());
-                    extra.put("componentName", menu.getComponentName());
-                    extra.put("componentPath", menu.getComponentPath());
-                    extra.put("description", menu.getDescription());
-                    extra.put("hidden", menu.getHidden());
-                    extra.put("menuSort", menu.getMenuSort());
-                    node.setExtra(extra);
-                    return node;
-                }).collect(Collectors.toList());
-
-        List<Tree<String>> result = TreeUtil.build(treeNodes, parentId.toString());
-
-        return result;
     }
 
     // endregion

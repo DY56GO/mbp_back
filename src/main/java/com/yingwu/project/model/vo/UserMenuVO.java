@@ -1,29 +1,29 @@
-package com.yingwu.project.model.dto.menu;
+package com.yingwu.project.model.vo;
 
 import lombok.Data;
 
 import java.io.Serializable;
 
 /**
- * 菜单更新请求
+ * 用户菜单视图
  *
  * @author Dy56
  */
 @Data
-public class MenuUpdateRequest implements Serializable {
+public class UserMenuVO implements Serializable {
 
     /**
      * id
      */
-    private Integer id;
+    private Long id;
 
     /**
      * 父id
      */
-    private Integer parentId;
+    private Long parentId;
 
     /**
-     * 菜单名称
+     * 菜单标题
      */
     private String menuTitle;
 
@@ -33,7 +33,7 @@ public class MenuUpdateRequest implements Serializable {
     private String menuIcon;
 
     /**
-     * 路由url
+     * 路由path
      */
     private String routePath;
 
@@ -48,14 +48,14 @@ public class MenuUpdateRequest implements Serializable {
     private String componentPath;
 
     /**
+     * 重定向
+     */
+    private String redirect;
+
+    /**
      * 描述
      */
     private String description;
-
-    /**
-     * 是否隐藏（0：否；1：是）
-     */
-    private Integer hidden;
 
     /**
      * 菜单排序

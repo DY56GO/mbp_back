@@ -15,6 +15,7 @@ import java.util.Date;
 @TableName(value ="menu")
 @Data
 public class Menu implements Serializable {
+
     /**
      * id
      */
@@ -27,9 +28,9 @@ public class Menu implements Serializable {
     private Long parentId;
 
     /**
-     * 菜单名称
+     * 菜单标题
      */
-    private String menuName;
+    private String menuTitle;
 
     /**
      * 菜单图标
@@ -37,9 +38,9 @@ public class Menu implements Serializable {
     private String menuIcon;
 
     /**
-     * 路由url
+     * 路由path
      */
-    private String routeUrl;
+    private String routePath;
 
     /**
      * 组件名称
@@ -50,6 +51,11 @@ public class Menu implements Serializable {
      * 组件路径
      */
     private String componentPath;
+
+    /**
+     * 重定向
+     */
+    private String redirect;
 
     /**
      * 描述
@@ -88,4 +94,5 @@ public class Menu implements Serializable {
 
     @TableField(exist = false)
     private static final long serialVersionUID = 1L;
+
 }
