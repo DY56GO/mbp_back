@@ -6,9 +6,9 @@ import com.yingwu.project.model.entity.RoleMenu;
 import java.util.List;
 
 /**
-* @author Dy56
-* @description 针对表【roleMenu】的数据库操作Mapper
-*/
+ * @author Dy56
+ * @description 针对表【roleMenu】的数据库操作Mapper
+ */
 public interface RoleMenuMapper extends BaseMapper<RoleMenu> {
 
     /**

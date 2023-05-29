@@ -21,7 +21,7 @@ public class MenuServiceImpl extends ServiceImpl<MenuMapper, Menu> implements Me
      *
      * @param menu
      */
-    @Override
+    
     public void validMenuInfo(Menu menu) {
         if (menu == null) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR);

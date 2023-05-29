@@ -2,9 +2,6 @@ package com.yingwu.project.controller;
 
 import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.lang.tree.Tree;
-import cn.hutool.core.lang.tree.TreeNode;
-import cn.hutool.core.lang.tree.TreeNodeConfig;
-import cn.hutool.core.lang.tree.TreeUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.yingwu.project.common.BaseResponse;
@@ -22,11 +19,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
-import java.util.Comparator;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
 
 import static com.yingwu.project.util.Utils.buildMenuTree;
 
@@ -52,7 +45,7 @@ public class MenuController {
      * @param request
      * @return
      */
-    @PostMapping("/add")
+    @PostMapping(value = "/add", name = "新增菜单")
     public BaseResponse<Long> addMenu(@RequestBody MenuAddRequest menuAddRequest, HttpServletRequest request) {
         // 校验
         if (menuAddRequest == null) {
@@ -77,7 +70,7 @@ public class MenuController {
      * @param request
      * @return
      */
-    @PostMapping("/delete")
+    @PostMapping(value = "/delete", name = "删除菜单")
     public BaseResponse<Boolean> deleteMenu(@RequestBody DeleteRequest deleteRequest, HttpServletRequest request) {
         if (deleteRequest == null || deleteRequest.getId() <= 0) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR);
@@ -102,7 +95,7 @@ public class MenuController {
      * @param request
      * @return
      */
-    @PostMapping("/update")
+    @PostMapping(value = "/update", name = "更新菜单")
     public BaseResponse<Boolean> updateMenu(@RequestBody MenuUpdateRequest menuUpdateRequest, HttpServletRequest request) {
         // 校验
         if (menuUpdateRequest == null) {
@@ -124,13 +117,13 @@ public class MenuController {
      * @param request
      * @return
      */
-    @GetMapping("/list")
+    @GetMapping(value = "/list", name = "获取菜单列表")
     public BaseResponse<List<Tree<String>>> listMenu(MenuQueryRequest menuQueryRequest, HttpServletRequest request) {
-        Menu MenuQuery = new Menu();
+        Menu menuQuery = new Menu();
         if (menuQueryRequest != null) {
-            BeanUtil.copyProperties(menuQueryRequest, MenuQuery);
+            BeanUtil.copyProperties(menuQueryRequest, menuQuery);
         }
-        String menuTitle = MenuQuery.getMenuTitle();
+        String menuTitle = menuQuery.getMenuTitle();
         QueryWrapper<Menu> queryWrapper = new QueryWrapper<>();
         queryWrapper.like(StringUtils.isNotBlank(menuTitle), "menu_title", menuTitle);
         queryWrapper.orderByAsc("parent_id");
@@ -148,19 +141,19 @@ public class MenuController {
      * @param request
      * @return
      */
-    @GetMapping("/list/page")
+    @GetMapping(value = "/list/page", name = "分页获取菜单列表")
     public BaseResponse<Page<Tree<String>>> listUserByPage(MenuQueryRequest menuQueryRequest, HttpServletRequest request) {
         long current = 1;
         long size = 10;
-        Menu MenuQuery = new Menu();
+        Menu menuQuery = new Menu();
         if (menuQueryRequest != null) {
-            BeanUtil.copyProperties(menuQueryRequest, MenuQuery);
+            BeanUtil.copyProperties(menuQueryRequest, menuQuery);
             current = menuQueryRequest.getCurrent();
             size = menuQueryRequest.getPageSize();
         }
-        String menuTitle = MenuQuery.getMenuTitle();
+        String menuTitle = menuQuery.getMenuTitle();
         QueryWrapper<Menu> queryWrapper = new QueryWrapper<>();
-        queryWrapper.like(StringUtils.isNotBlank(menuTitle), "menu_title", menuTitle);
+        queryWrapper.like(org.apache.commons.lang3.StringUtils.isNotBlank(menuTitle), "menu_title", menuTitle);
         queryWrapper.orderByAsc("parent_id");
         Page<Menu> menuListPage = menuService.page(new Page<>(current, size), queryWrapper);
 

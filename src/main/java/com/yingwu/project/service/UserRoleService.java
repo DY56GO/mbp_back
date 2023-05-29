@@ -7,8 +7,8 @@ import com.yingwu.project.model.entity.UserRole;
 /**
  * 用户角色服务
  *
-* @author Dy56
-*/
+ * @author Dy56
+ */
 public interface UserRoleService extends IService<UserRole> {
 
     /**

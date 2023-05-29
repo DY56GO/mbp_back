@@ -16,7 +16,7 @@ import java.util.Date;
  * @author Dy56
  * @TableName roleMenu
  */
-@TableName(value ="role_menu")
+@TableName(value = "role_menu")
 @Data
 public class RoleMenu implements Serializable {
 
@@ -50,4 +50,5 @@ public class RoleMenu implements Serializable {
 
     @TableField(exist = false)
     private static final long serialVersionUID = 1L;
+
 }

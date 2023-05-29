@@ -8,12 +8,15 @@ import java.io.Serializable;
 import java.util.Date;
 
 /**
+ * 系统接口
+ *
  * @author Dy56
- * @TableName role
+ * @TableName sys_interface
  */
-@TableName(value = "role")
+@TableName(value = "sys_interface")
 @Data
-public class Role implements Serializable {
+public class SysInterface implements Serializable {
+
     /**
      * id
      */
@@ -21,26 +24,25 @@ public class Role implements Serializable {
     private Long id;
 
     /**
-     * 角色名称
+     * 接口名称
      */
-    private String roleName;
+    private String interfaceName;
 
     /**
-     * 角色标识
+     * 接口方法
      */
-    private String roleIdentity;
+    private String interfaceMethod;
 
     /**
-     * 是否启用（（0：否；1：是））
+     * 接口url
+     */
+    private String interfaceUrl;
+
+    /**
+     * 是否启用（0：否；1：是）
      */
     @TableField(value = "is_using")
     private Integer usingStart;
-
-    /**
-     * 描述
-     */
-    private String description;
-
 
     /**
      * 创建时间
@@ -63,4 +65,5 @@ public class Role implements Serializable {
 
     @TableField(exist = false)
     private static final long serialVersionUID = 1L;
+
 }

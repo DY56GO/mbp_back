@@ -22,9 +22,6 @@ import java.util.List;
 @Service
 public class RoleMenuServiceImpl extends ServiceImpl<RoleMenuMapper, RoleMenu> implements RoleMenuService{
 
-    @Resource
-    private RoleMenuMapper roleMenuMapper;
-
     /**
      * 更新角色菜单
      *
@@ -78,7 +75,7 @@ public class RoleMenuServiceImpl extends ServiceImpl<RoleMenuMapper, RoleMenu> i
                 batchSize ++;
                 deleteRoleMenuBatch.add(roleMenu);
                 if (batchSize == 300 || batchSize == deleteRoleMenuList.size()) {
-                    roleMenuMapper.removeBatch(deleteRoleMenuBatch);
+                    getBaseMapper().removeBatch(deleteRoleMenuBatch);
                     batchSize = 0;
                     deleteRoleMenuBatch.clear();
                 }

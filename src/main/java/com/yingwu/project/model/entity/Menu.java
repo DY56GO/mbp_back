@@ -10,9 +10,10 @@ import java.util.Date;
 /**
  * 菜单
  *
+ * @author Dy56
  * @TableName menu
  */
-@TableName(value ="menu")
+@TableName(value = "menu")
 @Data
 public class Menu implements Serializable {
 

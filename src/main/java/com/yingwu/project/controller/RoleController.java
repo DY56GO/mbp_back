@@ -10,9 +10,12 @@ import com.yingwu.project.common.ResultUtils;
 import com.yingwu.project.exception.BusinessException;
 import com.yingwu.project.model.dto.role.*;
 import com.yingwu.project.model.entity.Role;
+import com.yingwu.project.model.entity.SysInterface;
 import com.yingwu.project.model.vo.RoleMenuVO;
+import com.yingwu.project.model.vo.RoleSysInterfaceVO;
 import com.yingwu.project.service.RoleMenuService;
 import com.yingwu.project.service.RoleService;
+import com.yingwu.project.service.RoleSysInterfaceService;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
@@ -36,6 +39,9 @@ public class RoleController {
     @Resource
     private RoleMenuService roleMenuService;
 
+    @Resource
+    private RoleSysInterfaceService roleSysInterfaceService;
+
     // region 增删改查
 
     /**
@@ -45,7 +51,7 @@ public class RoleController {
      * @param request
      * @return
      */
-    @PostMapping("/add")
+    @PostMapping(value = "/add", name = "新增角色")
     public BaseResponse<Long> addRole(@RequestBody RoleAddRequest roleAddRequest, HttpServletRequest request) {
         // 校验
         if (roleAddRequest == null) {
@@ -70,7 +76,7 @@ public class RoleController {
      * @param request
      * @return
      */
-    @PostMapping("/delete")
+    @PostMapping(value = "/delete", name = "删除角色")
     public BaseResponse<Boolean> deleteRole(@RequestBody DeleteRequest deleteRequest, HttpServletRequest request) {
         // 校验
         if (deleteRequest == null || deleteRequest.getId() <= 0) {
@@ -89,7 +95,7 @@ public class RoleController {
      * @param request
      * @return
      */
-    @PostMapping("/update")
+    @PostMapping(value = "/update", name = "更新角色")
     public BaseResponse<Boolean> updateRole(@RequestBody RoleUpdateRequest roleUpdateRequest, HttpServletRequest request) {
         // 校验
         if (roleUpdateRequest == null) {
@@ -110,7 +116,7 @@ public class RoleController {
      * @param request
      * @return
      */
-    @GetMapping("/list")
+    @GetMapping(value = "/list", name = "获取角色列表")
     public BaseResponse<List<Role>> listRole(RoleQueryRequest roleQueryRequest, HttpServletRequest request) {
         Role roleQuery = new Role();
         if (roleQueryRequest != null) {
@@ -131,24 +137,26 @@ public class RoleController {
      * @param request
      * @return
      */
-    @GetMapping("/list/page")
+    @GetMapping(value = "/list/page", name = "分页获取角色列表")
     public BaseResponse<Page<Role>> listRoleByPage(RoleQueryRequest roleQueryRequest, HttpServletRequest request) {
         long current = 1;
         long size = 10;
-        Role RoleQuery = new Role();
+        Role roleQuery = new Role();
         if (roleQueryRequest != null) {
-            BeanUtil.copyProperties(roleQueryRequest, RoleQuery);
+            BeanUtil.copyProperties(roleQueryRequest, roleQuery);
             current = roleQueryRequest.getCurrent();
             size = roleQueryRequest.getPageSize();
         }
-        String roleName = RoleQuery.getRoleName();
+        String roleName = roleQuery.getRoleName();
         QueryWrapper<Role> queryWrapper = new QueryWrapper<>();
-        queryWrapper.like(StringUtils.isNotBlank(roleName), "roleName", roleName);
+        queryWrapper.like(org.apache.commons.lang3.StringUtils.isNotBlank(roleName), "role_name", roleName);
         Page<Role> roleListPage = roleService.page(new Page<>(current, size), queryWrapper);
         return ResultUtils.success(roleListPage);
     }
 
     // endregion
+
+    // region 菜单相关
 
     /**
      * 获取角色菜单通过角色id
@@ -157,13 +165,13 @@ public class RoleController {
      * @param request
      * @return
      */
-    @GetMapping("/menu")
-    public BaseResponse<List<RoleMenuVO>> getRoleMenuByRoleId(RoleMenuQueryRequest roleMenuQueryRequest, HttpServletRequest request) {
+    @GetMapping(value = "/menu", name = "获取角色菜单通过角色id")
+    public BaseResponse<List<RoleMenuVO>> getRoleMenuByRoleId(RoleSysInterfaceQueryRequest roleMenuQueryRequest, HttpServletRequest request) {
         if (roleMenuQueryRequest == null) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR);
         }
-        List<RoleMenuVO> menuOption = roleService.getRoleMenuByRoleId(roleMenuQueryRequest.getId(), true);
-        return ResultUtils.success(menuOption);
+        List<RoleMenuVO> RoleMenuList = roleService.getRoleMenuByRoleId(roleMenuQueryRequest.getId(), true);
+        return ResultUtils.success(RoleMenuList);
     }
 
     /**
@@ -173,7 +181,7 @@ public class RoleController {
      * @param request
      * @return
      */
-    @PostMapping("/updateMenu")
+    @PostMapping(value = "/updateMenu", name = "更新角色菜单")
     public BaseResponse<Boolean> updateRoleMenu(@RequestBody RoleMenuUpdateRequest roleMenuUpdateRequest, HttpServletRequest request) {
         // 校验
         if (roleMenuUpdateRequest == null) {
@@ -185,7 +193,44 @@ public class RoleController {
         return ResultUtils.success(true);
     }
 
-    // region 菜单相关
+    // endregion
+
+    // region 系统接口相关
+
+    /**
+     * 获取角色系统接口通过角色id
+     *
+     * @param roleSysInterfaceQueryRequest
+     * @param request
+     * @return
+     */
+    @GetMapping(value = "/sysInterface", name = "获取角色系统接口通过角色id")
+    public BaseResponse<List<RoleSysInterfaceVO>> getRoleSysInterfaceByRoleId(RoleSysInterfaceQueryRequest roleSysInterfaceQueryRequest, HttpServletRequest request) {
+        if (roleSysInterfaceQueryRequest == null) {
+            throw new BusinessException(ErrorCode.PARAMS_ERROR);
+        }
+        List<RoleSysInterfaceVO> roleSysInterfaceList = roleService.getRoleSysInterfaceByRoleId(roleSysInterfaceQueryRequest.getId());
+        return ResultUtils.success(roleSysInterfaceList);
+    }
+
+    /**
+     * 更新角色系统接口
+     *
+     * @param roleSysInterfaceUpdateRequest
+     * @param request
+     * @return
+     */
+    @PostMapping(value = "/updateSysInterface", name = "更新角色系统接口")
+    public BaseResponse<Boolean> updateRoleSysInterface(@RequestBody RoleSysInterfaceUpdateRequest roleSysInterfaceUpdateRequest, HttpServletRequest request) {
+        // 校验
+        if (roleSysInterfaceUpdateRequest == null) {
+            throw new BusinessException(ErrorCode.PARAMS_ERROR);
+        }
+
+        roleSysInterfaceService.updateRoleSysInterface(roleSysInterfaceUpdateRequest);
+
+        return ResultUtils.success(true);
+    }
 
 
 }

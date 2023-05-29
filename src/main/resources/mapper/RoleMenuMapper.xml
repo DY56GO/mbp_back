@@ -5,8 +5,8 @@
 <mapper namespace="com.yingwu.project.mapper.RoleMenuMapper">
 
     <resultMap id="BaseResultMap" type="com.yingwu.project.model.entity.RoleMenu">
-            <result property="roleId" column="role_id" jdbcType="BIGINT"/>
-            <result property="menuId" column="menu_id" jdbcType="BIGINT"/>
+        <result property="roleId" column="role_id" jdbcType="BIGINT"/>
+        <result property="menuId" column="menu_id" jdbcType="BIGINT"/>
     </resultMap>
 
     <sql id="Base_Column_List">

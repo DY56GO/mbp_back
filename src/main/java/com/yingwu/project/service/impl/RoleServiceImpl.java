@@ -5,8 +5,10 @@ import com.yingwu.project.common.ErrorCode;
 import com.yingwu.project.exception.BusinessException;
 import com.yingwu.project.mapper.MenuMapper;
 import com.yingwu.project.mapper.RoleMapper;
+import com.yingwu.project.mapper.SysInterfaceMapper;
 import com.yingwu.project.model.entity.Role;
 import com.yingwu.project.model.vo.RoleMenuVO;
+import com.yingwu.project.model.vo.RoleSysInterfaceVO;
 import com.yingwu.project.service.RoleService;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
@@ -24,12 +26,15 @@ public class RoleServiceImpl extends ServiceImpl<RoleMapper, Role> implements Ro
     @Resource
     private MenuMapper menuMapper;
 
+    @Resource
+    private SysInterfaceMapper sysInterfaceMapper;
+
     /**
      * 角色信息校验
      *
      * @param role
      */
-    @Override
+    
     public void validRoleInfo(Role role) {
         if (role == null) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR);
@@ -49,10 +54,22 @@ public class RoleServiceImpl extends ServiceImpl<RoleMapper, Role> implements Ro
      * @param roleId
      * @return
      */
-    @Override
+    
     public List<RoleMenuVO> getRoleMenuByRoleId(Long roleId, boolean notParent) {
-        List<RoleMenuVO> menuOptionList = menuMapper.getRoleMenuByRoleId(roleId, notParent);
-        return menuOptionList;
+        List<RoleMenuVO> RoleMenuList = menuMapper.getRoleMenuByRoleId(roleId, notParent);
+        return RoleMenuList;
+    }
+
+    /**
+     * 获取角色系统接口通过角色id
+     *
+     * @param roleId
+     * @return
+     */
+    
+    public List<RoleSysInterfaceVO> getRoleSysInterfaceByRoleId(Long roleId) {
+        List<RoleSysInterfaceVO> RoleSysInterfaceList = sysInterfaceMapper.getRoleSysInterfaceByRoleId(roleId);
+        return RoleSysInterfaceList;
     }
 
 }

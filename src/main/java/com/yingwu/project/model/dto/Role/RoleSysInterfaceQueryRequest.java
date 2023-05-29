@@ -5,12 +5,12 @@ import lombok.Data;
 import java.io.Serializable;
 
 /**
- * 角色菜单查询请求
+ * 角色系统接口查询请求
  *
  * @author Dy56
  */
 @Data
-public class RoleMenuQueryRequest implements Serializable {
+public class RoleSysInterfaceQueryRequest implements Serializable {
 
     /**
      * id

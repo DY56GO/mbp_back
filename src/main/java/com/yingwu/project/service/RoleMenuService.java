@@ -7,8 +7,8 @@ import com.yingwu.project.model.entity.RoleMenu;
 /**
  * 角色菜单服务
  *
-* @author Dy56
-*/
+ * @author Dy56
+ */
 public interface RoleMenuService extends IService<RoleMenu> {
 
     /**

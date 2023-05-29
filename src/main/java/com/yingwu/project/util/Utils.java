@@ -60,7 +60,7 @@ public class Utils {
                     node.setParentId(String.valueOf(menu.getParentId()));
                     node.setWeight(menu.getMenuSort());
                     // 以下为扩展属性
-                    Map<String, Object> extra = new HashMap<>();
+                    Map<String, Object> extra = new HashMap<>(16);
                     extra.put("menuTitle", menu.getMenuTitle());
                     extra.put("menuIcon", menu.getMenuIcon());
                     extra.put("routePath", menu.getRoutePath());
@@ -106,7 +106,7 @@ public class Utils {
                     node.setParentId(String.valueOf(menu.getParentId()));
                     node.setWeight(menu.getMenuSort());
                     // 以下为扩展属性
-                    Map<String, Object> extra = new HashMap<>();
+                    Map<String, Object> extra = new HashMap<>(16);
                     extra.put("path", menu.getRoutePath());
                     extra.put("component", menu.getComponentPath());
                     extra.put("redirect", menu.getRedirect());

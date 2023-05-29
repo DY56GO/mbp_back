@@ -10,10 +10,10 @@ import com.yingwu.project.common.ResultUtils;
 import com.yingwu.project.exception.BusinessException;
 import com.yingwu.project.model.dto.user.*;
 import com.yingwu.project.model.entity.User;
-import com.yingwu.project.model.vo.UserInfoListVO;
-import com.yingwu.project.model.vo.UserRoleVO;
-import com.yingwu.project.model.vo.UserInfoRedisVO;
 import com.yingwu.project.model.vo.UserInfoFrontVO;
+import com.yingwu.project.model.vo.UserInfoListVO;
+import com.yingwu.project.model.vo.UserInfoRedisVO;
+import com.yingwu.project.model.vo.UserRoleVO;
 import com.yingwu.project.service.UserRoleService;
 import com.yingwu.project.service.UserService;
 import org.springframework.beans.BeanUtils;
@@ -34,7 +34,7 @@ import static com.yingwu.project.util.Utils.encryptPassword;
  *
  * @author Dy56
  */
-@CrossOrigin // 跨域
+@CrossOrigin
 @RestController
 @RequestMapping("/user")
 public class UserController {
@@ -53,7 +53,7 @@ public class UserController {
      * @param userRegisterRequest
      * @return
      */
-    @PostMapping("/register")
+    @PostMapping(value = "/register", name = "用户注册")
     public BaseResponse<Long> userRegister(@RequestBody UserRegisterRequest userRegisterRequest) {
         // 校验
         if (userRegisterRequest == null) {
@@ -75,7 +75,7 @@ public class UserController {
      * @param request
      * @return
      */
-    @PostMapping("/login")
+    @PostMapping(value = "/login", name = "用户登录")
     public BaseResponse<String> userLogin(@RequestBody UserLoginRequest userLoginRequest, HttpServletRequest request) {
         // 校验
         if (userLoginRequest == null) {
@@ -96,7 +96,7 @@ public class UserController {
      * @param request
      * @return
      */
-    @GetMapping("/info")
+    @GetMapping(value = "/info", name = "当前登录用户获取信息")
     public BaseResponse<UserInfoFrontVO> getLoginUser(HttpServletRequest request) {
         UserInfoRedisVO userInfoRedisVO = userService.getLoginUser(request);
         UserInfoFrontVO userInfoFrontVO = new UserInfoFrontVO();
@@ -110,7 +110,7 @@ public class UserController {
      * @param request
      * @return
      */
-    @PostMapping("/logout")
+    @PostMapping(value = "/logout", name = "用户注销")
     public BaseResponse<Boolean> userLogout(HttpServletRequest request) {
         boolean result = userService.userLogout(request);
         return ResultUtils.success(result);
@@ -127,7 +127,7 @@ public class UserController {
      * @param request
      * @return
      */
-    @PostMapping("/add")
+    @PostMapping(value = "/add", name = "新增用户")
     public BaseResponse<Long> addUser(@RequestBody UserAddRequest userAddRequest, HttpServletRequest request) {
         // 校验
         if (userAddRequest == null) {
@@ -155,7 +155,7 @@ public class UserController {
      * @param request
      * @return
      */
-    @PostMapping("/delete")
+    @PostMapping(value = "/delete", name = "删除用户")
     public BaseResponse<Boolean> deleteUser(@RequestBody DeleteRequest deleteRequest, HttpServletRequest request) {
         // 校验
         if (deleteRequest == null || deleteRequest.getId() <= 0) {
@@ -174,7 +174,7 @@ public class UserController {
      * @param request
      * @return
      */
-    @PostMapping("/update")
+    @PostMapping(value = "/update", name = "更新用户")
     public BaseResponse<Boolean> updateUser(@RequestBody UserUpdateRequest userUpdateRequest, HttpServletRequest request) {
         // 校验
         if (userUpdateRequest == null) {
@@ -199,14 +199,14 @@ public class UserController {
     }
 
     /**
-     * 更新用户（仅能更新自己的信息）
+     * 用户更新（仅能更新自己）
      *
      * @param userUpdateSelfRequest
      * @param request
      * @return
      */
-    @PostMapping("/updateSelf")
-    public BaseResponse<Boolean> updateUserOneself(@RequestBody UserUpdateSelfRequest userUpdateSelfRequest, HttpServletRequest request) {
+    @PostMapping(value = "/updateSelf", name = "用户更新（仅能更新自己）")
+    public BaseResponse<Boolean> userUpdateOneself(@RequestBody UserUpdateSelfRequest userUpdateSelfRequest, HttpServletRequest request) {
         // 校验
         UserInfoRedisVO userInfo = userService.getLoginUser(request);
         if (userUpdateSelfRequest == null) {
@@ -227,19 +227,19 @@ public class UserController {
     }
 
     /**
-     * 更新用户密码
+     * 用户更新密码
      *
      * @param userPasswordUpdateRequest
      * @param request
      * @return
      */
-    @PostMapping("/updatePassword")
-    public BaseResponse<Boolean> updateUserPassword(@RequestBody UserPasswordUpdateRequest userPasswordUpdateRequest, HttpServletRequest request) {
+    @PostMapping(value = "/updatePassword", name = "用户更新密码")
+    public BaseResponse<Boolean> userUpdatePassword(@RequestBody UserPasswordUpdateRequest userPasswordUpdateRequest, HttpServletRequest request) {
         UserInfoRedisVO userInfo = userService.getLoginUser(request);
         Long userId = userInfo.getId();
 
         // 校验
-        userService.validUpdateUserPasswordInfo(userPasswordUpdateRequest, userId);
+        userService.validUserPasswordUpdateInfo(userPasswordUpdateRequest, userId);
 
         // 加密
         User user = new User();
@@ -260,7 +260,7 @@ public class UserController {
      * @param request
      * @return
      */
-    @GetMapping("/list")
+    @GetMapping(value = "/list", name = "获取用户列表")
     public BaseResponse<List<UserInfoListVO>> getUserList(UserQueryRequest userQueryRequest, HttpServletRequest request) {
         User userQuery = new User();
         if (userQueryRequest != null) {
@@ -269,7 +269,7 @@ public class UserController {
         QueryWrapper<User> queryWrapper = new QueryWrapper<>(userQuery);
         List<User> userList = userService.list(queryWrapper);
         List<UserInfoListVO> userInfoList = new ArrayList<>();
-        for(User user : userList) {
+        for (User user : userList) {
             UserInfoListVO userInfoListVO = new UserInfoListVO();
             BeanUtils.copyProperties(user, userInfoListVO);
             userInfoList.add(userInfoListVO);
@@ -286,7 +286,7 @@ public class UserController {
      * @param request
      * @return
      */
-    @GetMapping("/list/page")
+    @GetMapping(value = "/list/page", name = "分页获取用户列表")
     public BaseResponse<Page<UserInfoListVO>> getUserListByPage(UserQueryRequest userQueryRequest, HttpServletRequest request) {
         long current = 1;
         long size = 10;
@@ -297,18 +297,20 @@ public class UserController {
             size = userQueryRequest.getPageSize();
         }
 
-        QueryWrapper<User> queryWrapper = new QueryWrapper<>(userQuery);
+        String userName = userQuery.getUserName();
+        QueryWrapper<User> queryWrapper = new QueryWrapper<>();
+        queryWrapper.like(org.apache.commons.lang3.StringUtils.isNotBlank(userName),"user_name", userName);
         Page<User> userPage = userService.page(new Page<>(current, size), queryWrapper);
 
         List<User> userList = userService.list(queryWrapper);
         List<UserInfoListVO> userInfoList = new ArrayList<>();
-        for(User user : userList) {
+        for (User user : userList) {
             UserInfoListVO userInfoListVO = new UserInfoListVO();
             BeanUtils.copyProperties(user, userInfoListVO);
             userInfoList.add(userInfoListVO);
         }
 
-        Page<UserInfoListVO> userInfoPage = new Page<>(userPage.getCurrent(), userPage.getSize());
+        Page<UserInfoListVO> userInfoPage = new Page<>(userPage.getCurrent(), userPage.getSize(), userPage.getTotal());
         userInfoPage.setRecords(userInfoList);
 
         return ResultUtils.success(userInfoPage);
@@ -325,7 +327,7 @@ public class UserController {
      * @param request
      * @return
      */
-    @GetMapping("/role")
+    @GetMapping(value = "/role", name = "获取用户角色")
     public BaseResponse<List<UserRoleVO>> getUserRoleByUserId(UserRoleUpdateRequest userRoleQueryRequest, HttpServletRequest request) {
         if (userRoleQueryRequest == null) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR);
@@ -341,7 +343,7 @@ public class UserController {
      * @param request
      * @return
      */
-    @PostMapping("/updateRole")
+    @PostMapping(value = "/updateRole", name = "更新用户角色")
     public BaseResponse<Boolean> updateUserRole(@RequestBody UserRoleUpdateRequest userRoleUpdateRequest, HttpServletRequest request) {
         // 校验
         if (userRoleUpdateRequest == null) {

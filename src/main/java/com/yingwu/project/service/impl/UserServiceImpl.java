@@ -68,7 +68,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
      * @param user
      * @return 新用户 id
      */
-    @Override
+    
     public long userRegister(User user) {
         String userAccount = user.getUserAccount();
         String userPassword = user.getUserPassword();
@@ -101,7 +101,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
      *
      * @param user
      */
-    @Override
+    
     public void validUserRegisterInfo(User user) {
         if (user == null) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR);
@@ -142,7 +142,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
      * @param request
      * @return 生成的tokenKey
      */
-    @Override
+    
     public String userLogin(User user, HttpServletRequest request) {
         // 1. 加密
         String userPassword = encryptPassword(user.getUserPassword());
@@ -231,7 +231,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
      *
      * @param request
      */
-    @Override
+    
     public void validUserLogin(HttpServletRequest request) {
         String tokenKey = request.getHeader("token");
         // 判断是否登录
@@ -246,7 +246,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
      * @param request
      * @return 用户信息
      */
-    @Override
+    
     public UserInfoRedisVO getLoginUser(HttpServletRequest request) {
         // 用户登陆校验
         validUserLogin(request);
@@ -269,7 +269,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
      * @param request
      * @return
      */
-    @Override
+    
     public boolean userLogout(HttpServletRequest request) {
         // 用户登陆校验
         validUserLogin(request);
@@ -325,7 +325,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
      *
      * @param user
      */
-    @Override
+    
     public void validUserUpdateInfo(User user) {
         if (user == null) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR);
@@ -357,8 +357,8 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
      * @param userPasswordUpdateRequest
      * @param userId
      */
-    @Override
-    public void validUpdateUserPasswordInfo(UserPasswordUpdateRequest userPasswordUpdateRequest, Long userId) {
+    
+    public void validUserPasswordUpdateInfo(UserPasswordUpdateRequest userPasswordUpdateRequest, Long userId) {
         if (userPasswordUpdateRequest == null) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR);
         }
@@ -401,7 +401,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
      * @param userId
      * @return 用户信息
      */
-    @Override
+    
     public UserInfoRedisVO getUserInfoById(Long userId) {
         // 查询用户是否存在
         QueryWrapper<User> queryWrapper = new QueryWrapper<>();

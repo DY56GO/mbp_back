@@ -89,7 +89,7 @@ public interface UserService extends IService<User> {
      * @param userPasswordUpdateRequest
      * @param userId
      */
-    void validUpdateUserPasswordInfo(UserPasswordUpdateRequest userPasswordUpdateRequest, Long userId);
+    void validUserPasswordUpdateInfo(UserPasswordUpdateRequest userPasswordUpdateRequest, Long userId);
 
     /**
      * 获取用户信息通过用户id

@@ -9,26 +9,27 @@ import org.apache.ibatis.annotations.Param;
 import java.util.List;
 
 /**
-*  @author Dy56
+ * @author Dy56
  * @description 针对表【menu】的数据库操作Mapper
-*/
+ */
 public interface MenuMapper extends BaseMapper<Menu> {
 
     /**
-     * 通过角色id获取角色菜单
+     * 获取角色菜单通过角色id
      *
      * @param roleId
      * @param notParent
      * @return
      */
-    List<RoleMenuVO> getRoleMenuByRoleId(@Param("roleId")Long roleId, @Param("notParent")boolean notParent);
+    List<RoleMenuVO> getRoleMenuByRoleId(@Param("roleId") Long roleId, @Param("notParent") boolean notParent);
 
     /**
-     * 通过用户id获取用户菜单
+     * 获取用户菜单通过用户id
+     *
      * @param userId
      * @return
      */
-    List<UserMenuVO> getUserMenuByUserId(@Param("userId")Long userId);
+    List<UserMenuVO> getUserMenuByUserId(@Param("userId") Long userId);
 
 }
 

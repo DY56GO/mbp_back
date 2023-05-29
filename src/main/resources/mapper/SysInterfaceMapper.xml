@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yingwu.project.mapper.SysInterfaceMapper">
+
+    <resultMap id="BaseResultMap" type="com.yingwu.project.model.entity.SysInterface">
+        <id property="id" column="id" jdbcType="INTEGER"/>
+        <result property="interfaceName" column="interface_name" jdbcType="VARCHAR"/>
+        <result property="interfaceMethod" column="interface_method" jdbcType="VARCHAR"/>
+        <result property="interfaceUrl" column="interface_url" jdbcType="VARCHAR"/>
+        <result property="usingStart" column="is_using" jdbcType="TINYINT"/>
+        <result property="gmtCreate" column="gmt_create" jdbcType="TIMESTAMP"/>
+        <result property="gmtModified" column="gmt_modified" jdbcType="TIMESTAMP"/>
+        <result property="del" column="is_delete" jdbcType="TINYINT"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id,interface_name,interface_method,
+        interface_url,is_using,gmt_create,
+        gmt_modified,is_delete
+    </sql>
+
+    <select id="getRoleSysInterfaceByRoleId" resultType="com.yingwu.project.model.vo.RoleSysInterfaceVO">
+        SELECT id, interface_name, interface_url
+        FROM sys_interface t1
+        WHERE is_delete != 1
+        AND t1.id IN (SELECT interface_id FROM role_sys_interface WHERE role_id = #{roleId})
+        ORDER BY t1.interface_name, t1.interface_method
+    </select>
+</mapper>

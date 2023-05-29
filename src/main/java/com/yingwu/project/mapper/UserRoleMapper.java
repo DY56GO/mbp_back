@@ -6,9 +6,9 @@ import com.yingwu.project.model.entity.UserRole;
 import java.util.List;
 
 /**
-* @author Dy56
-* @description 针对表【userRole】的数据库操作Mapper
-*/
+ * @author Dy56
+ * @description 针对表【userRole】的数据库操作Mapper
+ */
 public interface UserRoleMapper extends BaseMapper<UserRole> {
 
     /**
@@ -20,7 +20,3 @@ public interface UserRoleMapper extends BaseMapper<UserRole> {
     boolean removeBatch(List<UserRole> deleteUserRoleBatch);
 
 }
-
-
-
-

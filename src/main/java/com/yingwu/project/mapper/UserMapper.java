@@ -10,7 +10,3 @@ import com.yingwu.project.model.entity.User;
 public interface UserMapper extends BaseMapper<User> {
 
 }
-
-
-
-
