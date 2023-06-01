@@ -237,10 +237,6 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         String tokenKey = request.getHeader("token");
         // 从Redis中获取用户数据
         Map userInfoMap = redisTemplate.boundHashOps(tokenKey).entries();
-        if (userInfoMap.size() == 0) {
-            throw new BusinessException(ErrorCode.NOT_LOGIN_ERROR);
-        }
-
         UserInfoRedisVO userInfo = BeanUtil.toBeanIgnoreCase(userInfoMap, UserInfoRedisVO.class, false);
 
         return userInfo;

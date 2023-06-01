@@ -19,6 +19,9 @@ import javax.annotation.Resource;
 public class MvcConfig implements WebMvcConfigurer {
 
     @Resource
+    private PowerConfig powerConfig;
+
+    @Resource
     private RedisTemplate redisTemplate;
 
     public void addInterceptors(InterceptorRegistry registry) {
@@ -38,6 +41,9 @@ public class MvcConfig implements WebMvcConfigurer {
                         "/doc.html"
                 )
                 .order(1);
+        if (powerConfig.isInterfaceAuth()) {
+
+        }
         // 增加系统接口拦截器，并对不必要的请求路径排除拦截
         registry.addInterceptor(new SysInterfaceAuthInterceptor(redisTemplate))
                 .excludePathPatterns(

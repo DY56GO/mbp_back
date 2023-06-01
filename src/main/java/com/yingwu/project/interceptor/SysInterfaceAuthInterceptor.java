@@ -1,5 +1,9 @@
 package com.yingwu.project.interceptor;
 
+import cn.hutool.core.bean.BeanUtil;
+import com.yingwu.project.common.ErrorCode;
+import com.yingwu.project.exception.BusinessException;
+import com.yingwu.project.model.vo.UserInfoRedisVO;
 import com.yingwu.project.model.vo.UserRoleVO;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
@@ -10,6 +14,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import static com.yingwu.project.constant.SysConstant.SYS_INTERFACE_AUTH_KEY_REDIS;
 
@@ -44,7 +49,8 @@ public class SysInterfaceAuthInterceptor implements HandlerInterceptor {
         // 2.获取用户角色信息
         String tokenKey = request.getHeader("token");
         Map userInfoMap = redisTemplate.boundHashOps(tokenKey).entries();
-        List<UserRoleVO> userRoleList = (List<UserRoleVO>) userInfoMap.get("userRoleList");
+        UserInfoRedisVO userInfo = BeanUtil.toBeanIgnoreCase(userInfoMap, UserInfoRedisVO.class, false);
+        List<UserRoleVO> userRoleList = userInfo.getUserRoleList();
 
         // 3.获取访问接口信息
         String interfaceMethod = request.getMethod();
@@ -53,11 +59,21 @@ public class SysInterfaceAuthInterceptor implements HandlerInterceptor {
         interfaceUrl = interfaceUrl.replaceFirst(contextPath, "");
         String interfaceKey = interfaceMethod + "," + interfaceUrl;
 
-        // 判断
-        int size = userRoleList.size();
+        // 4.鉴权放行
+        if (sysInterfaceAuthMap.containsKey(interfaceKey)) {
+            Set<String> sysInterfaceRole = (Set<String>) sysInterfaceAuthMap.get(interfaceKey);
+            for (UserRoleVO userRole : userRoleList) {
+                // 判断是否包含角色
+                if (sysInterfaceRole.contains(userRole.getRoleIdentity())) {
+                    return true;
+                }
+            }
+        } else {
+            // 系统接口鉴权数据中没有接口
+            throw new BusinessException(ErrorCode.NO_AUTH_ERROR);
+        }
 
-
-        // 4.放行
-        return true;
+        // 4.未通过
+        throw new BusinessException(ErrorCode.NO_AUTH_ERROR);
     }
 }
