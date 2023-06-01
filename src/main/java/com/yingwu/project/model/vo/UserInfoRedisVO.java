@@ -48,7 +48,7 @@ public class UserInfoRedisVO implements Serializable {
     private Date gmtCreate;
 
     /**
-     * 用户角色
+     * 用户角色列表
      */
     private List<UserRoleVO> userRoleList;
 

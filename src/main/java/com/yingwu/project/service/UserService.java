@@ -4,8 +4,10 @@ import com.baomidou.mybatisplus.extension.service.IService;
 import com.yingwu.project.model.dto.user.UserPasswordUpdateRequest;
 import com.yingwu.project.model.entity.User;
 import com.yingwu.project.model.vo.UserInfoRedisVO;
+import com.yingwu.project.model.vo.UserRoleVO;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.List;
 
 /**
  * 用户服务
@@ -45,13 +47,6 @@ public interface UserService extends IService<User> {
      * @param user
      */
     void validUserLoginInfo(User user);
-
-    /**
-     * 用户登陆校验
-     *
-     * @param request
-     */
-    void validUserLogin(HttpServletRequest request);
 
     /**
      * 当前登录用户获取信息
@@ -97,7 +92,7 @@ public interface UserService extends IService<User> {
      * @param userId
      * @return 用户信息
      */
-    UserInfoRedisVO getUserInfoById(Long userId);
+    List<UserRoleVO> getUserInfoById(Long userId);
 
     /**
      * 用户Redis数据刷新

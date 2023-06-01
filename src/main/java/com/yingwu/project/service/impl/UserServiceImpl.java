@@ -13,9 +13,9 @@ import com.yingwu.project.mapper.RoleMapper;
 import com.yingwu.project.mapper.UserMapper;
 import com.yingwu.project.model.dto.user.UserPasswordUpdateRequest;
 import com.yingwu.project.model.entity.User;
+import com.yingwu.project.model.vo.UserInfoRedisVO;
 import com.yingwu.project.model.vo.UserMenuVO;
 import com.yingwu.project.model.vo.UserRoleVO;
-import com.yingwu.project.model.vo.UserInfoRedisVO;
 import com.yingwu.project.service.UserService;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
@@ -227,20 +227,6 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     }
 
     /**
-     * 用户登陆校验
-     *
-     * @param request
-     */
-    
-    public void validUserLogin(HttpServletRequest request) {
-        String tokenKey = request.getHeader("token");
-        // 判断是否登录
-        if (tokenKey == null || !redisTemplate.hasKey(tokenKey)) {
-            throw new BusinessException(ErrorCode.NOT_LOGIN_ERROR);
-        }
-    }
-
-    /**
      * 当前登录用户获取信息
      *
      * @param request
@@ -248,9 +234,6 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
      */
     
     public UserInfoRedisVO getLoginUser(HttpServletRequest request) {
-        // 用户登陆校验
-        validUserLogin(request);
-
         String tokenKey = request.getHeader("token");
         // 从Redis中获取用户数据
         Map userInfoMap = redisTemplate.boundHashOps(tokenKey).entries();
@@ -271,9 +254,6 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
      */
     
     public boolean userLogout(HttpServletRequest request) {
-        // 用户登陆校验
-        validUserLogin(request);
-
         String tokenKey = request.getHeader("token");
         // 从Redis中删除tokenKey
         redisTemplate.delete(tokenKey);
@@ -402,24 +382,12 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
      * @return 用户信息
      */
     
-    public UserInfoRedisVO getUserInfoById(Long userId) {
-        // 查询用户是否存在
-        QueryWrapper<User> queryWrapper = new QueryWrapper<>();
-        queryWrapper.eq("id", userId);
-        User hasUser = userMapper.selectOne(queryWrapper);
-
-        // 用户不存在
-        if (hasUser == null) {
-            throw new BusinessException(ErrorCode.PARAMS_ERROR, "用户不存在");
-        }
+    public List<UserRoleVO> getUserInfoById(Long userId) {
 
         // 数据脱敏和添加权限信息
-        UserInfoRedisVO userInfo = new UserInfoRedisVO();
-        BeanUtils.copyProperties(hasUser, userInfo);
-        List<UserRoleVO> userRoleList = roleMapper.getUserRoleByUserId(userInfo.getId());
-        userInfo.setUserRoleList(userRoleList);
+        List<UserRoleVO> userRoleList = roleMapper.getUserRoleByUserId(userId);
 
-        return userInfo;
+        return userRoleList;
     }
 
 
