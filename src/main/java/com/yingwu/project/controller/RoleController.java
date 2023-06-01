@@ -106,6 +106,7 @@ public class RoleController {
 
         // 更新
         boolean result = roleService.updateById(role);
+
         return ResultUtils.success(result);
     }
 

@@ -29,11 +29,10 @@ public class RoleSysInterfaceServiceImpl extends ServiceImpl<RoleSysInterfaceMap
      */
     @Transactional(rollbackFor = Exception.class)
     public boolean updateRoleSysInterface(RoleSysInterfaceUpdateRequest roleSysInterfaceUpdateRequest) {
-        // 校验
+        // 1.校验
         if (roleSysInterfaceUpdateRequest == null) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR);
         }
-
         Long roleId = roleSysInterfaceUpdateRequest.getId();
         List<Long> addSysInterfaceList = roleSysInterfaceUpdateRequest.getAddSysInterfaceList();
         List<Long> deleteSysInterfaceList = roleSysInterfaceUpdateRequest.getDeleteSysInterfaceList();
@@ -42,7 +41,7 @@ public class RoleSysInterfaceServiceImpl extends ServiceImpl<RoleSysInterfaceMap
             throw new BusinessException(ErrorCode.PARAMS_ERROR, "参数为空");
         }
 
-        // 组装新增角色系统接口列表和删除角色系统接口列表
+        // 2.组装新增角色系统接口列表和删除角色系统接口列表
         List<RoleSysInterface> addRoleSysInterfaceList = new ArrayList<>();
         List<RoleSysInterface> deleteRoleSysInterfaceList = new ArrayList<>();
 
@@ -62,6 +61,7 @@ public class RoleSysInterfaceServiceImpl extends ServiceImpl<RoleSysInterfaceMap
             deleteRoleSysInterfaceList.add(roleSysInterface);
         }
 
+        // 3.更新
         Object savePoint = TransactionAspectSupport.currentTransactionStatus().createSavepoint();
         try {
             // 批量新增
@@ -84,6 +84,8 @@ public class RoleSysInterfaceServiceImpl extends ServiceImpl<RoleSysInterfaceMap
             TransactionAspectSupport.currentTransactionStatus().rollbackToSavepoint(savePoint);
             throw new BusinessException(ErrorCode.OPERATION_ERROR);
         }
+
+        // 4.更新Redis数据 todo
 
         return true;
     }

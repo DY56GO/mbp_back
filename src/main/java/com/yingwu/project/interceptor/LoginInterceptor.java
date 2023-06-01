@@ -17,7 +17,6 @@ import static com.yingwu.project.constant.UserConstant.USER_EXPIRATION_TIME;
  *
  * @author Dy56
  */
-@Slf4j
 public class LoginInterceptor implements HandlerInterceptor {
 
     private RedisTemplate redisTemplate;
@@ -33,7 +32,8 @@ public class LoginInterceptor implements HandlerInterceptor {
         // 第一次是OPTIONS请求，这个请求不会携带参数，所以获取不到数据
         // 第二次才是GET/POST，携带参数
         // options直接放行
-        if (request.getMethod().equals("OPTIONS")) {
+        String options = "OPTIONS";
+        if (options.equals(request.getMethod())) {
             return true;
         }
 

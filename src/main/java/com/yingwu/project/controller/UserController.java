@@ -332,8 +332,8 @@ public class UserController {
         if (userRoleQueryRequest == null) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR);
         }
-        UserInfoRedisVO user = userService.getUserInfoById(userRoleQueryRequest.getId());
-        return ResultUtils.success(user.getUserRoleList());
+        List<UserRoleVO> userRoleList = userService.getUserInfoById(userRoleQueryRequest.getId());
+        return ResultUtils.success(userRoleList);
     }
 
     /**

@@ -5,11 +5,11 @@
 <mapper namespace="com.yingwu.project.mapper.RoleSysInterfaceMapper">
 
     <resultMap id="BaseResultMap" type="com.yingwu.project.model.entity.RoleSysInterface">
-            <id property="id" column="id" jdbcType="BIGINT"/>
-            <result property="roleId" column="role_id" jdbcType="BIGINT"/>
-            <result property="interfaceId" column="interface_id" jdbcType="BIGINT"/>
-            <result property="gmtCreate" column="gmt_create" jdbcType="TIMESTAMP"/>
-            <result property="gmtModified" column="gmt_modified" jdbcType="TIMESTAMP"/>
+        <id property="id" column="id" jdbcType="BIGINT"/>
+        <result property="roleId" column="role_id" jdbcType="BIGINT"/>
+        <result property="interfaceId" column="interface_id" jdbcType="BIGINT"/>
+        <result property="gmtCreate" column="gmt_create" jdbcType="TIMESTAMP"/>
+        <result property="gmtModified" column="gmt_modified" jdbcType="TIMESTAMP"/>
     </resultMap>
 
     <sql id="Base_Column_List">
@@ -17,10 +17,39 @@
         gmt_create,gmt_modified
     </sql>
 
+    <select id="getSysInterfaceRole" resultType="com.yingwu.project.model.vo.SysInterfaceRoleVO">
+        SELECT t1.interface_method,
+               t1.interface_url,
+               t4.role_identity
+        FROM sys_interface t1,
+             (SELECT t2.interface_id,
+                     t2.role_id,
+                     t3.role_identity
+              FROM role_sys_interface t2,
+                   role t3
+              WHERE t2.role_id = t3.id) t4
+        WHERE t1.id = t4.interface_id
+    </select>
+
     <delete id="removeBatch">
         delete from role_sys_interface where
         <foreach collection="deleteRoleSysInterfaceBatch" item="item" separator=" or " index="index">
             (role_id = #{item.roleId} and interface_id = #{item.interfaceId})
         </foreach>
     </delete>
+
+    <delete id="removeBatchByRoleId">
+        delete from role_sys_interface where
+        <foreach collection="deleteRoleIdBatch" item="id" separator=" or " index="index">
+            (role_id = #{id})
+        </foreach>
+    </delete>
+
+    <delete id="removeBatchByInterfaceId">
+        delete from role_sys_interface where
+        <foreach collection="deleteSysInterfaceIdBatch" item="id" separator=" or " index="index">
+            (interface_id = #{id})
+        </foreach>
+    </delete>
+
 </mapper>
