@@ -11,6 +11,7 @@ import com.yingwu.project.exception.BusinessException;
 import com.yingwu.project.mapper.MenuMapper;
 import com.yingwu.project.mapper.RoleMapper;
 import com.yingwu.project.mapper.UserMapper;
+import com.yingwu.project.mapper.UserRoleMapper;
 import com.yingwu.project.model.dto.user.UserPasswordUpdateRequest;
 import com.yingwu.project.model.entity.User;
 import com.yingwu.project.model.vo.UserInfoRedisVO;
@@ -22,10 +23,13 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.interceptor.TransactionAspectSupport;
 import org.springframework.util.DigestUtils;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -57,6 +61,9 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     private RoleMapper roleMapper;
 
     @Resource
+    private UserRoleMapper userRoleMapper;
+
+    @Resource
     private MenuMapper menuMapper;
 
     @Resource
@@ -68,7 +75,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
      * @param user
      * @return 新用户 id
      */
-    
+
     public long userRegister(User user) {
         String userAccount = user.getUserAccount();
         String userPassword = user.getUserPassword();
@@ -101,7 +108,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
      *
      * @param user
      */
-    
+
     public void validUserRegisterInfo(User user) {
         if (user == null) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR);
@@ -142,13 +149,13 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
      * @param request
      * @return 生成的tokenKey
      */
-    
+
     public String userLogin(User user, HttpServletRequest request) {
-        // 1. 加密
+        // 1.加密
         String userPassword = encryptPassword(user.getUserPassword());
         String userAccount = user.getUserAccount();
 
-        // 2. 查询用户是否存在
+        // 2.查询用户是否存在
         QueryWrapper<User> queryWrapper = new QueryWrapper<>();
         queryWrapper.eq("user_account", userAccount);
         queryWrapper.eq("user_password", userPassword);
@@ -159,7 +166,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
             throw new BusinessException(ErrorCode.PARAMS_ERROR, "用户不存在或密码错误");
         }
 
-        // 3. 判断Redis中是否存在，存在为已登录，直接返回tokenKey
+        // 3.判断Redis中是否存在，存在为已登录，直接返回tokenKey
         String userAccountKey = DigestUtils.md5DigestAsHex((SALT + userAccount).getBytes());
         Set<String> tokenKeys = redisTemplate.keys(userAccountKey + "_*");
         if (!tokenKeys.isEmpty()) {
@@ -168,21 +175,11 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         }
 
         // region Redis中不存在，开始生成tokenKey
-        
-        // 4. 数据脱敏和添加权限信息
-        UserInfoRedisVO userInfo = new UserInfoRedisVO();
-        BeanUtils.copyProperties(hasUser, userInfo);
 
-        // 角色信息
-        List<UserRoleVO> userRoleList = roleMapper.getUserRoleByUserId(userInfo.getId());
-        userInfo.setUserRoleList(userRoleList);
+        // 4.创建用户Redis数据
+        UserInfoRedisVO userInfo = createUserRedisData(hasUser.getId());
 
-        // 菜单信息（根据前台路由生成）
-        List<UserMenuVO> userMenuList = menuMapper.getUserMenuByUserId(userInfo.getId());
-        List<Tree<String>> userMenuTree = buildUserRouter(userMenuList);
-        userInfo.setUserMenuTree(userMenuTree);
-
-        // 5. 生成token
+        // 5.生成token
         // workerId 为终端ID
         // datacenterId 为数据中心ID
         Snowflake snowflake = IdUtil.getSnowflake(workerId, datacenterId);
@@ -192,7 +189,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         String tokenKey = userAccountKey + "_" + token;
 
         // endregion
-        
+
         // 7. 写入redis
         Map<String, Object> userInfoMap = BeanUtil.beanToMap(userInfo);
         redisTemplate.opsForHash().putAll(tokenKey, userInfoMap);
@@ -232,7 +229,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
      * @param request
      * @return 用户信息
      */
-    
+
     public UserInfoRedisVO getLoginUser(HttpServletRequest request) {
         String tokenKey = request.getHeader("token");
         // 从Redis中获取用户数据
@@ -248,7 +245,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
      * @param request
      * @return
      */
-    
+
     public boolean userLogout(HttpServletRequest request) {
         String tokenKey = request.getHeader("token");
         // 从Redis中删除tokenKey
@@ -301,7 +298,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
      *
      * @param user
      */
-    
+
     public void validUserUpdateInfo(User user) {
         if (user == null) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR);
@@ -333,7 +330,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
      * @param userPasswordUpdateRequest
      * @param userId
      */
-    
+
     public void validUserPasswordUpdateInfo(UserPasswordUpdateRequest userPasswordUpdateRequest, Long userId) {
         if (userPasswordUpdateRequest == null) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR);
@@ -377,7 +374,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
      * @param userId
      * @return 用户信息
      */
-    
+
     public List<UserRoleVO> getUserInfoById(Long userId) {
 
         // 数据脱敏和添加权限信息
@@ -386,23 +383,81 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         return userRoleList;
     }
 
+    /**
+     * 删除用户
+     *
+     * @param userId
+     * @return
+     */
+    @Transactional(rollbackFor = Exception.class)
+    public boolean deleteUser(Long userId) {
+        Object savePoint = TransactionAspectSupport.currentTransactionStatus().createSavepoint();
+        try {
+            User user = userMapper.selectById(userId);
+            removeById(userId);
+
+            List<Long> userIdList = new ArrayList<>();
+            userIdList.add(userId);
+
+            // 数据同步
+            // 删除用户角色
+            userRoleMapper.removeBatchByUserIdList(userIdList);
+
+            // 删除Redis中的用户，使其下线
+            deleteRedisUser(userId, user.getUserAccount());
+        } catch (Exception e) {
+            // 手动回滚异常
+            TransactionAspectSupport.currentTransactionStatus().rollbackToSavepoint(savePoint);
+            throw new BusinessException(ErrorCode.OPERATION_ERROR);
+        }
+
+        return true;
+    }
 
     /**
-     * 用户Redis数据刷新
+     * 创建用户Redis数据
+     *
+     * @param userId
+     * @return
+     */
+    public UserInfoRedisVO createUserRedisData(Long userId) {
+        // 1.获取用户基本信息
+        User hasUser = userMapper.selectById(userId);
+        // 用户不存在
+        if (hasUser == null) {
+            throw new BusinessException(ErrorCode.PARAMS_ERROR, "用户不存");
+        }
+
+        // 2.数据脱敏和添加权限信息
+        UserInfoRedisVO userInfo = new UserInfoRedisVO();
+        BeanUtils.copyProperties(hasUser, userInfo);
+
+        // 角色信息
+        List<UserRoleVO> userRoleList = roleMapper.getUserRoleByUserId(userInfo.getId());
+        userInfo.setUserRoleList(userRoleList);
+
+        // 菜单信息（根据前台路由生成）
+        List<UserMenuVO> userMenuList = menuMapper.getUserMenuByUserId(userInfo.getId());
+        if (userMenuList.size() != 0) {
+            List<Tree<String>> userMenuTree = buildUserRouter(userMenuList);
+            userInfo.setUserMenuTree(userMenuTree);
+        } else {
+            userInfo.setUserMenuTree(new ArrayList<>());
+        }
+        return userInfo;
+    }
+
+    /**
+     * 刷新用户Redis数据
      *
      * @param userId 用户Id
      * @return
      */
     public boolean updateRedisUser(Long userId) {
-        // 查询用户信息
-        User user = userMapper.selectById(userId);
+        // 创建用户Redis数据
+        UserInfoRedisVO userInfo = createUserRedisData(userId);
 
-        // 数据脱敏和添加权限信息
-        UserInfoRedisVO userInfo = BeanUtil.copyProperties(user, UserInfoRedisVO.class);
-        List<UserRoleVO> userRoleList = roleMapper.getUserRoleByUserId(userInfo.getId());
-        userInfo.setUserRoleList(userRoleList);
-
-        // 刷新用户Redis数据
+        // 如果Redis中存在，则刷新用户Redis数据
         String userAccountKey = DigestUtils.md5DigestAsHex((SALT + userInfo.getUserAccount()).getBytes());
         Set<String> tokenKeys = redisTemplate.keys(userAccountKey + "_*");
         if (!tokenKeys.isEmpty()) {
@@ -414,6 +469,31 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
                 }
             });
             redisTemplate.opsForHash().putAll(tokenKey, userMap);
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * 删除用户Redis数据
+     *
+     * @param userId 用户id
+     * @param userAccount
+     * @return
+     */
+    public boolean deleteRedisUser(Long userId, String userAccount) {
+        // 查询用户信息
+        User user = userMapper.selectById(userId);
+        if (user != null) {
+            userAccount = user.getUserAccount();
+        }
+
+        // 如果Redis中存在，则刷新用户Redis数据
+        String userAccountKey = DigestUtils.md5DigestAsHex((SALT + userAccount).getBytes());
+        Set<String> tokenKeys = redisTemplate.keys(userAccountKey + "_*");
+        if (!tokenKeys.isEmpty()) {
+            String tokenKey = tokenKeys.iterator().next();
+            redisTemplate.delete(tokenKey);
             return true;
         }
         return false;

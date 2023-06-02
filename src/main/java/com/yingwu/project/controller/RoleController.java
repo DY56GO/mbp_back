@@ -10,7 +10,6 @@ import com.yingwu.project.common.ResultUtils;
 import com.yingwu.project.exception.BusinessException;
 import com.yingwu.project.model.dto.role.*;
 import com.yingwu.project.model.entity.Role;
-import com.yingwu.project.model.entity.SysInterface;
 import com.yingwu.project.model.vo.RoleMenuVO;
 import com.yingwu.project.model.vo.RoleSysInterfaceVO;
 import com.yingwu.project.service.RoleMenuService;
@@ -83,8 +82,8 @@ public class RoleController {
             throw new BusinessException(ErrorCode.PARAMS_ERROR);
         }
 
-        // 删除
-        boolean result = roleService.removeById(deleteRequest.getId());
+        boolean result = roleService.deleteRole(deleteRequest.getId());
+
         return ResultUtils.success(result);
     }
 
@@ -105,7 +104,7 @@ public class RoleController {
         BeanUtil.copyProperties(roleUpdateRequest, role);
 
         // 更新
-        boolean result = roleService.updateById(role);
+        boolean result = roleService.updateRole(role);
 
         return ResultUtils.success(result);
     }
@@ -149,7 +148,8 @@ public class RoleController {
             size = roleQueryRequest.getPageSize();
         }
         String roleName = roleQuery.getRoleName();
-        QueryWrapper<Role> queryWrapper = new QueryWrapper<>();
+        roleQuery.setRoleName(null);
+        QueryWrapper<Role> queryWrapper = new QueryWrapper<>(roleQuery);
         queryWrapper.like(org.apache.commons.lang3.StringUtils.isNotBlank(roleName), "role_name", roleName);
         Page<Role> roleListPage = roleService.page(new Page<>(current, size), queryWrapper);
         return ResultUtils.success(roleListPage);

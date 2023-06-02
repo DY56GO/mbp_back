@@ -95,11 +95,27 @@ public interface UserService extends IService<User> {
     List<UserRoleVO> getUserInfoById(Long userId);
 
     /**
-     * 用户Redis数据刷新
+     * 删除用户
+     *
+     * @param userId
+     * @return
+     */
+    boolean deleteUser(Long userId);
+    /**
+     * 刷新用户Redis数据
      *
      * @param userId 用户id
      * @return
      */
     boolean updateRedisUser(Long userId);
+
+    /**
+     * 删除用户Redis数据
+     *
+     * @param userId
+     * @param userAccount
+     * @return
+     */
+    boolean deleteRedisUser(Long userId, String userAccount);
 
 }

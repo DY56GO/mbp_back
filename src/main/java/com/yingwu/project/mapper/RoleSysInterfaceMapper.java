@@ -33,7 +33,7 @@ public interface RoleSysInterfaceMapper extends BaseMapper<RoleSysInterface> {
      * @param deleteRoleIdBatch
      * @return
      */
-    boolean  removeBatchByRoleId(List<Long> deleteRoleIdBatch);
+    boolean  removeBatchByRoleIdList(List<Long> deleteRoleIdBatch);
 
     /**
      * 批量删除角色系统接口通过接口id
@@ -41,7 +41,7 @@ public interface RoleSysInterfaceMapper extends BaseMapper<RoleSysInterface> {
      * @param deleteSysInterfaceIdBatch
      * @return
      */
-    boolean removeBatchByInterfaceId(List<Long> deleteSysInterfaceIdBatch);
+    boolean removeBatchByInterfaceIdList(List<Long> deleteSysInterfaceIdBatch);
     
 }
 

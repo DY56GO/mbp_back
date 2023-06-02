@@ -17,4 +17,12 @@ public interface MenuService extends IService<Menu> {
      */
     void validMenuInfo(Menu menu);
 
+    /**
+     * 删除菜单
+     *
+     * @param menuId
+     * @return
+     */
+    boolean deleteMenu(Long menuId);
+
 }

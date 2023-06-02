@@ -22,6 +22,21 @@ public interface RoleService extends IService<Role> {
     void validRoleInfo(Role role);
 
     /**
+     * 更新角色
+     *
+     * @param role
+     * @return
+     */
+    boolean updateRole(Role role);
+
+    /**
+     * 删除角色
+     *
+     * @param roleId
+     * @return
+     */
+    boolean deleteRole(Long roleId);
+    /**
      * 获取角色菜单通过角色id
      *
      * @param roleId

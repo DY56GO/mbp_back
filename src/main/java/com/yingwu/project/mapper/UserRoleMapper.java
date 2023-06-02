@@ -19,4 +19,20 @@ public interface UserRoleMapper extends BaseMapper<UserRole> {
      */
     boolean removeBatch(List<UserRole> deleteUserRoleBatch);
 
+    /**
+     * 批量删除用户角色通过用户id
+     *
+     * @param deleteUserIdBatch
+     * @return
+     */
+    boolean removeBatchByUserIdList(List<Long> deleteUserIdBatch);
+
+    /**
+     * 批量删除用户角色通过角色id
+     *
+     * @param deleteRoleIdBatch
+     * @return
+     */
+    boolean removeBatchByRoleIdList(List<Long> deleteRoleIdBatch);
+
 }

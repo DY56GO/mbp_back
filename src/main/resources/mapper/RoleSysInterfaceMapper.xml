@@ -27,8 +27,11 @@
                      t3.role_identity
               FROM role_sys_interface t2,
                    role t3
-              WHERE t2.role_id = t3.id) t4
+              WHERE t2.role_id = t3.id
+                AND t3.is_delete != 1
+                AND t3.is_using = 1) t4
         WHERE t1.id = t4.interface_id
+          AND t1.is_using = 1
     </select>
 
     <delete id="removeBatch">
@@ -38,14 +41,14 @@
         </foreach>
     </delete>
 
-    <delete id="removeBatchByRoleId">
+    <delete id="removeBatchByRoleIdList">
         delete from role_sys_interface where
         <foreach collection="deleteRoleIdBatch" item="id" separator=" or " index="index">
             (role_id = #{id})
         </foreach>
     </delete>
 
-    <delete id="removeBatchByInterfaceId">
+    <delete id="removeBatchByInterfaceIdList">
         delete from role_sys_interface where
         <foreach collection="deleteSysInterfaceIdBatch" item="id" separator=" or " index="index">
             (interface_id = #{id})

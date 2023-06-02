@@ -15,6 +15,13 @@ public interface SysInterfaceService extends IService<SysInterface> {
      *
      * @return
      */
-    boolean refreshInterface();
+    boolean updateInterface();
+
+    /**
+     * 更新系统接口鉴权Redis数据
+     *
+     * @return
+     */
+    boolean updateSysInterfaceRedisAuthData();
 
 }

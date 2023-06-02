@@ -19,4 +19,19 @@
             (role_id = #{item.roleId} and menu_id = #{item.menuId})
         </foreach>
     </delete>
+
+    <delete id="removeBatchByRoleIdList">
+        delete from role_menu where
+        <foreach collection="deleteRoleIdBatch" item="id" separator=" or " index="index">
+            (role_id = #{id})
+        </foreach>
+    </delete>
+
+    <delete id="removeBatchByMenuIdList">
+        delete from role_menu where
+        <foreach collection="deleteMenuIdBatch" item="id" separator=" or " index="index">
+            (menu_id = #{id})
+        </foreach>
+    </delete>
+
 </mapper>

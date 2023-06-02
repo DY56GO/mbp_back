@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
+import java.util.ArrayList;
 import java.util.List;
 
 import static com.yingwu.project.util.Utils.buildMenuTree;
@@ -75,16 +76,10 @@ public class MenuController {
         if (deleteRequest == null || deleteRequest.getId() <= 0) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR);
         }
-        // 判断是否含有子菜单
-        Menu menu = new Menu();
-        menu.setParentId(deleteRequest.getId());
-        QueryWrapper<Menu> queryWrapper = new QueryWrapper<>(menu);
-        long count = menuService.count(queryWrapper);
-        if (count != 0) {
-            throw new BusinessException(ErrorCode.PARAMS_ERROR, "存在子菜单");
-        }
 
-        boolean result = menuService.removeById(deleteRequest.getId());
+        // 删除
+        boolean result = menuService.deleteMenu(deleteRequest.getId());
+
         return ResultUtils.success(result);
     }
 
@@ -124,7 +119,8 @@ public class MenuController {
             BeanUtil.copyProperties(menuQueryRequest, menuQuery);
         }
         String menuTitle = menuQuery.getMenuTitle();
-        QueryWrapper<Menu> queryWrapper = new QueryWrapper<>();
+        menuQuery.setMenuTitle(null);
+        QueryWrapper<Menu> queryWrapper = new QueryWrapper<>(menuQuery);
         queryWrapper.like(StringUtils.isNotBlank(menuTitle), "menu_title", menuTitle);
         queryWrapper.orderByAsc("parent_id");
 
@@ -152,7 +148,8 @@ public class MenuController {
             size = menuQueryRequest.getPageSize();
         }
         String menuTitle = menuQuery.getMenuTitle();
-        QueryWrapper<Menu> queryWrapper = new QueryWrapper<>();
+        menuQuery.setMenuTitle(null);
+        QueryWrapper<Menu> queryWrapper = new QueryWrapper<>(menuQuery);
         queryWrapper.like(org.apache.commons.lang3.StringUtils.isNotBlank(menuTitle), "menu_title", menuTitle);
         queryWrapper.orderByAsc("parent_id");
         Page<Menu> menuListPage = menuService.page(new Page<>(current, size), queryWrapper);

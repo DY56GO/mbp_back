@@ -17,6 +17,20 @@
         gmt_create,gmt_modified
     </sql>
 
+    <delete id="removeBatchByUserIdList">
+        delete from user_role where
+        <foreach collection="deleteUserIdBatch" item="id" separator=" or " index="index">
+            (user_id = #{id})
+        </foreach>
+    </delete>
+
+    <delete id="removeBatchByRoleIdList">
+        delete from user_role where
+        <foreach collection="deleteRoleIdBatch" item="id" separator=" or " index="index">
+            (role_id = #{id})
+        </foreach>
+    </delete>
+
     <delete id="removeBatch">
         delete from user_role where
         <foreach collection="deleteUserRoleBatch" item="item" separator=" or " index="index">

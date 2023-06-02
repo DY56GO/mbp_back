@@ -7,10 +7,12 @@ import com.yingwu.project.mapper.RoleSysInterfaceMapper;
 import com.yingwu.project.model.dto.role.RoleSysInterfaceUpdateRequest;
 import com.yingwu.project.model.entity.RoleSysInterface;
 import com.yingwu.project.service.RoleSysInterfaceService;
+import com.yingwu.project.service.SysInterfaceService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.interceptor.TransactionAspectSupport;
 
+import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -20,6 +22,9 @@ import java.util.List;
 */
 @Service
 public class RoleSysInterfaceServiceImpl extends ServiceImpl<RoleSysInterfaceMapper, RoleSysInterface> implements RoleSysInterfaceService {
+
+    @Resource
+    private SysInterfaceService sysInterfaceService;
 
     /**
      * 更新角色系统接口
@@ -79,13 +84,14 @@ public class RoleSysInterfaceServiceImpl extends ServiceImpl<RoleSysInterfaceMap
                     deleteRoleSysInterfaceBatch.clear();
                 }
             }
+
+            // 刷新系统接口鉴权Redis数据
+            sysInterfaceService.updateSysInterfaceRedisAuthData();
         } catch (Exception e) {
             // 手动回滚异常
             TransactionAspectSupport.currentTransactionStatus().rollbackToSavepoint(savePoint);
             throw new BusinessException(ErrorCode.OPERATION_ERROR);
         }
-
-        // 4.更新Redis数据 todo
 
         return true;
     }

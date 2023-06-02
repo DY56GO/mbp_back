@@ -29,7 +29,6 @@ import java.util.List;
 @RequestMapping("/sysInterface")
 public class SysInterfaceController {
 
-
     @Resource
     private SysInterfaceService sysInterfaceService;
 
@@ -44,7 +43,7 @@ public class SysInterfaceController {
     @GetMapping(value = "/refresh", name = "刷新系统接口")
     public BaseResponse<Boolean> refreshSysInterface(HttpServletRequest request) {
 
-        return ResultUtils.success(sysInterfaceService.refreshInterface());
+        return ResultUtils.success(sysInterfaceService.updateInterface());
 
     }
 
@@ -67,6 +66,10 @@ public class SysInterfaceController {
         // 更新
         boolean result = sysInterfaceService.updateById(sysInterface);
 
+        // 数据同步
+        // 更新系统接口鉴权Redis数据
+        sysInterfaceService.updateSysInterfaceRedisAuthData();
+
         return ResultUtils.success(result);
     }
 
@@ -84,7 +87,8 @@ public class SysInterfaceController {
             BeanUtils.copyProperties(sysInterfaceQueryRequest, sysInterfaceQuery);
         }
         String sysInterfaceName = sysInterfaceQuery.getInterfaceName();
-        QueryWrapper<SysInterface> queryWrapper = new QueryWrapper<>();
+        sysInterfaceQuery.setInterfaceName(null);
+        QueryWrapper<SysInterface> queryWrapper = new QueryWrapper<>(sysInterfaceQuery);
         queryWrapper.like(StringUtils.isNotBlank(sysInterfaceName), "interface_name", sysInterfaceName);
         queryWrapper.orderByAsc("interface_url", "interface_method");
 
@@ -111,7 +115,8 @@ public class SysInterfaceController {
             size = sysInterfaceQueryRequest.getPageSize();
         }
         String interfaceName = sysInterfaceQuery.getInterfaceName();
-        QueryWrapper<SysInterface> queryWrapper = new QueryWrapper<>();
+        sysInterfaceQuery.setInterfaceName(null);
+        QueryWrapper<SysInterface> queryWrapper = new QueryWrapper<>(sysInterfaceQuery);
         queryWrapper.like(org.apache.commons.lang3.StringUtils.isNotBlank(interfaceName), "interface_name", interfaceName);
         queryWrapper.orderByAsc("interface_url", "interface_method");
 

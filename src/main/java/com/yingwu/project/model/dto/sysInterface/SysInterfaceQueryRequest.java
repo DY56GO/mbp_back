@@ -1,10 +1,15 @@
 package com.yingwu.project.model.dto.sysInterface;
 
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.annotation.TableId;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.yingwu.project.common.PageRequest;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
 import java.io.Serializable;
+import java.util.Date;
 
 /**
  * 系统接口查询请求
@@ -16,9 +21,24 @@ import java.io.Serializable;
 public class SysInterfaceQueryRequest extends PageRequest implements Serializable {
 
     /**
-     * 接口name
+     * 接口名称
      */
     private String interfaceName;
+
+    /**
+     * 接口方法
+     */
+    private String interfaceMethod;
+
+    /**
+     * 接口url
+     */
+    private String interfaceUrl;
+
+    /**
+     * 是否启用（0：否；1：是）
+     */
+    private Integer usingStart;
 
     private static final long serialVersionUID = 1L;
 

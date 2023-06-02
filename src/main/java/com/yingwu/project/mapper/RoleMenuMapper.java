@@ -19,6 +19,22 @@ public interface RoleMenuMapper extends BaseMapper<RoleMenu> {
      */
     boolean removeBatch(List<RoleMenu> deleteRoleMenuBatch);
 
+    /**
+     * 批量删除角色菜单通过角色id
+     *
+     * @param deleteRoleIdBatch
+     * @return
+     */
+    boolean removeBatchByRoleIdList(List<Long> deleteRoleIdBatch);
+
+    /**
+     * 批量删除角色菜单通过菜单id
+     *
+     * @param deleteMenuIdBatch
+     * @return
+     */
+    boolean removeBatchByMenuIdList(List<Long> deleteMenuIdBatch);
+
 }
 
 

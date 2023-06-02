@@ -5,8 +5,7 @@ import com.yingwu.project.common.ErrorCode;
 import com.yingwu.project.exception.BusinessException;
 import com.yingwu.project.model.vo.UserInfoRedisVO;
 import com.yingwu.project.model.vo.UserRoleVO;
-import lombok.val;
-import org.apache.commons.lang3.StringUtils;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.web.servlet.HandlerInterceptor;
 
@@ -23,6 +22,7 @@ import static com.yingwu.project.constant.SysConstant.SYS_INTERFACE_AUTH_KEY_RED
  *
  * @author Dy56
  */
+@Slf4j
 public class SysInterfaceAuthInterceptor implements HandlerInterceptor {
 
     private RedisTemplate redisTemplate;
@@ -57,7 +57,7 @@ public class SysInterfaceAuthInterceptor implements HandlerInterceptor {
         String contextPath = request.getContextPath();
         String interfaceUrl = request.getRequestURI();
         interfaceUrl = interfaceUrl.replaceFirst(contextPath, "");
-        String interfaceKey = interfaceMethod + "," + interfaceUrl;
+        String interfaceKey = interfaceMethod + ":" + interfaceUrl;
 
         // 4.鉴权放行
         if (sysInterfaceAuthMap.containsKey(interfaceKey)) {
@@ -70,10 +70,12 @@ public class SysInterfaceAuthInterceptor implements HandlerInterceptor {
             }
         } else {
             // 系统接口鉴权数据中没有接口
+            log.info(interfaceKey);
             throw new BusinessException(ErrorCode.NO_AUTH_ERROR);
         }
 
         // 4.未通过
+        log.info(interfaceKey);
         throw new BusinessException(ErrorCode.NO_AUTH_ERROR);
     }
 }

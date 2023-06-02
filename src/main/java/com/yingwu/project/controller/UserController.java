@@ -163,7 +163,8 @@ public class UserController {
         }
 
         // 删除
-        boolean result = userService.removeById(deleteRequest.getId());
+        boolean result = userService.deleteUser(deleteRequest.getId());
+
         return ResultUtils.success(result);
     }
 
@@ -192,8 +193,14 @@ public class UserController {
         // 更新
         boolean result = userService.updateById(user);
         if (result) {
-            // 更新Redis中的用户信息
-            userService.updateRedisUser(user.getId());
+            // 数据同步
+            // 判断用户是否启用，如果非启用，则删除Redis中的用户，使其下线
+            if (user.getUsingStart() == 0) {
+                userService.deleteRedisUser(user.getId(), "");
+            } else {
+                // 刷新用户Redis数据
+                userService.updateRedisUser(user.getId());
+            }
         }
         return ResultUtils.success(result);
     }
@@ -220,7 +227,7 @@ public class UserController {
         // 更新
         boolean result = userService.updateById(user);
         if (result) {
-            // 用户Redis数据刷新
+            // 刷新用户Redis数据
             userService.updateRedisUser(userInfo.getId());
         }
         return ResultUtils.success(result);
@@ -266,7 +273,10 @@ public class UserController {
         if (userQueryRequest != null) {
             BeanUtil.copyProperties(userQueryRequest, userQuery);
         }
+        String userName = userQuery.getUserName();
+        userQuery.setUserName(null);
         QueryWrapper<User> queryWrapper = new QueryWrapper<>(userQuery);
+        queryWrapper.like(org.apache.commons.lang3.StringUtils.isNotBlank(userName), "user_name", userName);
         List<User> userList = userService.list(queryWrapper);
         List<UserInfoListVO> userInfoList = new ArrayList<>();
         for (User user : userList) {
@@ -298,8 +308,9 @@ public class UserController {
         }
 
         String userName = userQuery.getUserName();
-        QueryWrapper<User> queryWrapper = new QueryWrapper<>();
-        queryWrapper.like(org.apache.commons.lang3.StringUtils.isNotBlank(userName),"user_name", userName);
+        userQuery.setUserName(null);
+        QueryWrapper<User> queryWrapper = new QueryWrapper<>(userQuery);
+        queryWrapper.like(org.apache.commons.lang3.StringUtils.isNotBlank(userName), "user_name", userName);
         Page<User> userPage = userService.page(new Page<>(current, size), queryWrapper);
 
         List<User> userList = userService.list(queryWrapper);
@@ -353,7 +364,7 @@ public class UserController {
         //  更新
         boolean result = userRoleService.updateUserRole(userRoleUpdateRequest);
         if (result) {
-            // 更新Redis中的用户信息
+            // 刷新用户Redis数据
             userService.updateRedisUser(userRoleUpdateRequest.getId());
         }
 
