@@ -43,4 +43,4 @@ snowflake:
   datacenterId: 1 #数据中心ID
 # 系统功能
 powerconfig:
-  interfaceAuth: true # 开启系统接口鉴权
+  interfaceAuth: true # 开启系统接口鉴权 true | false
