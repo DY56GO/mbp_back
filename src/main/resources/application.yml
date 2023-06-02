@@ -4,7 +4,7 @@ spring:
   # DataSource Config
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://192.168.10.22:3306/myBasicProject
+    url: jdbc:mysql://192.168.10.22:3306/MBP
     username: root
     password: 123456
   mvc:
