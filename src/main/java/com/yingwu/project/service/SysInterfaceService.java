@@ -11,7 +11,7 @@ import com.yingwu.project.model.entity.SysInterface;
 public interface SysInterfaceService extends IService<SysInterface> {
 
     /**
-     * 刷新系统接口
+     * 更新系统接口
      *
      * @return
      */

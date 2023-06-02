@@ -76,7 +76,6 @@ public class ApplicationRunnerBean implements ApplicationRunner {
                 value.add(sysInterfaceRole.getRoleIdentity());
                 sysInterfaceAuthMap.put(key, value);
             }
-
         }
 
         // 3.写入Redis中

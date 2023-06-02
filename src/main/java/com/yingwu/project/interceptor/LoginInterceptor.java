@@ -44,7 +44,7 @@ public class LoginInterceptor implements HandlerInterceptor {
             throw new BusinessException(ErrorCode.NOT_LOGIN_ERROR);
         }
 
-        // 3.刷新用户token的有效时间 (只要用户在这段时间内用户在线，那么就不会过期)
+        // 3.更新用户token的有效时间 (只要用户在这段时间内用户操作，那么就不会过期)
         redisTemplate.expire(tokenKey, USER_EXPIRATION_TIME, TimeUnit.MINUTES);
 
         // 4.放行

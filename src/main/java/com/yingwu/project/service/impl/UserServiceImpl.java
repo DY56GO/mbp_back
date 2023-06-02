@@ -448,7 +448,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     }
 
     /**
-     * 刷新用户Redis数据
+     * 更新用户Redis数据
      *
      * @param userId 用户Id
      * @return
@@ -457,7 +457,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         // 创建用户Redis数据
         UserInfoRedisVO userInfo = createUserRedisData(userId);
 
-        // 如果Redis中存在，则刷新用户Redis数据
+        // 如果Redis中存在，则更新用户Redis数据
         String userAccountKey = DigestUtils.md5DigestAsHex((SALT + userInfo.getUserAccount()).getBytes());
         Set<String> tokenKeys = redisTemplate.keys(userAccountKey + "_*");
         if (!tokenKeys.isEmpty()) {
@@ -488,7 +488,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
             userAccount = user.getUserAccount();
         }
 
-        // 如果Redis中存在，则刷新用户Redis数据
+        // 如果Redis中存在，则更新用户Redis数据
         String userAccountKey = DigestUtils.md5DigestAsHex((SALT + userAccount).getBytes());
         Set<String> tokenKeys = redisTemplate.keys(userAccountKey + "_*");
         if (!tokenKeys.isEmpty()) {

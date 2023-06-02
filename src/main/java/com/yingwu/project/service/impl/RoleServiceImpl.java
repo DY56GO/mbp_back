@@ -73,7 +73,7 @@ public class RoleServiceImpl extends ServiceImpl<RoleMapper, Role> implements Ro
         boolean result = updateById(role);
 
         if (role.getUsingStart() != null) {
-            // 刷新系统接口鉴权Redis数据
+            // 更新系统接口鉴权Redis数据
             sysInterfaceService.updateSysInterfaceRedisAuthData();
         }
 
@@ -109,7 +109,7 @@ public class RoleServiceImpl extends ServiceImpl<RoleMapper, Role> implements Ro
 
             // 如果用户登录，删除Redis数据
 
-            // 刷新系统接口鉴权Redis数据
+            // 更新系统接口鉴权Redis数据
             sysInterfaceService.updateSysInterfaceRedisAuthData();
 
         } catch (Exception e) {

@@ -198,7 +198,7 @@ public class UserController {
             if (user.getUsingStart() == 0) {
                 userService.deleteRedisUser(user.getId(), "");
             } else {
-                // 刷新用户Redis数据
+                // 更新用户Redis数据
                 userService.updateRedisUser(user.getId());
             }
         }
@@ -227,7 +227,7 @@ public class UserController {
         // 更新
         boolean result = userService.updateById(user);
         if (result) {
-            // 刷新用户Redis数据
+            // 更新用户Redis数据
             userService.updateRedisUser(userInfo.getId());
         }
         return ResultUtils.success(result);
@@ -364,7 +364,7 @@ public class UserController {
         //  更新
         boolean result = userRoleService.updateUserRole(userRoleUpdateRequest);
         if (result) {
-            // 刷新用户Redis数据
+            // 更新用户Redis数据
             userService.updateRedisUser(userRoleUpdateRequest.getId());
         }
 

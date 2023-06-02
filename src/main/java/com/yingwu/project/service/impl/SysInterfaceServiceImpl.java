@@ -45,7 +45,7 @@ public class SysInterfaceServiceImpl extends ServiceImpl<SysInterfaceMapper, Sys
     private RedisTemplate redisTemplate;
 
     /**
-     * 刷新系统接口
+     * 更新系统接口
      *
      * @return
      */

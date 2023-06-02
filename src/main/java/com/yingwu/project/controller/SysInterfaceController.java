@@ -32,16 +32,16 @@ public class SysInterfaceController {
     @Resource
     private SysInterfaceService sysInterfaceService;
 
-    // region 刷新、启用和查询
+    // region 更新、启用和查询
 
     /**
-     * 刷新系统接口
+     * 更新系统接口
      *
      * @param request
      * @return
      */
-    @GetMapping(value = "/refresh", name = "刷新系统接口")
-    public BaseResponse<Boolean> refreshSysInterface(HttpServletRequest request) {
+    @GetMapping(value = "/refresh", name = "更新系统接口")
+    public BaseResponse<Boolean> updateSysInterface(HttpServletRequest request) {
 
         return ResultUtils.success(sysInterfaceService.updateInterface());
 

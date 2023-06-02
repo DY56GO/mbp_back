@@ -85,7 +85,7 @@ public class RoleSysInterfaceServiceImpl extends ServiceImpl<RoleSysInterfaceMap
                 }
             }
 
-            // 刷新系统接口鉴权Redis数据
+            // 更新系统接口鉴权Redis数据
             sysInterfaceService.updateSysInterfaceRedisAuthData();
         } catch (Exception e) {
             // 手动回滚异常
