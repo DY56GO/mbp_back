@@ -25,7 +25,7 @@
         SELECT id, interface_name, interface_url
         FROM sys_interface t1
         WHERE is_delete != 1
-        AND t1.id IN (SELECT interface_id FROM role_sys_interface WHERE role_id = #{roleId})
+          AND t1.id IN (SELECT interface_id FROM role_sys_interface WHERE role_id = #{roleId})
         ORDER BY t1.interface_name, t1.interface_method
     </select>
 </mapper>

@@ -1,6 +1,5 @@
 package com.yingwu.project.model.dto.user;
 
-import com.baomidou.mybatisplus.annotation.TableField;
 import lombok.Data;
 
 import java.io.Serializable;

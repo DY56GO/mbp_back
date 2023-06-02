@@ -2,7 +2,6 @@ package com.yingwu.project.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.yingwu.project.model.entity.SysInterface;
-import com.yingwu.project.model.vo.RoleMenuVO;
 import com.yingwu.project.model.vo.RoleSysInterfaceVO;
 import org.apache.ibatis.annotations.Param;
 

@@ -14,7 +14,7 @@ import java.util.Date;
  * @author Dy56
  * @TableName role_sys_interface
  */
-@TableName(value ="role_sys_interface")
+@TableName(value = "role_sys_interface")
 @Data
 public class RoleSysInterface implements Serializable {
 

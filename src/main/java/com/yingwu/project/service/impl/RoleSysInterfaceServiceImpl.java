@@ -17,9 +17,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
-* @author Dy56
-* @description 针对表【role_sys_interface】的数据库操作Service实现
-*/
+ * @author Dy56
+ * @description 针对表【role_sys_interface】的数据库操作Service实现
+ */
 @Service
 public class RoleSysInterfaceServiceImpl extends ServiceImpl<RoleSysInterfaceMapper, RoleSysInterface> implements RoleSysInterfaceService {
 
@@ -28,7 +28,7 @@ public class RoleSysInterfaceServiceImpl extends ServiceImpl<RoleSysInterfaceMap
 
     /**
      * 更新角色系统接口
-     * 
+     *
      * @param roleSysInterfaceUpdateRequest
      * @return
      */
@@ -76,7 +76,7 @@ public class RoleSysInterfaceServiceImpl extends ServiceImpl<RoleSysInterfaceMap
             int batchSize = 0;
             List<RoleSysInterface> deleteRoleSysInterfaceBatch = new ArrayList<>();
             for (RoleSysInterface roleSysInterface : deleteRoleSysInterfaceList) {
-                batchSize ++;
+                batchSize++;
                 deleteRoleSysInterfaceBatch.add(roleSysInterface);
                 if (batchSize == 300 || batchSize == deleteRoleSysInterfaceList.size()) {
                     getBaseMapper().removeBatch(deleteRoleSysInterfaceBatch);

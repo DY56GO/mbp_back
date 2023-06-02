@@ -18,9 +18,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
-* @author Dy56
-* @description 针对表【menu】的数据库操作Service实现
-*/
+ * @author Dy56
+ * @description 针对表【menu】的数据库操作Service实现
+ */
 @Service
 public class MenuServiceImpl extends ServiceImpl<MenuMapper, Menu> implements MenuService {
 
@@ -32,7 +32,7 @@ public class MenuServiceImpl extends ServiceImpl<MenuMapper, Menu> implements Me
      *
      * @param menu
      */
-    
+
     public void validMenuInfo(Menu menu) {
         if (menu == null) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR);

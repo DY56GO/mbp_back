@@ -7,9 +7,9 @@ import com.yingwu.project.model.vo.SysInterfaceRoleVO;
 import java.util.List;
 
 /**
-* @author Dy56
-* @description 针对表【role_sys_interface】的数据库操作Mapper
-*/
+ * @author Dy56
+ * @description 针对表【role_sys_interface】的数据库操作Mapper
+ */
 public interface RoleSysInterfaceMapper extends BaseMapper<RoleSysInterface> {
 
     /**
@@ -33,7 +33,7 @@ public interface RoleSysInterfaceMapper extends BaseMapper<RoleSysInterface> {
      * @param deleteRoleIdBatch
      * @return
      */
-    boolean  removeBatchByRoleIdList(List<Long> deleteRoleIdBatch);
+    boolean removeBatchByRoleIdList(List<Long> deleteRoleIdBatch);
 
     /**
      * 批量删除角色系统接口通过接口id
@@ -42,7 +42,7 @@ public interface RoleSysInterfaceMapper extends BaseMapper<RoleSysInterface> {
      * @return
      */
     boolean removeBatchByInterfaceIdList(List<Long> deleteSysInterfaceIdBatch);
-    
+
 }
 
 

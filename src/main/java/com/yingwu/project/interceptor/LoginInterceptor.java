@@ -2,7 +2,6 @@ package com.yingwu.project.interceptor;
 
 import com.yingwu.project.common.ErrorCode;
 import com.yingwu.project.exception.BusinessException;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.web.servlet.HandlerInterceptor;
 

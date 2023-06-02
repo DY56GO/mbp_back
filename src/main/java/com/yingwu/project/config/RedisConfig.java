@@ -1,6 +1,5 @@
 package com.yingwu.project.config;
 
-import lombok.val;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.core.RedisTemplate;

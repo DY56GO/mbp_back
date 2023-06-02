@@ -477,7 +477,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     /**
      * 删除用户Redis数据
      *
-     * @param userId 用户id
+     * @param userId      用户id
      * @param userAccount
      * @return
      */

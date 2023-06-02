@@ -11,16 +11,15 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.interceptor.TransactionAspectSupport;
 
-import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.List;
 
 /**
-* @author Dy56
-* @description 针对表【roleMenu】的数据库操作Service实现
-*/
+ * @author Dy56
+ * @description 针对表【roleMenu】的数据库操作Service实现
+ */
 @Service
-public class RoleMenuServiceImpl extends ServiceImpl<RoleMenuMapper, RoleMenu> implements RoleMenuService{
+public class RoleMenuServiceImpl extends ServiceImpl<RoleMenuMapper, RoleMenu> implements RoleMenuService {
 
     /**
      * 更新角色菜单
@@ -72,7 +71,7 @@ public class RoleMenuServiceImpl extends ServiceImpl<RoleMenuMapper, RoleMenu> i
             int batchSize = 0;
             List<RoleMenu> deleteRoleMenuBatch = new ArrayList<>();
             for (RoleMenu roleMenu : deleteRoleMenuList) {
-                batchSize ++;
+                batchSize++;
                 deleteRoleMenuBatch.add(roleMenu);
                 if (batchSize == 300 || batchSize == deleteRoleMenuList.size()) {
                     getBaseMapper().removeBatch(deleteRoleMenuBatch);

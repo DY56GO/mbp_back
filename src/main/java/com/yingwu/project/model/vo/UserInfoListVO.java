@@ -1,6 +1,5 @@
 package com.yingwu.project.model.vo;
 
-import cn.hutool.core.lang.tree.Tree;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
@@ -9,7 +8,6 @@ import lombok.Data;
 
 import java.io.Serializable;
 import java.util.Date;
-import java.util.List;
 
 /**
  * 列表用户信息视图

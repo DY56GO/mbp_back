@@ -36,6 +36,7 @@ public interface RoleService extends IService<Role> {
      * @return
      */
     boolean deleteRole(Long roleId);
+
     /**
      * 获取角色菜单通过角色id
      *
