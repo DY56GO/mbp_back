@@ -110,7 +110,7 @@ public class SysInterfaceServiceImpl extends ServiceImpl<SysInterfaceMapper, Sys
 
         // 生成新增和修改的list
         for (String methodAndUrl : addInterfaceSet) {
-            String[] methodAndUrlArr = methodAndUrl.split(",");
+            String[] methodAndUrlArr = methodAndUrl.split(":");
             SysInterface sysInterface = new SysInterface();
 
             // 如果在数据库列表中存在相同的接口，则对接口名称进行更新（添加id）
@@ -189,17 +189,8 @@ public class SysInterfaceServiceImpl extends ServiceImpl<SysInterfaceMapper, Sys
             }
 
             // 3.更新系统接口鉴权Redis数据
-            // 删除未启用和删除的系统接口
-            Map sysInterfaceAuthOldMap = redisTemplate.boundHashOps(SYS_INTERFACE_AUTH_KEY_REDIS).entries();
-            sysInterfaceAuthOldMap.forEach((key, value) -> {
-                if (!sysInterfaceAuthMap.containsKey(key)) {
-                    redisTemplate.opsForHash().delete(SYS_INTERFACE_AUTH_KEY_REDIS, key);
-                }
-            });
-
-            // 更新系统接口角色
+            redisTemplate.delete(SYS_INTERFACE_AUTH_KEY_REDIS);
             redisTemplate.opsForHash().putAll(SYS_INTERFACE_AUTH_KEY_REDIS, sysInterfaceAuthMap);
-
 
         }
         return true;

@@ -463,12 +463,10 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         if (!tokenKeys.isEmpty()) {
             String tokenKey = tokenKeys.iterator().next();
             Map<String, Object> userMap = BeanUtil.beanToMap(userInfo);
-            userMap.forEach((key, value) -> {
-                if (null != value) {
-                    userMap.put(key, String.valueOf(value));
-                }
-            });
+            redisTemplate.delete(tokenKey);
             redisTemplate.opsForHash().putAll(tokenKey, userMap);
+
+
             return true;
         }
         return false;
