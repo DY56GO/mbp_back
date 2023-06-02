@@ -33,6 +33,7 @@
         SELECT id, menu_title
         FROM menu t1
         WHERE is_delete != 1
+        AND is_hidden = 0
         <if test="notParent == true">
             AND NOT EXISTS(SELECT 1 FROM menu t2 WHERE t2.parent_id = t1.id)
         </if>
