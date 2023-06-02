@@ -32,12 +32,11 @@ public class MvcConfig implements WebMvcConfigurer {
                 .excludePathPatterns(INTERCEPTOR_WHITELIST)
                 .order(1);
         if (powerConfig.isInterfaceAuth()) {
-
+            // 增加系统接口拦截器，并对不必要的请求路径排除拦截
+            registry.addInterceptor(new SysInterfaceAuthInterceptor(redisTemplate))
+                    .excludePathPatterns(INTERCEPTOR_WHITELIST)
+                    .order(2);
         }
-        // 增加系统接口拦截器，并对不必要的请求路径排除拦截
-        registry.addInterceptor(new SysInterfaceAuthInterceptor(redisTemplate))
-                .excludePathPatterns(INTERCEPTOR_WHITELIST)
-                .order(2);
     }
 
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
