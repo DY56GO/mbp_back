@@ -10,6 +10,8 @@ import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry
 
 import javax.annotation.Resource;
 
+import static com.yingwu.project.constant.SysConstant.INTERCEPTOR_WHITELIST;
+
 /**
  * 拦截器配置
  *
@@ -27,42 +29,17 @@ public class MvcConfig implements WebMvcConfigurer {
     public void addInterceptors(InterceptorRegistry registry) {
         // 增加登录拦截器，并对不必要的请求路径排除拦截
         registry.addInterceptor(new LoginInterceptor(redisTemplate))
-                .excludePathPatterns(
-                        "/user/login",
-                        "/user/register",
-                        "/error"
-                )
-                .excludePathPatterns(
-                        "/swagger-resources/**",
-                        "/webjars/**",
-                        "/v2/**",
-                        "/v3/**",
-                        "/swagger-ui.html/**",
-                        "/doc.html"
-                )
+                .excludePathPatterns(INTERCEPTOR_WHITELIST)
                 .order(1);
         if (powerConfig.isInterfaceAuth()) {
 
         }
         // 增加系统接口拦截器，并对不必要的请求路径排除拦截
         registry.addInterceptor(new SysInterfaceAuthInterceptor(redisTemplate))
-                .excludePathPatterns(
-                        "/user/login",
-                        "/user/register",
-                        "/error"
-                )
-                .excludePathPatterns(
-                        "/swagger-resources/**",
-                        "/webjars/**",
-                        "/v2/**",
-                        "/v3/**",
-                        "/swagger-ui.html/**",
-                        "/doc.html"
-                )
+                .excludePathPatterns(INTERCEPTOR_WHITELIST)
                 .order(2);
     }
 
-    
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
         registry.addResourceHandler("swagger-ui.html", "doc.html")
                 .addResourceLocations("classpath:/META-INF/resources/");
