@@ -62,30 +62,28 @@ MBP是一个管理系统的基础项目模板，其主要作用是提供管理�
 ```yml
 datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver	# 数据库连接驱动，这里使用的是MySQL
-    url: jdbc:mysql://192.168.10.22:3306/mbp 	# 数据库连接地址（3306为MySQL默认端口）
-    username: root 		# 数据库用户
-    password: 123456 	# 数据库用户密码
+    url: jdbc:mysql://192.168.10.22:3306/mbp # 数据库连接地址（3306为MySQL默认端口）
+    username: root # 数据库用户
+    password: 123456 # 数据库用户密码
 
 redis:
-    port: 6379 			# Redis端口（6379为Redis默认端口）
+    port: 6379 # Redis端口（6379为Redis默认端口）
     host: 192.168.10.22 # Redis访问地址
-    database: 0 		# 指定Redis的库
-    password: 123456 	# Redis密码
+    database: 0 # 指定Redis的库
+    password: 123456 # Redis密码
     
 server:
   port: 7529 # 项目启动端口
 
 # hutool雪花token生成参数
 snowflake: 
-  workerId: 1 		# 参数1为终端ID
-  datacenterId: 1 	# 数据中心ID
+  workerId: 1 # 参数1为终端ID
+  datacenterId: 1 # 数据中心ID
 
 # 系统可选功能
 powerconfig: 
   interfaceAuth: true # 开启系统接口鉴权 true | false
 ```
-
-
 
 
 
