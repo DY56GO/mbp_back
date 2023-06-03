@@ -6,6 +6,8 @@ MBP是一个管理系统的基础项目模板，其主要作用是提供管理�
 
 ![image](https://github.com/DY56GO/MarkdownImg/blob/master/MBP/MBP-1.png "BMP-1")
 
+
+
 ### 基础功能
 
 首页：目前基本为空白页面，开发者可根据业务需求修改。
