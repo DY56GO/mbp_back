@@ -66,13 +66,14 @@ public class MenuServiceImpl extends ServiceImpl<MenuMapper, Menu> implements Me
         Object savePoint = TransactionAspectSupport.currentTransactionStatus().createSavepoint();
         try {
             // 删除
-            boolean result = removeById(menuId);
+            removeById(menuId);
 
-            // 数据同步 todo
+            // 数据同步
             // 删除角色菜单数据
             List<Long> deleteMenuIdBatch = new ArrayList<>();
             deleteMenuIdBatch.add(menuId);
             roleMenuMapper.removeBatchByMenuIdList(deleteMenuIdBatch);
+
         } catch (Exception e) {
             // 手动回滚异常
             TransactionAspectSupport.currentTransactionStatus().rollbackToSavepoint(savePoint);
