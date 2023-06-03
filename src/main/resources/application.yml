@@ -39,8 +39,8 @@ mybatis-plus:
       logic-not-delete-value: 0 # 逻辑未删除值(默认为 0)
       select-strategy: not_empty # 入参为null时去除
 snowflake:
-  workerId: 1 #参数1为终端ID
-  datacenterId: 1 #数据中心ID
+  workerId: 1 # 参数1为终端ID
+  datacenterId: 1 # 数据中心ID
 # 系统功能
 powerconfig:
   interfaceAuth: true # 开启系统接口鉴权 true | false
