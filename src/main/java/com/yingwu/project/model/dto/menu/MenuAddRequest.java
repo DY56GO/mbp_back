@@ -43,6 +43,11 @@ public class MenuAddRequest implements Serializable {
     private String componentPath;
 
     /**
+     * 重定向
+     */
+    private String redirect;
+
+    /**
      * 描述
      */
     private String description;
