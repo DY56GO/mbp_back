@@ -137,7 +137,7 @@ public class MenuController {
      * @return
      */
     @GetMapping(value = "/list/page", name = "分页获取菜单列表")
-    public BaseResponse<Page<Tree<String>>> listUserByPage(MenuQueryRequest menuQueryRequest, HttpServletRequest request) {
+    public BaseResponse<Page<Tree<String>>> listMenuByPage(MenuQueryRequest menuQueryRequest, HttpServletRequest request) {
         long current = 1;
         long size = 10;
         Menu menuQuery = new Menu();
