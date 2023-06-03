@@ -1,3 +1,19 @@
+/*
+ Navicat Premium Data Transfer
+
+ Source Server         : 本地开发数据库
+ Source Server Type    : MySQL
+ Source Server Version : 80020
+ Source Host           : 192.168.10.22:3306
+ Source Schema         : mbp
+
+ Target Server Type    : MySQL
+ Target Server Version : 80020
+ File Encoding         : 65001
+
+ Date: 03/06/2023 19:40:05
+*/
+
 SET NAMES utf8mb4;
 SET FOREIGN_KEY_CHECKS = 0;
 
@@ -6,7 +22,7 @@ SET FOREIGN_KEY_CHECKS = 0;
 -- ----------------------------
 DROP TABLE IF EXISTS `menu`;
 CREATE TABLE `menu`  (
-  `id` int NOT NULL AUTO_INCREMENT,
+  `id` bigint NOT NULL AUTO_INCREMENT,
   `parent_id` int NULL DEFAULT 0 COMMENT '父id',
   `menu_title` varchar(256) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '菜单标题',
   `menu_icon` varchar(256) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '菜单图标',
@@ -41,7 +57,7 @@ INSERT INTO `menu` VALUES (8, 4, '接口管理', 'el-icon-link', 'sysInterface',
 -- ----------------------------
 DROP TABLE IF EXISTS `role`;
 CREATE TABLE `role`  (
-  `id` int NOT NULL AUTO_INCREMENT,
+  `id` bigint NOT NULL AUTO_INCREMENT,
   `role_name` varchar(256) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '角色名称',
   `role_identity` varchar(256) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '角色标识',
   `is_using` tinyint NOT NULL DEFAULT 1 COMMENT '是否启用（0：否；1：是）',
@@ -65,7 +81,7 @@ INSERT INTO `role` VALUES (3, '其他', 'other', 1, '其他', '2023-06-02 13:16:
 -- ----------------------------
 DROP TABLE IF EXISTS `role_menu`;
 CREATE TABLE `role_menu`  (
-  `id` int NOT NULL AUTO_INCREMENT,
+  `id` bigint NOT NULL AUTO_INCREMENT,
   `role_id` bigint NOT NULL COMMENT '角色id',
   `menu_id` bigint NOT NULL COMMENT '菜单id',
   `gmt_create` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
@@ -95,7 +111,7 @@ INSERT INTO `role_menu` VALUES (11, 2, 3, '2023-06-02 14:57:53', '2023-06-02 14:
 -- ----------------------------
 DROP TABLE IF EXISTS `role_sys_interface`;
 CREATE TABLE `role_sys_interface`  (
-  `id` int NOT NULL AUTO_INCREMENT,
+  `id` bigint NOT NULL AUTO_INCREMENT,
   `role_id` bigint NOT NULL COMMENT '角色id',
   `interface_id` bigint NOT NULL COMMENT '接口id',
   `gmt_create` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
@@ -147,7 +163,7 @@ INSERT INTO `role_sys_interface` VALUES (35, 3, 33, '2023-06-02 14:59:49', '2023
 -- ----------------------------
 DROP TABLE IF EXISTS `sys_interface`;
 CREATE TABLE `sys_interface`  (
-  `id` int NOT NULL AUTO_INCREMENT,
+  `id` bigint NOT NULL AUTO_INCREMENT,
   `interface_name` varchar(256) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '接口名称',
   `interface_method` varchar(256) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '接口方法',
   `interface_url` varchar(256) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '接口url',
@@ -204,7 +220,7 @@ INSERT INTO `sys_interface` VALUES (37, '/v2/api-docs', 'GET', '/v2/api-docs', 1
 -- ----------------------------
 DROP TABLE IF EXISTS `user`;
 CREATE TABLE `user`  (
-  `id` int NOT NULL AUTO_INCREMENT,
+  `id` bigint NOT NULL AUTO_INCREMENT,
   `user_name` varchar(256) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '用户名称',
   `user_account` varchar(256) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '用户账号',
   `user_avatar` varchar(1024) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '用户头像',
@@ -222,7 +238,7 @@ CREATE TABLE `user`  (
 -- ----------------------------
 -- Records of user
 -- ----------------------------
-INSERT INTO `user` VALUES (1, '管理员', 'admin', '', 1, 'e559996f7d546db340035d754234ad22', 1, '2023-06-02 13:16:47', '2023-06-02 13:16:47', 0);
+INSERT INTO `user` VALUES (1, '管理员', 'admin', '', 1, 'e559996f7d546db340035d754234ad22', 1, '2023-06-02 13:16:47', '2023-06-03 05:24:12', 0);
 INSERT INTO `user` VALUES (2, '用户', 'user', '', 1, 'e559996f7d546db340035d754234ad22', 1, '2023-06-02 13:16:47', '2023-06-02 14:57:25', 0);
 INSERT INTO `user` VALUES (3, '其他', 'other', '', 1, 'e559996f7d546db340035d754234ad22', 1, '2023-06-02 13:16:47', '2023-06-02 13:16:47', 0);
 
@@ -231,7 +247,7 @@ INSERT INTO `user` VALUES (3, '其他', 'other', '', 1, 'e559996f7d546db340035d7
 -- ----------------------------
 DROP TABLE IF EXISTS `user_role`;
 CREATE TABLE `user_role`  (
-  `id` int NOT NULL AUTO_INCREMENT,
+  `id` bigint NOT NULL AUTO_INCREMENT,
   `user_id` bigint NOT NULL COMMENT '用户id',
   `role_id` bigint NOT NULL COMMENT '角色id',
   `gmt_create` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
