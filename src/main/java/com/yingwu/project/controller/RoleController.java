@@ -107,6 +107,7 @@ public class RoleController {
         }
         Role role = new Role();
         BeanUtil.copyProperties(roleUpdateRequest, role);
+        roleService.validRoleInfo(role);
 
         // 更新
         boolean result = roleService.updateRole(role);

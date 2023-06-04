@@ -1,5 +1,6 @@
 package com.yingwu.project.service.impl;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.yingwu.project.common.ErrorCode;
 import com.yingwu.project.exception.BusinessException;
@@ -59,6 +60,17 @@ public class RoleServiceImpl extends ServiceImpl<RoleMapper, Role> implements Ro
 
         if (StringUtils.isAnyBlank(roleName, roleIdentity)) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR, "参数为空");
+        }
+
+        // 角色标识不能重复
+        QueryWrapper<Role> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("role_identity", roleIdentity);
+        if (role.getId() != null) {
+            queryWrapper.eq("id", role.getId());
+        }
+        long count = count(queryWrapper);
+        if (count != 0) {
+            throw new BusinessException(ErrorCode.PARAMS_ERROR, "角色标识重复");
         }
     }
 
