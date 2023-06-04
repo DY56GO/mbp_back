@@ -11,7 +11,7 @@
  Target Server Version : 80020
  File Encoding         : 65001
 
- Date: 03/06/2023 19:40:05
+ Date: 04/06/2023 12:37:51
 */
 
 SET NAMES utf8mb4;
@@ -37,7 +37,8 @@ CREATE TABLE `menu`  (
   `gmt_modified` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '修改时间',
   `is_delete` tinyint NULL DEFAULT 0 COMMENT '是否删除（0：否；1：是）',
   PRIMARY KEY (`id`) USING BTREE,
-  INDEX `menu_menu_name`(`menu_title` ASC) USING BTREE
+  UNIQUE INDEX `uk_menu_menu_name`(`menu_title` ASC) USING BTREE,
+  UNIQUE INDEX `pk_menu_id`(`id` ASC) USING BTREE
 ) ENGINE = InnoDB AUTO_INCREMENT = 9 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
@@ -66,7 +67,8 @@ CREATE TABLE `role`  (
   `gmt_modified` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '修改时间',
   `is_delete` tinyint NOT NULL DEFAULT 0 COMMENT '是否删除（0：否；1：是）',
   PRIMARY KEY (`id`) USING BTREE,
-  INDEX `role_roleIdentity`(`role_identity` ASC) USING BTREE
+  UNIQUE INDEX `uk_role_roleIdentity`(`role_identity` ASC) USING BTREE,
+  UNIQUE INDEX `pk_role_id`(`id` ASC) USING BTREE
 ) ENGINE = InnoDB AUTO_INCREMENT = 4 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
@@ -87,8 +89,8 @@ CREATE TABLE `role_menu`  (
   `gmt_create` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
   `gmt_modified` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '修改时间',
   PRIMARY KEY (`id`) USING BTREE,
-  INDEX `role_menu_role_id`(`role_id` ASC) USING BTREE,
-  INDEX `role_menu_menu_id`(`menu_id` ASC) USING BTREE
+  INDEX `idx_role_menu_role_id`(`role_id` ASC) USING BTREE,
+  INDEX `idx_role_menu_menu_id`(`menu_id` ASC) USING BTREE
 ) ENGINE = InnoDB AUTO_INCREMENT = 12 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
@@ -117,8 +119,8 @@ CREATE TABLE `role_sys_interface`  (
   `gmt_create` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
   `gmt_modified` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '修改时间',
   PRIMARY KEY (`id`) USING BTREE,
-  INDEX `role_sys_interface_role_id`(`role_id` ASC) USING BTREE,
-  INDEX `role_sys_interface_interface_id`(`interface_id` ASC) USING BTREE
+  INDEX `idx_role_sys_interface_role_id`(`role_id` ASC) USING BTREE,
+  INDEX `idx_role_sys_interface_interface_id`(`interface_id` ASC) USING BTREE
 ) ENGINE = InnoDB AUTO_INCREMENT = 36 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
@@ -171,7 +173,8 @@ CREATE TABLE `sys_interface`  (
   `gmt_create` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
   `gmt_modified` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '修改时间',
   `is_delete` tinyint NOT NULL DEFAULT 0 COMMENT '是否删除（0：否；1：是）',
-  PRIMARY KEY (`id`) USING BTREE
+  PRIMARY KEY (`id`) USING BTREE,
+  UNIQUE INDEX `pk_sys_interface_id`(`id` ASC) USING BTREE
 ) ENGINE = InnoDB AUTO_INCREMENT = 38 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
@@ -231,8 +234,8 @@ CREATE TABLE `user`  (
   `gmt_modified` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '修改时间',
   `is_delete` tinyint NOT NULL DEFAULT 0 COMMENT '是否删除（0：否；1：是）',
   PRIMARY KEY (`id`) USING BTREE,
-  UNIQUE INDEX `user_user_account`(`user_account` ASC) USING BTREE,
-  INDEX `user_id`(`id` ASC) USING BTREE
+  UNIQUE INDEX `uk_user_user_account`(`user_account` ASC) USING BTREE,
+  UNIQUE INDEX `pk_user_id`(`id` ASC) USING BTREE
 ) ENGINE = InnoDB AUTO_INCREMENT = 4 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '用户' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
@@ -253,8 +256,8 @@ CREATE TABLE `user_role`  (
   `gmt_create` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
   `gmt_modified` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '修改时间',
   PRIMARY KEY (`id`) USING BTREE,
-  INDEX `user_role_user_id`(`user_id` ASC) USING BTREE,
-  INDEX `user_role_role_id`(`role_id` ASC) USING BTREE
+  INDEX `idx_user_role_user_id`(`user_id` ASC) USING BTREE,
+  INDEX `idx_user_role_role_id`(`role_id` ASC) USING BTREE
 ) ENGINE = InnoDB AUTO_INCREMENT = 5 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
