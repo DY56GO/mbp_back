@@ -66,7 +66,7 @@ public class RoleServiceImpl extends ServiceImpl<RoleMapper, Role> implements Ro
         QueryWrapper<Role> queryWrapper = new QueryWrapper<>();
         queryWrapper.eq("role_identity", roleIdentity);
         if (role.getId() != null) {
-            queryWrapper.eq("id", role.getId());
+            queryWrapper.ne("id", role.getId());
         }
         long count = count(queryWrapper);
         if (count != 0) {
