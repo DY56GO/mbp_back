@@ -1,11 +1,11 @@
 package com.yingwu.project.constant;
 
 /**
- * 通用常量
+ * 排序常量
  *
  * @author Dy56
  */
-public interface CommonConstant {
+public interface OrderConstant {
 
     /**
      * 升序

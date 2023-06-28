@@ -85,9 +85,9 @@ public class UserController {
         BeanUtils.copyProperties(userLoginRequest, user);
         userService.validUserLoginInfo(user);
 
-        // 登陆 返回tokenKey
-        String tokenKey = userService.userLogin(user, request);
-        return ResultUtils.success(tokenKey);
+        // 登陆 返回token
+        String token = userService.userLogin(user, request);
+        return ResultUtils.success(token);
     }
 
     /**
@@ -196,10 +196,7 @@ public class UserController {
             // 数据同步
             // 判断用户是否启用，如果非启用，则删除Redis中的用户，使其下线
             if (user.getUsingStart() == 0) {
-                userService.deleteRedisUser(user.getId(), "");
-            } else {
-                // 更新用户Redis数据
-                userService.updateRedisUser(user.getId());
+                userService.deleteRedisUser(user.getId());
             }
         }
         return ResultUtils.success(result);
@@ -226,10 +223,9 @@ public class UserController {
 
         // 更新
         boolean result = userService.updateById(user);
-        if (result) {
-            // 更新用户Redis数据
-            userService.updateRedisUser(userInfo.getId());
-        }
+        // 更新Redis数据
+        userService.updateRedisUser(user.getId());
+
         return ResultUtils.success(result);
     }
 
@@ -363,12 +359,8 @@ public class UserController {
 
         //  更新
         boolean result = userRoleService.updateUserRole(userRoleUpdateRequest);
-        if (result) {
-            // 更新用户Redis数据
-            userService.updateRedisUser(userRoleUpdateRequest.getId());
-        }
 
-        return ResultUtils.success(true);
+        return ResultUtils.success(result);
     }
 
     // endregion

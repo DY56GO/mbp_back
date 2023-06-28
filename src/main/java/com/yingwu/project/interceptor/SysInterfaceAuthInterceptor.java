@@ -5,27 +5,37 @@ import com.yingwu.project.common.ErrorCode;
 import com.yingwu.project.exception.BusinessException;
 import com.yingwu.project.model.vo.UserInfoRedisVO;
 import com.yingwu.project.model.vo.UserRoleVO;
+import com.yingwu.project.service.UserService;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.web.servlet.HandlerInterceptor;
 
+import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.TimeUnit;
 
-import static com.yingwu.project.constant.SysConstant.SYS_INTERFACE_AUTH_KEY_REDIS;
+import static com.yingwu.project.constant.RedisConstant.*;
+
 
 /**
  * 系统接口校验 拦截器
  *
  * @author Dy56
  */
+@Configuration
 @Slf4j
 public class SysInterfaceAuthInterceptor implements HandlerInterceptor {
 
+    @Resource
     private RedisTemplate redisTemplate;
+
+    @Resource
+    private UserService userService;
 
     public SysInterfaceAuthInterceptor(RedisTemplate redisTemplate) {
         this.redisTemplate = redisTemplate;
@@ -47,8 +57,23 @@ public class SysInterfaceAuthInterceptor implements HandlerInterceptor {
         Map sysInterfaceAuthMap = redisTemplate.boundHashOps(SYS_INTERFACE_AUTH_KEY_REDIS).entries();
 
         // 2.获取用户角色信息
-        String tokenKey = request.getHeader("token");
-        Map userInfoMap = redisTemplate.boundHashOps(tokenKey).entries();
+        String token = request.getHeader("token");
+        String userKey = (String) redisTemplate.opsForValue().get(token);
+        Map userInfoMap = redisTemplate.opsForHash().entries(userKey);
+
+        // 如果Redis中没有则去查询并重新写入Redis
+        if(userInfoMap.size() == 0) {
+            String userId = userKey.replaceAll(USER_ID_KEY_REDIS, "");
+            UserInfoRedisVO userInfo = userService.createUserRedisData(Long.valueOf(userId));
+            userInfo.setToken(token);
+
+            // 6.将token和用户信息写入Redis
+            redisTemplate.opsForValue().set(token, userKey);
+            userInfoMap = BeanUtil.beanToMap(userInfo);
+            redisTemplate.opsForHash().putAll(userKey, userInfoMap);
+            redisTemplate.expire(userKey, USER_ID_EXPIRATION_TIME, TimeUnit.MINUTES);
+        }
+
         UserInfoRedisVO userInfo = BeanUtil.toBeanIgnoreCase(userInfoMap, UserInfoRedisVO.class, false);
         List<UserRoleVO> userRoleList = userInfo.getUserRoleList();
 

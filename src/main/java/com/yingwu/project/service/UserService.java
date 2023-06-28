@@ -103,20 +103,27 @@ public interface UserService extends IService<User> {
     boolean deleteUser(Long userId);
 
     /**
-     * 更新用户Redis数据
+     * 创建用户Redis数据
      *
-     * @param userId 用户id
+     * @param userId
      * @return
      */
-    boolean updateRedisUser(Long userId);
+    public UserInfoRedisVO createUserRedisData(Long userId);
+
+    /**
+     * 更新用户Redis数据
+     *
+     * @param userId
+     * @return
+     */
+    public boolean updateRedisUser(Long userId);
 
     /**
      * 删除用户Redis数据
      *
      * @param userId
-     * @param userAccount
      * @return
      */
-    boolean deleteRedisUser(Long userId, String userAccount);
+    boolean deleteRedisUser(Long userId);
 
 }

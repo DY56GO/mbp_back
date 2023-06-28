@@ -25,9 +25,4 @@ public interface SysConstant {
         add("/doc.html");
     }};
 
-    /**
-     * 系统接口鉴权数据在Redis中的key
-     */
-    String SYS_INTERFACE_AUTH_KEY_REDIS = "SysInterfaceAuth";
-
 }

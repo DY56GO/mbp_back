@@ -2,27 +2,27 @@ package com.yingwu.project.interceptor;
 
 import com.yingwu.project.common.ErrorCode;
 import com.yingwu.project.exception.BusinessException;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.web.servlet.HandlerInterceptor;
 
+import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.concurrent.TimeUnit;
 
-import static com.yingwu.project.constant.UserConstant.USER_EXPIRATION_TIME;
+import static com.yingwu.project.constant.RedisConstant.*;
 
 /**
  * 登录校验 拦截器
  *
  * @author Dy56
  */
+@Configuration
 public class LoginInterceptor implements HandlerInterceptor {
 
+    @Resource
     private RedisTemplate redisTemplate;
-
-    public LoginInterceptor(RedisTemplate redisTemplate) {
-        this.redisTemplate = redisTemplate;
-    }
 
     /**
      * 执行拦截
@@ -37,15 +37,17 @@ public class LoginInterceptor implements HandlerInterceptor {
         }
 
         // 1. 获取请求头中的token
-        String tokenKey = request.getHeader("token");
+        String token = request.getHeader("token");
 
         // 2. 判断是否登录
-        if (tokenKey == null || !redisTemplate.hasKey(tokenKey)) {
+        if (token == null || !redisTemplate.hasKey(token)) {
             throw new BusinessException(ErrorCode.NOT_LOGIN_ERROR);
         }
 
-        // 3.更新用户token的有效时间 (只要用户在这段时间内用户操作，那么就不会过期)
-        redisTemplate.expire(tokenKey, USER_EXPIRATION_TIME, TimeUnit.MINUTES);
+        // 3.更新用户id和token的有效时间 (只要用户在这段时间内用户操作，那么就不会过期)
+        String userKey = (String) redisTemplate.opsForValue().get(token);
+        redisTemplate.expire(token, TOKEN_EXPIRATION_TIME, TimeUnit.MINUTES);
+        redisTemplate.expire(userKey, USER_ID_EXPIRATION_TIME, TimeUnit.MINUTES);
 
         // 4.放行
         return true;

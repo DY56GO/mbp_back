@@ -36,6 +36,7 @@ import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 import static com.yingwu.project.constant.PasswordConstant.SALT;
+import static com.yingwu.project.constant.RedisConstant.*;
 import static com.yingwu.project.constant.UserConstant.*;
 import static com.yingwu.project.util.Utils.buildUserRouter;
 import static com.yingwu.project.util.Utils.encryptPassword;
@@ -147,7 +148,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
      *
      * @param user
      * @param request
-     * @return 生成的tokenKey
+     * @return 生成的token
      */
 
     public String userLogin(User user, HttpServletRequest request) {
@@ -166,37 +167,36 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
             throw new BusinessException(ErrorCode.PARAMS_ERROR, "用户不存在或密码错误");
         }
 
-        // 3.判断Redis中是否存在，存在为已登录，直接返回tokenKey
-        String userAccountKey = DigestUtils.md5DigestAsHex((SALT + userAccount).getBytes());
-        Set<String> tokenKeys = redisTemplate.keys(userAccountKey + "_*");
-        if (!tokenKeys.isEmpty()) {
-            String tokenKey = tokenKeys.iterator().next();
-            return tokenKey;
+        // 3.通过用户id为key，判断Redis中是否存在，存在为已登录，返回value中的token
+        String userKey = USER_ID_KEY_REDIS + hasUser.getId();
+        String userToken = (String) redisTemplate.opsForHash().get(userKey, "token");
+
+        if (userToken != null) {
+            return userToken;
         }
 
-        // region Redis中不存在，开始生成tokenKey
+        // Redis中不存在，开始生成token
 
-        // 4.创建用户Redis数据
-        UserInfoRedisVO userInfo = createUserRedisData(hasUser.getId());
-
-        // 5.生成token
+        // 4.生成token
         // workerId 为终端ID
         // datacenterId 为数据中心ID
         Snowflake snowflake = IdUtil.getSnowflake(workerId, datacenterId);
         String token = snowflake.nextIdStr();
 
-        // 6. 自定义tokenKey
-        String tokenKey = userAccountKey + "_" + token;
+        // 5.创建用户Redis数据
+        UserInfoRedisVO userInfo = createUserRedisData(hasUser.getId());
+        userInfo.setToken(token);
 
-        // endregion
-
-        // 7. 写入redis
+        // 6.将token和用户信息写入Redis
+        redisTemplate.opsForValue().set(token, userKey);
         Map<String, Object> userInfoMap = BeanUtil.beanToMap(userInfo);
-        redisTemplate.opsForHash().putAll(tokenKey, userInfoMap);
-        // 设置过期时间
-        redisTemplate.expire(tokenKey, USER_EXPIRATION_TIME, TimeUnit.MINUTES);
+        redisTemplate.opsForHash().putAll(userKey, userInfoMap);
 
-        return tokenKey;
+        // 设置过期时间
+        redisTemplate.expire(token, TOKEN_EXPIRATION_TIME, TimeUnit.MINUTES);
+        redisTemplate.expire(userKey, USER_ID_EXPIRATION_TIME, TimeUnit.MINUTES);
+
+        return token;
     }
 
     /**
@@ -231,9 +231,24 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
      */
 
     public UserInfoRedisVO getLoginUser(HttpServletRequest request) {
-        String tokenKey = request.getHeader("token");
+        String token = request.getHeader("token");
         // 从Redis中获取用户数据
-        Map userInfoMap = redisTemplate.boundHashOps(tokenKey).entries();
+        String userKey = (String) redisTemplate.opsForValue().get(token);
+        Map userInfoMap = redisTemplate.opsForHash().entries(userKey);
+
+        // 如果Redis中没有则去查询并重新写入Redis
+        if(userInfoMap.size() == 0) {
+            String userId = userKey.replaceAll(USER_ID_KEY_REDIS, "");
+            UserInfoRedisVO userInfo = createUserRedisData(Long.valueOf(userId));
+            userInfo.setToken(token);
+
+            // 6.将token和用户信息写入Redis
+            redisTemplate.opsForValue().set(token, userKey);
+            userInfoMap = BeanUtil.beanToMap(userInfo);
+            redisTemplate.opsForHash().putAll(userKey, userInfoMap);
+            redisTemplate.expire(userKey, USER_ID_EXPIRATION_TIME, TimeUnit.MINUTES);
+        }
+
         UserInfoRedisVO userInfo = BeanUtil.toBeanIgnoreCase(userInfoMap, UserInfoRedisVO.class, false);
 
         return userInfo;
@@ -247,9 +262,10 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
      */
 
     public boolean userLogout(HttpServletRequest request) {
-        String tokenKey = request.getHeader("token");
-        // 从Redis中删除tokenKey
-        redisTemplate.delete(tokenKey);
+        String token = request.getHeader("token");
+        // 从Redis中延迟删除token
+        Long userId = Long.valueOf(redisTemplate.opsForValue().get(token).toString().replaceAll(USER_ID_KEY_REDIS, ""));
+        deleteRedisUser(userId);
 
         return true;
     }
@@ -393,7 +409,6 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     public boolean deleteUser(Long userId) {
         Object savePoint = TransactionAspectSupport.currentTransactionStatus().createSavepoint();
         try {
-            User user = userMapper.selectById(userId);
             removeById(userId);
 
             List<Long> userIdList = new ArrayList<>();
@@ -404,7 +419,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
             userRoleMapper.removeBatchByUserIdList(userIdList);
 
             // 删除Redis中的用户，使其下线
-            deleteRedisUser(userId, user.getUserAccount());
+            deleteRedisUser(userId);
         } catch (Exception e) {
             // 手动回滚异常
             TransactionAspectSupport.currentTransactionStatus().rollbackToSavepoint(savePoint);
@@ -450,51 +465,36 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     /**
      * 更新用户Redis数据
      *
-     * @param userId 用户Id
+     * @param userId
      * @return
      */
     public boolean updateRedisUser(Long userId) {
-        // 创建用户Redis数据
-        UserInfoRedisVO userInfo = createUserRedisData(userId);
+        String userKey = USER_ID_KEY_REDIS + userId;
+        redisTemplate.expire(userKey, DELETE_KEY_TIME, TimeUnit.SECONDS);
 
-        // 如果Redis中存在，则更新用户Redis数据
-        String userAccountKey = DigestUtils.md5DigestAsHex((SALT + userInfo.getUserAccount()).getBytes());
-        Set<String> tokenKeys = redisTemplate.keys(userAccountKey + "_*");
-        if (!tokenKeys.isEmpty()) {
-            String tokenKey = tokenKeys.iterator().next();
-            Map<String, Object> userMap = BeanUtil.beanToMap(userInfo);
-            redisTemplate.delete(tokenKey);
-            redisTemplate.opsForHash().putAll(tokenKey, userMap);
-
-
-            return true;
-        }
-        return false;
+        return true;
     }
 
     /**
      * 删除用户Redis数据
      *
-     * @param userId      用户id
-     * @param userAccount
+     * @param userId
      * @return
      */
-    public boolean deleteRedisUser(Long userId, String userAccount) {
-        // 查询用户信息
-        User user = userMapper.selectById(userId);
-        if (user != null) {
-            userAccount = user.getUserAccount();
-        }
+    public boolean deleteRedisUser(Long userId) {
+        String userKey = USER_ID_KEY_REDIS + userId;
 
-        // 如果Redis中存在，则更新用户Redis数据
-        String userAccountKey = DigestUtils.md5DigestAsHex((SALT + userAccount).getBytes());
-        Set<String> tokenKeys = redisTemplate.keys(userAccountKey + "_*");
-        if (!tokenKeys.isEmpty()) {
-            String tokenKey = tokenKeys.iterator().next();
-            redisTemplate.delete(tokenKey);
+        if(!redisTemplate.hasKey(userKey)) {
             return true;
         }
-        return false;
+
+        String token = (String) redisTemplate.opsForHash().get(userKey, "token");
+
+        // 从Redis中延迟删除token
+        redisTemplate.expire(token, DELETE_KEY_TIME, TimeUnit.SECONDS);
+        redisTemplate.expire(userKey, DELETE_KEY_TIME, TimeUnit.SECONDS);
+
+        return true;
     }
 
 }

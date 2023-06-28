@@ -7,11 +7,6 @@ package com.yingwu.project.constant;
  */
 public interface UserConstant {
 
-    /**
-     * 用户过期时间
-     */
-    long USER_EXPIRATION_TIME = 30;
-
     //  region 校验
 
     /**

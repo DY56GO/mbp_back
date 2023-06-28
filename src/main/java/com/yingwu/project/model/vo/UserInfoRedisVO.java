@@ -22,6 +22,11 @@ public class UserInfoRedisVO implements Serializable {
     private Long id;
 
     /**
+     * token
+     */
+    private String token;
+
+    /**
      * 用户名称
      */
     private String userName;
@@ -40,12 +45,6 @@ public class UserInfoRedisVO implements Serializable {
      * 性别
      */
     private Integer gender;
-
-    /**
-     * 创建时间
-     */
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", locale = "zh", timezone = "GMT+8")
-    private Date gmtCreate;
 
     /**
      * 用户角色列表

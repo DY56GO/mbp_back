@@ -1,6 +1,6 @@
 package com.yingwu.project.common;
 
-import com.yingwu.project.constant.CommonConstant;
+import com.yingwu.project.constant.OrderConstant;
 import lombok.Data;
 
 /**
@@ -29,5 +29,5 @@ public class PageRequest {
     /**
      * 排序顺序（默认升序）
      */
-    private String sortOrder = CommonConstant.SORT_ORDER_ASC;
+    private String sortOrder = OrderConstant.SORT_ORDER_ASC;
 }

@@ -26,14 +26,20 @@ public class MvcConfig implements WebMvcConfigurer {
     @Resource
     private RedisTemplate redisTemplate;
 
+    @Resource
+    private LoginInterceptor loginInterceptor;
+
+    @Resource
+    private SysInterfaceAuthInterceptor sysInterfaceAuthInterceptor;
+
     public void addInterceptors(InterceptorRegistry registry) {
         // 增加登录拦截器，并对不必要的请求路径排除拦截
-        registry.addInterceptor(new LoginInterceptor(redisTemplate))
+        registry.addInterceptor(loginInterceptor)
                 .excludePathPatterns(INTERCEPTOR_WHITELIST)
                 .order(1);
         if (powerConfig.isInterfaceAuth()) {
             // 增加系统接口拦截器，并对不必要的请求路径排除拦截
-            registry.addInterceptor(new SysInterfaceAuthInterceptor(redisTemplate))
+            registry.addInterceptor(sysInterfaceAuthInterceptor)
                     .excludePathPatterns(INTERCEPTOR_WHITELIST)
                     .order(2);
         }

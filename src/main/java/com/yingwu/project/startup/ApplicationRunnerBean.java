@@ -13,7 +13,8 @@ import org.springframework.util.StopWatch;
 import javax.annotation.Resource;
 import java.util.*;
 
-import static com.yingwu.project.constant.SysConstant.SYS_INTERFACE_AUTH_KEY_REDIS;
+import static com.yingwu.project.constant.RedisConstant.SYS_INTERFACE_AUTH_KEY_REDIS;
+
 
 /**
  * 系统启动加载
