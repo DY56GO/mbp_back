@@ -45,8 +45,8 @@ public class ApplicationRunnerBean implements ApplicationRunner {
             loadingSysInterfaceAuth();
         } else {
             // 判断之前的角色接口信息是否存在，存在则删除
-            Set<String> tokenKeys = redisTemplate.keys(SYS_INTERFACE_AUTH_KEY_REDIS);
-            if (!tokenKeys.isEmpty()) {
+            Boolean hasKey = redisTemplate.hasKey(SYS_INTERFACE_AUTH_KEY_REDIS);
+            if (hasKey) {
                 redisTemplate.delete(SYS_INTERFACE_AUTH_KEY_REDIS);
             }
         }
