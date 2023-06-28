@@ -54,7 +54,11 @@ public class SysInterfaceAuthInterceptor implements HandlerInterceptor {
         }
 
         // 1.获取系统鉴权数据
-        Map sysInterfaceAuthMap = redisTemplate.boundHashOps(SYS_INTERFACE_AUTH_KEY_REDIS).entries();
+        Map sysInterfaceAuthMap = redisTemplate.opsForHash().entries(SYS_INTERFACE_AUTH_KEY_REDIS);
+
+        if (sysInterfaceAuthMap.size() == 0) {
+
+        }
 
         // 2.获取用户角色信息
         String token = request.getHeader("token");
@@ -62,7 +66,7 @@ public class SysInterfaceAuthInterceptor implements HandlerInterceptor {
         Map userInfoMap = redisTemplate.opsForHash().entries(userKey);
 
         // 如果Redis中没有则去查询并重新写入Redis
-        if(userInfoMap.size() == 0) {
+        if (userInfoMap.size() == 0) {
             String userId = userKey.replaceAll(USER_ID_KEY_REDIS, "");
             UserInfoRedisVO userInfo = userService.createUserRedisData(Long.valueOf(userId));
             userInfo.setToken(token);

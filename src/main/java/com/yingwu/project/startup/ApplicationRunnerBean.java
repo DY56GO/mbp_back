@@ -3,6 +3,7 @@ package com.yingwu.project.startup;
 import com.yingwu.project.config.PowerConfig;
 import com.yingwu.project.mapper.RoleSysInterfaceMapper;
 import com.yingwu.project.model.vo.SysInterfaceRoleVO;
+import com.yingwu.project.service.SysInterfaceService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
@@ -29,7 +30,7 @@ public class ApplicationRunnerBean implements ApplicationRunner {
     private PowerConfig powerConfig;
 
     @Resource
-    private RoleSysInterfaceMapper roleSysInterfaceMapper;
+    private SysInterfaceService sysInterfaceService;
 
     @Resource
     private RedisTemplate redisTemplate;
@@ -61,25 +62,11 @@ public class ApplicationRunnerBean implements ApplicationRunner {
      * 加载系统接口鉴权数据
      */
     public void loadingSysInterfaceAuth() {
-        // 1.查询接口角色
-        List<SysInterfaceRoleVO> sysInterfaceRoleList = roleSysInterfaceMapper.getSysInterfaceRole();
 
-        // 2.构建存入Redis的数据
-        Map<String, Set<String>> sysInterfaceAuthMap = new HashMap<>(512);
-        for (SysInterfaceRoleVO sysInterfaceRole : sysInterfaceRoleList) {
-            String key = sysInterfaceRole.getInterfaceMethod() + ":" + sysInterfaceRole.getInterfaceUrl();
+        // 构建系统接口鉴权数据
+        Map<String, Set<String>> sysInterfaceAuthMap = sysInterfaceService.buildSysInterfaceAuthMap();
 
-            if (sysInterfaceAuthMap.containsKey(key)) {
-                Set<String> value = sysInterfaceAuthMap.get(key);
-                value.add(sysInterfaceRole.getRoleIdentity());
-            } else {
-                Set<String> value = new HashSet<>();
-                value.add(sysInterfaceRole.getRoleIdentity());
-                sysInterfaceAuthMap.put(key, value);
-            }
-        }
-
-        // 3.写入Redis中
+        // 写入Redis中
         redisTemplate.opsForHash().putAll(SYS_INTERFACE_AUTH_KEY_REDIS, sysInterfaceAuthMap);
     }
 }

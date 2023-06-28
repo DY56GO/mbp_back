@@ -3,6 +3,9 @@ package com.yingwu.project.service;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.yingwu.project.model.entity.SysInterface;
 
+import java.util.Map;
+import java.util.Set;
+
 /**
  * 系统接口服务
  *
@@ -23,5 +26,12 @@ public interface SysInterfaceService extends IService<SysInterface> {
      * @return
      */
     boolean updateSysInterfaceRedisAuthData();
+
+    /**
+     * 构建系统接口鉴权数据
+     *
+     * @return
+     */
+    public Map<String, Set<String>> buildSysInterfaceAuthMap();
 
 }

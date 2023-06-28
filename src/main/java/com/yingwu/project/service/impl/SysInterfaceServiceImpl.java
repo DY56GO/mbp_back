@@ -170,24 +170,8 @@ public class SysInterfaceServiceImpl extends ServiceImpl<SysInterfaceMapper, Sys
     public boolean updateSysInterfaceRedisAuthData() {
         // 加载角色接口信息到Redis中，用于系统接口鉴权
         if (powerConfig.isInterfaceAuth()) {
-            // 1.查询接口角色
-            List<SysInterfaceRoleVO> sysInterfaceRoleList = roleSysInterfaceMapper.getSysInterfaceRole();
-
-            // 2.构建存入Redis的数据
-            Map<String, Set<String>> sysInterfaceAuthMap = new HashMap<>(512);
-            for (SysInterfaceRoleVO sysInterfaceRole : sysInterfaceRoleList) {
-                String key = sysInterfaceRole.getInterfaceMethod() + ":" + sysInterfaceRole.getInterfaceUrl();
-
-                if (sysInterfaceAuthMap.containsKey(key)) {
-                    Set<String> value = sysInterfaceAuthMap.get(key);
-                    value.add(sysInterfaceRole.getRoleIdentity());
-                } else {
-                    Set<String> value = new HashSet<>();
-                    value.add(sysInterfaceRole.getRoleIdentity());
-                    sysInterfaceAuthMap.put(key, value);
-                }
-
-            }
+            // 构建系统接口鉴权数据
+            Map<String, Set<String>> sysInterfaceAuthMap = buildSysInterfaceAuthMap();
 
             // 3.更新系统接口鉴权Redis数据
             redisTemplate.delete(SYS_INTERFACE_AUTH_KEY_REDIS);
@@ -195,6 +179,33 @@ public class SysInterfaceServiceImpl extends ServiceImpl<SysInterfaceMapper, Sys
 
         }
         return true;
+    }
+
+    /**
+     * 构建系统接口鉴权数据
+     *
+     * @return
+     */
+    public Map<String, Set<String>> buildSysInterfaceAuthMap() {
+        // 1.查询接口角色
+        List<SysInterfaceRoleVO> sysInterfaceRoleList = roleSysInterfaceMapper.getSysInterfaceRole();
+
+        // 2.构建存入Redis的数据
+        Map<String, Set<String>> sysInterfaceAuthMap = new HashMap<>(512);
+        for (SysInterfaceRoleVO sysInterfaceRole : sysInterfaceRoleList) {
+            String key = sysInterfaceRole.getInterfaceMethod() + ":" + sysInterfaceRole.getInterfaceUrl();
+
+            if (sysInterfaceAuthMap.containsKey(key)) {
+                Set<String> value = sysInterfaceAuthMap.get(key);
+                value.add(sysInterfaceRole.getRoleIdentity());
+            } else {
+                Set<String> value = new HashSet<>();
+                value.add(sysInterfaceRole.getRoleIdentity());
+                sysInterfaceAuthMap.put(key, value);
+            }
+        }
+
+        return sysInterfaceAuthMap;
     }
 }
 

@@ -237,7 +237,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         Map userInfoMap = redisTemplate.opsForHash().entries(userKey);
 
         // 如果Redis中没有则去查询并重新写入Redis
-        if(userInfoMap.size() == 0) {
+        if (userInfoMap.size() == 0) {
             String userId = userKey.replaceAll(USER_ID_KEY_REDIS, "");
             UserInfoRedisVO userInfo = createUserRedisData(Long.valueOf(userId));
             userInfo.setToken(token);
@@ -484,7 +484,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     public boolean deleteRedisUser(Long userId) {
         String userKey = USER_ID_KEY_REDIS + userId;
 
-        if(!redisTemplate.hasKey(userKey)) {
+        if (!redisTemplate.hasKey(userKey)) {
             return true;
         }
 
