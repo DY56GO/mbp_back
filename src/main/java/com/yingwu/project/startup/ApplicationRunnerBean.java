@@ -41,15 +41,15 @@ public class ApplicationRunnerBean implements ApplicationRunner {
         StopWatch stopWatch = new StopWatch();
         stopWatch.start();
 
+        // 判断之前的角色接口信息是否存在，存在则删除
+        Boolean hasKey = redisTemplate.hasKey(SYS_INTERFACE_AUTH_KEY_REDIS);
+        if (hasKey) {
+            redisTemplate.delete(SYS_INTERFACE_AUTH_KEY_REDIS);
+        }
+
         // 加载角色接口信息到Redis中，用于系统接口鉴权
         if (powerConfig.isInterfaceAuth()) {
             loadingSysInterfaceAuth();
-        } else {
-            // 判断之前的角色接口信息是否存在，存在则删除
-            Boolean hasKey = redisTemplate.hasKey(SYS_INTERFACE_AUTH_KEY_REDIS);
-            if (hasKey) {
-                redisTemplate.delete(SYS_INTERFACE_AUTH_KEY_REDIS);
-            }
         }
 
         // 计时结束
