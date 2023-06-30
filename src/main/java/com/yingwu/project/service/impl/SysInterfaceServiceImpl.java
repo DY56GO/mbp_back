@@ -173,7 +173,7 @@ public class SysInterfaceServiceImpl extends ServiceImpl<SysInterfaceMapper, Sys
             // 构建系统接口鉴权数据
             Map<String, Set<String>> sysInterfaceAuthMap = buildSysInterfaceAuthMap();
 
-            // 3.更新系统接口鉴权Redis数据
+            // 更新系统接口鉴权Redis数据
             redisTemplate.delete(SYS_INTERFACE_AUTH_KEY_REDIS);
             redisTemplate.opsForHash().putAll(SYS_INTERFACE_AUTH_KEY_REDIS, sysInterfaceAuthMap);
 
