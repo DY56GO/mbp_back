@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yingwu.project.mapper.TradeMapper">
+
+    <resultMap id="BaseResultMap" type="com.yingwu.project.model.entity.Trade">
+            <id property="id" column="id" jdbcType="BIGINT"/>
+            <result property="tsCode" column="ts_code" jdbcType="VARCHAR"/>
+            <result property="tradeDate" column="trade_date" jdbcType="TIMESTAMP"/>
+            <result property="closePrice" column="close_price" jdbcType="DECIMAL"/>
+            <result property="openPrice" column="open_price" jdbcType="DECIMAL"/>
+            <result property="highPrice" column="high_price" jdbcType="DECIMAL"/>
+            <result property="lowPrice" column="low_price" jdbcType="DECIMAL"/>
+            <result property="priceAvg" column="price_avg" jdbcType="DECIMAL"/>
+            <result property="pipChange" column="pip_change" jdbcType="VARCHAR"/>
+            <result property="pctChange" column="pct_change" jdbcType="DECIMAL"/>
+            <result property="vol" column="vol" jdbcType="INTEGER"/>
+            <result property="amount" column="amount" jdbcType="BIGINT"/>
+            <result property="gmtCreate" column="gmt_create" jdbcType="TIMESTAMP"/>
+            <result property="gmtModified" column="gmt_modified" jdbcType="TIMESTAMP"/>
+            <result property="del" column="is_delete" jdbcType="TINYINT"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id,ts_code,trade_date,
+        close_price,open_price,high_price,
+        low_price,price_avg,pip_change,
+        pct_change,vol,amount,
+        gmt_create,gmt_modified,is_delete
+    </sql>
+</mapper>
