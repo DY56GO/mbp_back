@@ -76,7 +76,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
      * @param user
      * @return 新用户 id
      */
-
+    @Override
     public long userRegister(User user) {
         String userAccount = user.getUserAccount();
         String userPassword = user.getUserPassword();
@@ -109,7 +109,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
      *
      * @param user
      */
-
+    @Override
     public void validUserRegisterInfo(User user) {
         if (user == null) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR);
@@ -150,7 +150,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
      * @param request
      * @return 生成的token
      */
-
+    @Override
     public String userLogin(User user, HttpServletRequest request) {
         // 1.加密
         String userPassword = encryptPassword(user.getUserPassword());
@@ -204,6 +204,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
      *
      * @param user
      */
+    @Override
     public void validUserLoginInfo(User user) {
         if (user == null) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR);
@@ -229,7 +230,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
      * @param request
      * @return 用户信息
      */
-
+    @Override
     public UserInfoRedisVO getLoginUser(HttpServletRequest request) {
         String token = request.getHeader("token");
         // 从Redis中获取用户数据
@@ -260,7 +261,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
      * @param request
      * @return
      */
-
+    @Override
     public boolean userLogout(HttpServletRequest request) {
         String token = request.getHeader("token");
         // 从Redis中延迟删除token
@@ -275,6 +276,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
      *
      * @param user
      */
+    @Override
     public void validAddUserInfo(User user) {
         if (user == null) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR);
@@ -314,7 +316,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
      *
      * @param user
      */
-
+    @Override
     public void validUserUpdateInfo(User user) {
         if (user == null) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR);
@@ -346,7 +348,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
      * @param userPasswordUpdateRequest
      * @param userId
      */
-
+    @Override
     public void validUserPasswordUpdateInfo(UserPasswordUpdateRequest userPasswordUpdateRequest, Long userId) {
         if (userPasswordUpdateRequest == null) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR);
@@ -390,7 +392,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
      * @param userId
      * @return 用户信息
      */
-
+    @Override
     public List<UserRoleVO> getUserInfoById(Long userId) {
 
         // 数据脱敏和添加权限信息
@@ -435,6 +437,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
      * @param userId
      * @return
      */
+    @Override
     public UserInfoRedisVO createUserRedisData(Long userId) {
         // 1.获取用户基本信息
         User hasUser = userMapper.selectById(userId);
@@ -468,6 +471,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
      * @param userId
      * @return
      */
+    @Override
     public boolean updateRedisUser(Long userId) {
         String userKey = USER_ID_KEY_REDIS + userId;
         redisTemplate.expire(userKey, DELETE_KEY_TIME, TimeUnit.SECONDS);
@@ -481,6 +485,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
      * @param userId
      * @return
      */
+    @Override
     public boolean deleteRedisUser(Long userId) {
         String userKey = USER_ID_KEY_REDIS + userId;
 

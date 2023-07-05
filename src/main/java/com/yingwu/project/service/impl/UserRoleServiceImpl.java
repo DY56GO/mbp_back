@@ -31,6 +31,7 @@ public class UserRoleServiceImpl extends ServiceImpl<UserRoleMapper, UserRole> i
      * @param userRoleUpdateRequest
      * @return
      */
+    @Override
     @Transactional(rollbackFor = Exception.class)
     public boolean updateUserRole(UserRoleUpdateRequest userRoleUpdateRequest) {
         // 校验

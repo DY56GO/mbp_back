@@ -23,6 +23,7 @@ public class TradeServiceImpl extends ServiceImpl<TradeMapper, Trade> implements
      *
      * @param trade
      */
+    @Override
     public void validTradeInfo(Trade trade) {
         if (trade == null) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR);

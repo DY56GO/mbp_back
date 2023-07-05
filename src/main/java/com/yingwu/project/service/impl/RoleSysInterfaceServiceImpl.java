@@ -32,6 +32,7 @@ public class RoleSysInterfaceServiceImpl extends ServiceImpl<RoleSysInterfaceMap
      * @param roleSysInterfaceUpdateRequest
      * @return
      */
+    @Override
     @Transactional(rollbackFor = Exception.class)
     public boolean updateRoleSysInterface(RoleSysInterfaceUpdateRequest roleSysInterfaceUpdateRequest) {
         // 1.校验

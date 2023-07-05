@@ -50,6 +50,7 @@ public class SysInterfaceServiceImpl extends ServiceImpl<SysInterfaceMapper, Sys
      *
      * @return
      */
+    @Override
     @Transactional(rollbackFor = Exception.class)
     public boolean updateInterface() {
         // 1.扫描获取当前接口列表
@@ -167,6 +168,7 @@ public class SysInterfaceServiceImpl extends ServiceImpl<SysInterfaceMapper, Sys
      *
      * @return
      */
+    @Override
     public boolean updateSysInterfaceRedisAuthData() {
         // 加载角色接口信息到Redis中，用于系统接口鉴权
         if (powerConfig.isInterfaceAuth()) {
@@ -186,6 +188,7 @@ public class SysInterfaceServiceImpl extends ServiceImpl<SysInterfaceMapper, Sys
      *
      * @return
      */
+    @Override
     public Map<String, Set<String>> buildSysInterfaceAuthMap() {
         // 1.查询接口角色
         List<SysInterfaceRoleVO> sysInterfaceRoleList = roleSysInterfaceMapper.getSysInterfaceRole();

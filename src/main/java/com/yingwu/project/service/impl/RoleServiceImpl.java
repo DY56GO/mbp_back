@@ -49,7 +49,7 @@ public class RoleServiceImpl extends ServiceImpl<RoleMapper, Role> implements Ro
      *
      * @param role
      */
-
+    @Override
     public void validRoleInfo(Role role) {
         if (role == null) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR);
@@ -80,6 +80,7 @@ public class RoleServiceImpl extends ServiceImpl<RoleMapper, Role> implements Ro
      * @param role
      * @return
      */
+    @Override
     public boolean updateRole(Role role) {
 
         boolean result = updateById(role);
@@ -98,6 +99,7 @@ public class RoleServiceImpl extends ServiceImpl<RoleMapper, Role> implements Ro
      * @param roleId
      * @return
      */
+    @Override
     @Transactional(rollbackFor = Exception.class)
     public boolean deleteRole(Long roleId) {
         Object savePoint = TransactionAspectSupport.currentTransactionStatus().createSavepoint();
@@ -139,7 +141,7 @@ public class RoleServiceImpl extends ServiceImpl<RoleMapper, Role> implements Ro
      * @param roleId
      * @return
      */
-
+    @Override
     public List<RoleMenuVO> getRoleMenuByRoleId(Long roleId, boolean notParent) {
         List<RoleMenuVO> RoleMenuList = menuMapper.getRoleMenuByRoleId(roleId, notParent);
         return RoleMenuList;
@@ -151,7 +153,7 @@ public class RoleServiceImpl extends ServiceImpl<RoleMapper, Role> implements Ro
      * @param roleId
      * @return
      */
-
+    @Override
     public List<RoleSysInterfaceVO> getRoleSysInterfaceByRoleId(Long roleId) {
         List<RoleSysInterfaceVO> RoleSysInterfaceList = sysInterfaceMapper.getRoleSysInterfaceByRoleId(roleId);
         return RoleSysInterfaceList;

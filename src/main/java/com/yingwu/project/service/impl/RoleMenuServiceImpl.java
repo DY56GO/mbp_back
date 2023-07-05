@@ -27,6 +27,7 @@ public class RoleMenuServiceImpl extends ServiceImpl<RoleMenuMapper, RoleMenu> i
      * @param roleMenuUpdateRequest
      * @return
      */
+    @Override
     @Transactional(rollbackFor = Exception.class)
     public boolean updateRoleMenu(RoleMenuUpdateRequest roleMenuUpdateRequest) {
         // 校验
