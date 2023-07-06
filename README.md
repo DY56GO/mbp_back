@@ -39,7 +39,8 @@ mbp是一个管理系统的基础项目模板，其主要作用是提供管理�
 - Redis 6.05
 - Lombok 注解
 - Swagger + Knife4j 3.0.3 接口文档
-- hutool 5.8.16 工具类库
+- HuTool 5.8.16 工具类库
+- EasyExcel 3.3.2 Excel工具
 
 
 

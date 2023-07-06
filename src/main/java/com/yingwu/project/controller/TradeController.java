@@ -1,6 +1,10 @@
 package com.yingwu.project.controller;
 
 import cn.hutool.core.bean.BeanUtil;
+import com.alibaba.excel.EasyExcel;
+import com.alibaba.excel.ExcelWriter;
+import com.alibaba.excel.write.metadata.WriteSheet;
+import com.alibaba.excel.write.style.column.LongestMatchColumnWidthStyleStrategy;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.yingwu.project.common.BaseResponse;
@@ -8,17 +12,29 @@ import com.yingwu.project.common.DeleteRequest;
 import com.yingwu.project.common.ErrorCode;
 import com.yingwu.project.common.ResultUtils;
 import com.yingwu.project.exception.BusinessException;
+import com.yingwu.project.exception.ThrowUtils;
 import com.yingwu.project.model.dto.trade.TradeAddRequest;
 import com.yingwu.project.model.dto.trade.TradeQueryRequest;
 import com.yingwu.project.model.dto.trade.TradeUpdateRequest;
 import com.yingwu.project.model.entity.Trade;
+import com.yingwu.project.model.excel.TradeExcl;
 import com.yingwu.project.service.TradeService;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.BeanUtils;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.net.URLEncoder;
+import java.util.ArrayList;
 import java.util.List;
+
+import static com.yingwu.project.constant.SysConstant.MAX_PAGE_SIZE;
 
 /**
  * 交易接口
@@ -110,18 +126,9 @@ public class TradeController {
      */
     @GetMapping(value = "/list", name = "获取交易列表")
     public BaseResponse<List<Trade>> listTrade(TradeQueryRequest tradeQueryRequest, HttpServletRequest request) {
-        Trade tradeQuery = new Trade();
-        if (tradeQueryRequest != null) {
-            BeanUtil.copyProperties(tradeQueryRequest, tradeQuery);
-        }
-        String tsCode = tradeQuery.getTsCode();
-        tradeQuery.setTsCode(null);
-        QueryWrapper<Trade> queryWrapper = new QueryWrapper<>(tradeQuery);
-        queryWrapper.like(StringUtils.isNotBlank(tsCode), "ts_code", tsCode);
+        QueryWrapper<Trade> queryWrapper = buildTradeQueryWrapper(tradeQueryRequest);
         queryWrapper.orderByDesc("trade_date");
-
         List<Trade> tradeList = tradeService.list(queryWrapper);
-
         return ResultUtils.success(tradeList);
     }
 
@@ -136,17 +143,87 @@ public class TradeController {
     public BaseResponse<Page<Trade>> listTradeByPage(TradeQueryRequest tradeQueryRequest, HttpServletRequest request) {
         long current = 1;
         long size = 10;
+        if (tradeQueryRequest != null) {
+            current = tradeQueryRequest.getCurrent();
+            size = tradeQueryRequest.getPageSize();
+            // 限制爬虫
+            ThrowUtils.throwIf(size > MAX_PAGE_SIZE, ErrorCode.PARAMS_ERROR);
+        }
+        QueryWrapper<Trade> queryWrapper = buildTradeQueryWrapper(tradeQueryRequest);
+        queryWrapper.orderByDesc("trade_date");
+
+        Page<Trade> tradeListPage = tradeService.page(new Page<>(current, size), queryWrapper);
+
+        return ResultUtils.success(tradeListPage);
+    }
+
+    // endregion
+
+    /**
+     * 交易数据导出
+     *
+     * @param tradeQueryRequest
+     * @param request
+     */
+    @GetMapping(value = "/excel", name = "交易数据导出")
+    public void TradeExcelExport(TradeQueryRequest tradeQueryRequest, HttpServletRequest request) throws IOException {
+
+        ServletRequestAttributes requestAttributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
+        HttpServletResponse response = requestAttributes.getResponse();
+        OutputStream outputStream = response.getOutputStream();
+
+        // 如要循环，请放到循环外，否则会刷新流
+        ExcelWriter excelWriter = EasyExcel.write(outputStream).build();
+
+        QueryWrapper<Trade> queryWrapper = buildTradeQueryWrapper(tradeQueryRequest);
+        long tradeCount = tradeService.count(queryWrapper);
+        long pageCount = tradeCount / MAX_PAGE_SIZE;
+        if (tradeCount % MAX_PAGE_SIZE != 0) {
+            pageCount = pageCount + 1;
+        }
+
+        for(long current = 1; current<= pageCount; current++) {
+            Page<Trade> tradeListPage = tradeService.page(new Page<>(current, MAX_PAGE_SIZE), queryWrapper);
+            List<Trade> tradeList = tradeListPage.getRecords();
+            List<TradeExcl> TradeExclList = new ArrayList<>();
+            for (Trade trade : tradeList) {
+                TradeExcl tradeExcl = new TradeExcl();
+                BeanUtils.copyProperties(trade, tradeExcl);
+                TradeExclList.add(tradeExcl);
+            }
+            WriteSheet writeSheet = EasyExcel.writerSheet(0, "sheet").head(TradeExcl.class).registerWriteHandler(new LongestMatchColumnWidthStyleStrategy()).build();
+            // 写数据
+            excelWriter.write(TradeExclList, writeSheet);
+        }
+        response.setContentType("application/octet-stream");
+        response.setCharacterEncoding("utf-8");
+        // 这里URLEncoder.encode可以防止浏览器端导出excel文件名中文乱码 当然和easyexcel没有关系
+        String fileName = URLEncoder.encode("交易数据导出", "UTF-8").replaceAll("\\+", "%20");
+        response.setHeader("Content-disposition", "attachment;filename*=utf-8''" + fileName + ".xlsx");
+        excelWriter.finish();
+        outputStream.flush();
+        if (outputStream != null) {
+            outputStream.close();
+        }
+    }
+
+    /**
+     * 构建交易查询条件
+     *
+     * @param tradeQueryRequest
+     * @return
+     */
+    private QueryWrapper<Trade> buildTradeQueryWrapper(TradeQueryRequest tradeQueryRequest) {
         Trade tradeQuery = new Trade();
         if (tradeQueryRequest != null) {
             BeanUtil.copyProperties(tradeQueryRequest, tradeQuery);
-            current = tradeQueryRequest.getCurrent();
-            size = tradeQueryRequest.getPageSize();
         }
         String tsCode = tradeQuery.getTsCode();
         tradeQuery.setTsCode(null);
 
         QueryWrapper<Trade> queryWrapper = new QueryWrapper<>(tradeQuery);
         queryWrapper.like(StringUtils.isNotBlank(tsCode), "ts_code", tsCode);
+
         if (tradeQueryRequest.getStartTradeDate() != null) {
             queryWrapper.ge("trade_date", tradeQueryRequest.getStartTradeDate());
         }
@@ -154,11 +231,8 @@ public class TradeController {
             queryWrapper.le("trade_date", tradeQueryRequest.getEndTradeDate());
         }
         queryWrapper.orderByDesc("trade_date");
-        Page<Trade> tradeListPage = tradeService.page(new Page<>(current, size), queryWrapper);
 
-        return ResultUtils.success(tradeListPage);
+        return queryWrapper;
     }
-
-    // endregion
 
 }

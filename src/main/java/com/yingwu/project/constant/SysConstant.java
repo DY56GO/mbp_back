@@ -25,4 +25,8 @@ public interface SysConstant {
         add("/doc.html");
     }};
 
+    String RESOURCES_PATH = "src/main/resources/";
+
+    long MAX_PAGE_SIZE = 1000;
+
 }
