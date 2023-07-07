@@ -30,6 +30,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
@@ -166,11 +167,16 @@ public class TradeController {
      * @param request
      */
     @GetMapping(value = "/excel", name = "交易数据导出")
-    public void TradeExcelExport(TradeQueryRequest tradeQueryRequest, HttpServletRequest request) throws IOException {
+    public void TradeExcelExport(TradeQueryRequest tradeQueryRequest, HttpServletRequest request){
 
         ServletRequestAttributes requestAttributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
         HttpServletResponse response = requestAttributes.getResponse();
-        OutputStream outputStream = response.getOutputStream();
+        OutputStream outputStream = null;
+        try {
+            outputStream = response.getOutputStream();
+        } catch (IOException e) {
+            throw new BusinessException(ErrorCode.OPERATION_ERROR);
+        }
 
         // 如要循环，请放到循环外，否则会刷新流
         ExcelWriter excelWriter = EasyExcel.write(outputStream).build();
@@ -198,12 +204,21 @@ public class TradeController {
         response.setContentType("application/octet-stream");
         response.setCharacterEncoding("utf-8");
         // 这里URLEncoder.encode可以防止浏览器端导出excel文件名中文乱码 当然和easyexcel没有关系
-        String fileName = URLEncoder.encode("交易数据导出", "UTF-8").replaceAll("\\+", "%20");
+        String fileName = null;
+        try {
+            fileName = URLEncoder.encode("交易数据导出", "UTF-8").replaceAll("\\+", "%20");
+        } catch (UnsupportedEncodingException e) {
+            throw new BusinessException(ErrorCode.OPERATION_ERROR);
+        }
         response.setHeader("Content-disposition", "attachment;filename*=utf-8''" + fileName + ".xlsx");
         excelWriter.finish();
-        outputStream.flush();
-        if (outputStream != null) {
-            outputStream.close();
+        try {
+            outputStream.flush();
+            if (outputStream != null) {
+                outputStream.close();
+            }
+        } catch (IOException e) {
+            throw new BusinessException(ErrorCode.OPERATION_ERROR);
         }
     }
 
