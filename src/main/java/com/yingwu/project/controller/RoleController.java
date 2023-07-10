@@ -177,8 +177,8 @@ public class RoleController {
         if (roleMenuQueryRequest == null) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR);
         }
-        List<RoleMenuVO> RoleMenuList = roleService.getRoleMenuByRoleId(roleMenuQueryRequest.getId(), true);
-        return ResultUtils.success(RoleMenuList);
+        List<RoleMenuVO> roleMenuList = roleService.getRoleMenuByRoleId(roleMenuQueryRequest.getId(), true);
+        return ResultUtils.success(roleMenuList);
     }
 
     /**

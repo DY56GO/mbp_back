@@ -143,8 +143,8 @@ public class RoleServiceImpl extends ServiceImpl<RoleMapper, Role> implements Ro
      */
     @Override
     public List<RoleMenuVO> getRoleMenuByRoleId(Long roleId, boolean notParent) {
-        List<RoleMenuVO> RoleMenuList = menuMapper.getRoleMenuByRoleId(roleId, notParent);
-        return RoleMenuList;
+        List<RoleMenuVO> roleMenuList = menuMapper.getRoleMenuByRoleId(roleId, notParent);
+        return roleMenuList;
     }
 
     /**
@@ -155,8 +155,8 @@ public class RoleServiceImpl extends ServiceImpl<RoleMapper, Role> implements Ro
      */
     @Override
     public List<RoleSysInterfaceVO> getRoleSysInterfaceByRoleId(Long roleId) {
-        List<RoleSysInterfaceVO> RoleSysInterfaceList = sysInterfaceMapper.getRoleSysInterfaceByRoleId(roleId);
-        return RoleSysInterfaceList;
+        List<RoleSysInterfaceVO> roleSysInterfaceList = sysInterfaceMapper.getRoleSysInterfaceByRoleId(roleId);
+        return roleSysInterfaceList;
     }
 
 }

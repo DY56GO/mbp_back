@@ -1,4 +1,4 @@
-package com.yingwu.project.model.dto.sysInterface;
+package com.yingwu.project.model.dto.sysinterface;
 
 import lombok.Data;
 

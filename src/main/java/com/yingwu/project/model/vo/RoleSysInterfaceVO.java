@@ -20,12 +20,12 @@ public class RoleSysInterfaceVO implements Serializable {
     /**
      * 系统接口名称
      */
-    private String InterfaceName;
+    private String interfaceName;
 
     /**
      * 系统接口url
      */
-    private String InterfaceUrl;
+    private String interfaceUrl;
 
     private static final long serialVersionUID = 1L;
 
