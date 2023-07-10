@@ -13,9 +13,11 @@ import com.yingwu.project.common.ErrorCode;
 import com.yingwu.project.common.ResultUtils;
 import com.yingwu.project.exception.BusinessException;
 import com.yingwu.project.exception.ThrowUtils;
+import com.yingwu.project.model.dto.menu.MenuQueryRequest;
 import com.yingwu.project.model.dto.trade.TradeAddRequest;
 import com.yingwu.project.model.dto.trade.TradeQueryRequest;
 import com.yingwu.project.model.dto.trade.TradeUpdateRequest;
+import com.yingwu.project.model.entity.Menu;
 import com.yingwu.project.model.entity.Trade;
 import com.yingwu.project.model.excel.TradeExcl;
 import com.yingwu.project.service.TradeService;
@@ -35,6 +37,7 @@ import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.yingwu.project.constant.OrderConstant.SORT_ORDER_ASC;
 import static com.yingwu.project.constant.SysConstant.MAX_PAGE_SIZE;
 
 /**
@@ -191,15 +194,15 @@ public class TradeController {
         for(long current = 1; current<= pageCount; current++) {
             Page<Trade> tradeListPage = tradeService.page(new Page<>(current, MAX_PAGE_SIZE), queryWrapper);
             List<Trade> tradeList = tradeListPage.getRecords();
-            List<TradeExcl> TradeExclList = new ArrayList<>();
+            List<TradeExcl> tradeExclList = new ArrayList<>();
             for (Trade trade : tradeList) {
                 TradeExcl tradeExcl = new TradeExcl();
                 BeanUtils.copyProperties(trade, tradeExcl);
-                TradeExclList.add(tradeExcl);
+                tradeExclList.add(tradeExcl);
             }
             WriteSheet writeSheet = EasyExcel.writerSheet(0, "sheet").head(TradeExcl.class).registerWriteHandler(new LongestMatchColumnWidthStyleStrategy()).build();
             // 写数据
-            excelWriter.write(TradeExclList, writeSheet);
+            excelWriter.write(tradeExclList, writeSheet);
         }
         response.setContentType("application/octet-stream");
         response.setCharacterEncoding("utf-8");
@@ -245,7 +248,27 @@ public class TradeController {
         if (tradeQueryRequest.getEndTradeDate() != null) {
             queryWrapper.le("trade_date", tradeQueryRequest.getEndTradeDate());
         }
-        queryWrapper.orderByDesc("trade_date");
+
+        // 设置排序
+        setTradeQueryOrder(tradeQueryRequest, queryWrapper);
+
+        return queryWrapper;
+    }
+
+    /**
+     * 设置交易查询排序
+     *
+     * @param tradeQueryRequest
+     * @param queryWrapper
+     */
+    private QueryWrapper<Trade> setTradeQueryOrder(TradeQueryRequest tradeQueryRequest, QueryWrapper<Trade> queryWrapper) {
+        List<String> orderList = new ArrayList<>();
+        orderList.add("trade_date");
+        if(tradeQueryRequest.getSortOrder().equals(SORT_ORDER_ASC)){
+            queryWrapper.orderByAsc(orderList);
+        }else{
+            queryWrapper.orderByDesc(orderList);
+        }
 
         return queryWrapper;
     }

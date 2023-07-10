@@ -19,8 +19,10 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
+import java.util.ArrayList;
 import java.util.List;
 
+import static com.yingwu.project.constant.OrderConstant.SORT_ORDER_ASC;
 import static com.yingwu.project.util.Utils.buildMenuTree;
 
 
@@ -121,7 +123,9 @@ public class MenuController {
         menuQuery.setMenuTitle(null);
         QueryWrapper<Menu> queryWrapper = new QueryWrapper<>(menuQuery);
         queryWrapper.like(StringUtils.isNotBlank(menuTitle), "menu_title", menuTitle);
-        queryWrapper.orderByAsc("parent_id");
+
+        // 设置排序
+        setMenuQueryOrder(menuQueryRequest, queryWrapper);
 
         List<Menu> menuList = menuService.list(queryWrapper);
         List<Tree<String>> menuTree = buildMenuTree(menuList);
@@ -150,7 +154,10 @@ public class MenuController {
         menuQuery.setMenuTitle(null);
         QueryWrapper<Menu> queryWrapper = new QueryWrapper<>(menuQuery);
         queryWrapper.like(org.apache.commons.lang3.StringUtils.isNotBlank(menuTitle), "menu_title", menuTitle);
-        queryWrapper.orderByAsc("parent_id");
+
+        // 设置排序
+        setMenuQueryOrder(menuQueryRequest, queryWrapper);
+
         Page<Menu> menuListPage = menuService.page(new Page<>(current, size), queryWrapper);
 
         List<Menu> menuList = menuListPage.getRecords();
@@ -164,4 +171,22 @@ public class MenuController {
     }
 
     // endregion
+
+    /**
+     * 设置查询菜单排序
+     *
+     * @param menuQueryRequest
+     * @param queryWrapper
+     */
+    private QueryWrapper<Menu> setMenuQueryOrder(MenuQueryRequest menuQueryRequest, QueryWrapper<Menu> queryWrapper) {
+        List<String> orderList = new ArrayList<>();
+        orderList.add("parent_id");
+        if(menuQueryRequest.getSortOrder().equals(SORT_ORDER_ASC)){
+            queryWrapper.orderByAsc(orderList);
+        }else{
+            queryWrapper.orderByDesc(orderList);
+        }
+
+        return queryWrapper;
+    }
 }

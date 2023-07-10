@@ -8,8 +8,8 @@ import com.yingwu.project.common.BaseResponse;
 import com.yingwu.project.common.ErrorCode;
 import com.yingwu.project.common.ResultUtils;
 import com.yingwu.project.exception.BusinessException;
-import com.yingwu.project.model.dto.sysInterface.SysInterfaceQueryRequest;
-import com.yingwu.project.model.dto.sysInterface.SysInterfaceUpdateRequest;
+import com.yingwu.project.model.dto.sysinterface.SysInterfaceQueryRequest;
+import com.yingwu.project.model.dto.sysinterface.SysInterfaceUpdateRequest;
 import com.yingwu.project.model.entity.SysInterface;
 import com.yingwu.project.service.SysInterfaceService;
 import org.springframework.beans.BeanUtils;
@@ -17,7 +17,10 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
+import java.util.ArrayList;
 import java.util.List;
+
+import static com.yingwu.project.constant.OrderConstant.SORT_ORDER_ASC;
 
 
 /**
@@ -90,7 +93,9 @@ public class SysInterfaceController {
         sysInterfaceQuery.setInterfaceName(null);
         QueryWrapper<SysInterface> queryWrapper = new QueryWrapper<>(sysInterfaceQuery);
         queryWrapper.like(StringUtils.isNotBlank(sysInterfaceName), "interface_name", sysInterfaceName);
-        queryWrapper.orderByAsc("interface_url", "interface_method");
+
+        // 设置排序
+        setSysInterQueryfaceOrder(sysInterfaceQueryRequest, queryWrapper);
 
         List<SysInterface> sysInterfaceList = sysInterfaceService.list(queryWrapper);
 
@@ -118,7 +123,9 @@ public class SysInterfaceController {
         sysInterfaceQuery.setInterfaceName(null);
         QueryWrapper<SysInterface> queryWrapper = new QueryWrapper<>(sysInterfaceQuery);
         queryWrapper.like(org.apache.commons.lang3.StringUtils.isNotBlank(interfaceName), "interface_name", interfaceName);
-        queryWrapper.orderByAsc("interface_url", "interface_method");
+
+        // 设置排序
+        setSysInterQueryfaceOrder(sysInterfaceQueryRequest, queryWrapper);
 
         Page<SysInterface> sysInterfaceListPage = sysInterfaceService.page(new Page<>(current, size), queryWrapper);
 
@@ -126,4 +133,23 @@ public class SysInterfaceController {
     }
 
     // endregion
+
+    /**
+     * 设置查询系统接口排序
+     *
+     * @param sysInterfaceQueryRequest
+     * @param queryWrapper
+     */
+    private QueryWrapper<SysInterface> setSysInterQueryfaceOrder(SysInterfaceQueryRequest sysInterfaceQueryRequest, QueryWrapper<SysInterface> queryWrapper) {
+        List<String> orderList = new ArrayList<>();
+        orderList.add("interface_url");
+        orderList.add("interface_method");
+        if(sysInterfaceQueryRequest.getSortOrder().equals(SORT_ORDER_ASC)){
+            queryWrapper.orderByAsc(orderList);
+        }else{
+            queryWrapper.orderByDesc(orderList);
+        }
+
+        return queryWrapper;
+    }
 }
