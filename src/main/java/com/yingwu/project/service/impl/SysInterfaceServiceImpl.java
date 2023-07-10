@@ -58,7 +58,7 @@ public class SysInterfaceServiceImpl extends ServiceImpl<SysInterfaceMapper, Sys
         Map<RequestMappingInfo, HandlerMethod> handlerMethods = mapping.getHandlerMethods();
 
         // 生成用于比较的 现接口Set Key: GET,/user/list,用户列表
-        Set<String> nowInterfaceSet = new HashSet<>();
+        Set<String> nowInterfaceSet = new HashSet<>(512);
         // 生成用于比较的 现接口Set Key: GET,/user/list
         Set<String> nowInterfaceIdSet = new HashSet<>(512);
 
@@ -96,48 +96,12 @@ public class SysInterfaceServiceImpl extends ServiceImpl<SysInterfaceMapper, Sys
             databaseInterfaceIdMap.put(interfaceMethod + ":" + interfaceUrl, sysInterface.getId());
         }
 
-        // 3.比较当前接口列表和数据库接口列表生成新增列表和删除列表
-        Set<String> addInterfaceSet = new HashSet<>();
-        Set<String> deleteInterfaceSet = new HashSet<>();
-        List<SysInterface> addInterfaceList = new ArrayList<>();
-        List<Long> deleteInterfaceList = new ArrayList<>();
+        // 3.生成新增列表和删除列表
+        // 构建新增列表
+        List<SysInterface> addInterfaceList = buildAddInterfaceList(nowInterfaceSet, databaseInterfaceSet, databaseInterfaceIdMap);
 
-        // 获取要新增和修改的接口
-        addInterfaceSet.addAll(nowInterfaceSet);
-        addInterfaceSet.removeAll(databaseInterfaceSet);
-
-        // 获取要删除的接口（内含要更新的接口）
-        deleteInterfaceSet.addAll(databaseInterfaceSet);
-        deleteInterfaceSet.removeAll(nowInterfaceSet);
-
-        // 生成新增和修改的list
-        for (String methodAndUrl : addInterfaceSet) {
-            String[] methodAndUrlArr = methodAndUrl.split(":");
-            SysInterface sysInterface = new SysInterface();
-
-            // 如果在数据库列表中存在相同的接口，则对接口名称进行更新（添加id）
-            Long interfaceId = databaseInterfaceIdMap.get(methodAndUrlArr[0] + ":" + methodAndUrlArr[1]);
-            if (interfaceId != null) {
-                sysInterface.setId(interfaceId);
-            }
-            sysInterface.setInterfaceMethod(methodAndUrlArr[0]);
-            sysInterface.setInterfaceUrl(methodAndUrlArr[1]);
-            sysInterface.setInterfaceName(methodAndUrlArr[2]);
-            addInterfaceList.add(sysInterface);
-        }
-
-        // 生成删除的list
-        for (SysInterface sysInterface : databaseInterfaceList) {
-            String interfaceMethod = sysInterface.getInterfaceMethod();
-            String interfaceUrl = sysInterface.getInterfaceUrl();
-            String interfaceName = sysInterface.getInterfaceName();
-            String interfaceKey = interfaceMethod + ":" + interfaceUrl + ":" + interfaceName;
-
-            // 如果在数据库列表中存在相同的接口，则不加入删除list
-            if (deleteInterfaceSet.contains(interfaceKey) && !nowInterfaceIdSet.contains(interfaceMethod + ":" + interfaceUrl)) {
-                deleteInterfaceList.add(sysInterface.getId());
-            }
-        }
+        // 构建删除列表
+        List<Long> deleteInterfaceList = buildDeleteInterfaceList(nowInterfaceSet, databaseInterfaceSet, databaseInterfaceList, nowInterfaceIdSet);
 
         Object savePoint = TransactionAspectSupport.currentTransactionStatus().createSavepoint();
         try {
@@ -209,6 +173,73 @@ public class SysInterfaceServiceImpl extends ServiceImpl<SysInterfaceMapper, Sys
         }
 
         return sysInterfaceAuthMap;
+    }
+
+    /**
+     * 构建新增列表
+     *
+     * @param nowInterfaceSet
+     * @param databaseInterfaceSet
+     */
+    private List<SysInterface> buildAddInterfaceList(Set<String> nowInterfaceSet, Set<String> databaseInterfaceSet, Map<String, Long> databaseInterfaceIdMap) {
+        // 比较当前接口列表和数据库接口列表
+        Set<String> addInterfaceSet = new HashSet<>();
+        List<SysInterface> addInterfaceList = new ArrayList<>();
+        // 获取要新增和修改的接口
+        addInterfaceSet.addAll(nowInterfaceSet);
+        addInterfaceSet.removeAll(databaseInterfaceSet);
+
+        // 生成新增和修改的list
+        for (String methodAndUrl : addInterfaceSet) {
+            String[] methodAndUrlArr = methodAndUrl.split(":");
+            SysInterface sysInterface = new SysInterface();
+
+            // 如果在数据库列表中存在相同的接口，则对接口名称进行更新（添加id）
+            Long interfaceId = databaseInterfaceIdMap.get(methodAndUrlArr[0] + ":" + methodAndUrlArr[1]);
+            if (interfaceId != null) {
+                sysInterface.setId(interfaceId);
+            }
+            sysInterface.setInterfaceMethod(methodAndUrlArr[0]);
+            sysInterface.setInterfaceUrl(methodAndUrlArr[1]);
+            sysInterface.setInterfaceName(methodAndUrlArr[2]);
+            addInterfaceList.add(sysInterface);
+        }
+
+        return addInterfaceList;
+    }
+
+    /**
+     * 构建删除列表
+     *
+     * @param nowInterfaceSet
+     * @param databaseInterfaceSet
+     * @param databaseInterfaceList
+     * @return
+     */
+    private List<Long> buildDeleteInterfaceList(Set<String> nowInterfaceSet, Set<String> databaseInterfaceSet, List<SysInterface> databaseInterfaceList, Set<String> nowInterfaceIdSet) {
+        // 比较当前接口列表和数据库接口列表
+        Set<String> deleteInterfaceSet = new HashSet<>();
+        List<Long> deleteInterfaceList = new ArrayList<>();
+
+        // 获取要删除的接口（内含要更新的接口）
+        deleteInterfaceSet.addAll(databaseInterfaceSet);
+        deleteInterfaceSet.removeAll(nowInterfaceSet);
+
+
+        // 生成删除的list
+        for (SysInterface sysInterface : databaseInterfaceList) {
+            String interfaceMethod = sysInterface.getInterfaceMethod();
+            String interfaceUrl = sysInterface.getInterfaceUrl();
+            String interfaceName = sysInterface.getInterfaceName();
+            String interfaceKey = interfaceMethod + ":" + interfaceUrl + ":" + interfaceName;
+
+            // 如果在数据库列表中存在相同的接口，则不加入删除list
+            if (deleteInterfaceSet.contains(interfaceKey) && !nowInterfaceIdSet.contains(interfaceMethod + ":" + interfaceUrl)) {
+                deleteInterfaceList.add(sysInterface.getId());
+            }
+        }
+
+        return deleteInterfaceList;
     }
 }
 

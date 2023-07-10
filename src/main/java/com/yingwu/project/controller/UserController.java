@@ -274,14 +274,9 @@ public class UserController {
         userQuery.setUserName(null);
         QueryWrapper<User> queryWrapper = new QueryWrapper<>(userQuery);
         queryWrapper.like(org.apache.commons.lang3.StringUtils.isNotBlank(userName), "user_name", userName);
-        List<User> userList = userService.list(queryWrapper);
-        List<UserInfoListVO> userInfoList = new ArrayList<>();
-        for (User user : userList) {
-            UserInfoListVO userInfoListVO = new UserInfoListVO();
-            BeanUtils.copyProperties(user, userInfoListVO);
-            userInfoList.add(userInfoListVO);
-        }
 
+        // 构建构建用户信息视图列表
+        List<UserInfoListVO> userInfoList = buildUserInfoListVO(queryWrapper);
 
         return ResultUtils.success(userInfoList);
     }
@@ -310,13 +305,8 @@ public class UserController {
         queryWrapper.like(org.apache.commons.lang3.StringUtils.isNotBlank(userName), "user_name", userName);
         Page<User> userPage = userService.page(new Page<>(current, size), queryWrapper);
 
-        List<User> userList = userService.list(queryWrapper);
-        List<UserInfoListVO> userInfoList = new ArrayList<>();
-        for (User user : userList) {
-            UserInfoListVO userInfoListVO = new UserInfoListVO();
-            BeanUtils.copyProperties(user, userInfoListVO);
-            userInfoList.add(userInfoListVO);
-        }
+        // 构建构建用户信息视图列表
+        List<UserInfoListVO> userInfoList = buildUserInfoListVO(queryWrapper);
 
         Page<UserInfoListVO> userInfoPage = new Page<>(userPage.getCurrent(), userPage.getSize(), userPage.getTotal());
         userInfoPage.setRecords(userInfoList);
@@ -368,4 +358,21 @@ public class UserController {
     }
 
     // endregion
+
+    /**
+     * 构建构建用户信息视图列表
+     *
+     * @param queryWrapper
+     * @return
+     */
+    private List<UserInfoListVO> buildUserInfoListVO(QueryWrapper<User> queryWrapper) {
+        List<User> userList = userService.list(queryWrapper);
+        List<UserInfoListVO> userInfoList = new ArrayList<>();
+        for (User user : userList) {
+            UserInfoListVO userInfoListVO = new UserInfoListVO();
+            BeanUtils.copyProperties(user, userInfoListVO);
+            userInfoList.add(userInfoListVO);
+        }
+        return userInfoList;
+    }
 }
