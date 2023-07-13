@@ -11,7 +11,7 @@
     </parent>
     <groupId>com.yingwu</groupId>
     <artifactId>mbp</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
+    <version>1.0.0</version>
     <name>mbp</name>
     <description>my basic project</description>
     <properties>

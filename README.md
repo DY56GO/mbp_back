@@ -123,4 +123,40 @@ powerconfig:
 
 ### **打包和部署**
 
-**正在建设中...**
+这里提供一个简单的打包部署方式，具体为：以jar的方式对项目进行打包和部署，使用Docker管理中间件（Redis、MySql），Java为本地环境。
+
+#### 打包
+
+| 描述                                                         | 图片                                                         |
+| ------------------------------------------------------------ | ------------------------------------------------------------ |
+| 1.建议是是新建一个生产环境的profiles文件，以来区分开发环境和生产环境。 | <img src="img/DEPLOY-1.png" alt="DEPLOY-1" style="zoom:60%;" /> |
+| 2.通过Maven的package命令打包为jar包。                        | <img src="img/DEPLOY-2.png" alt="DEPLOY-2" style="zoom:60%;" /> |
+| 3.打包后的jar包在项目的target文件夹下。                      | <img src="img/DEPLOY-3.png" alt="DEPLOY-3" style="zoom:60%;" /> |
+
+
+
+#### 部署
+
+主要分为两步，一：环境搭建，二：运行jar包。
+
+由于篇符过长，环境搭建请到deployment目录下查看“服务环境.md“进行操作。
+
+运行jar，deployment目录下的“启动命令.txt”为相同内容。
+
+```shell
+# 查看当前运行的 Java 项目
+ps aux|grep java
+
+# 杀死进程
+kill pid
+
+# 强制杀死进程
+kill -9 pid
+
+# 打开 jar 所在目录
+cd /home/projects/mbp/code/mbp_back/
+
+# 启动 mbp_back 到后台，其中“--spring.profiles.active=prod”为指定profiles使用生产环境，“mbp_back.log”为日志文件
+nohup java -jar mbp_back-1.0.0.jar --spring.profiles.active=prod > mbp_back.log
+```
+
