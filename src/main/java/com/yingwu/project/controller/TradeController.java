@@ -204,7 +204,7 @@ public class TradeController {
         }
         response.setContentType("application/octet-stream");
         response.setCharacterEncoding("utf-8");
-        // 这里URLEncoder.encode可以防止浏览器端导出excel文件名中文乱码 当然和easyexcel没有关系
+        // 这里URLEncoder.encode可以防止浏览器端导出excel文件名中文乱码 当然和easyExcel没有关系
         String fileName = null;
         try {
             fileName = URLEncoder.encode("交易数据导出", "UTF-8").replaceAll("\\+", "%20");
