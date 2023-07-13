@@ -72,7 +72,7 @@ mbp是一个管理系统的基础项目模板，其主要作用是提供管理�
 
 3.安装中间件：MySQL 8.0.20 和 Redis 6.05。
 
-4.通过 sql/mbp.sql 文件在MySQL中带入数据。
+4.通过 sql/mbp.sql 文件在MySQL中导入数据。
 
 5.修改 src/main/resources/application.yml 下的配置。
 
@@ -110,8 +110,17 @@ powerconfig:
 
 ### 开发上手
 
-正在建设中...
+可以通过参照其中样例功能的实现来熟悉基本的代码开发，建议从controller开始，逐步到service、model、mapper，完成简单的crud，才慢慢的去熟悉其他的功能（token登陆、拦截器鉴权、角色权限RABC）。
 
-### 打包和部署
+| 描述                                                         | 图片                                                        |
+| ------------------------------------------------------------ | ----------------------------------------------------------- |
+| 在controller下提供样例功能（交易接口）Tradecontroller类，里面包含了简单的增删改查，以及一个表格导出。 | <img src="img/CODE-1.png" alt="CODE-1" style="zoom:60%;" /> |
+| 在service下通过交易接口服务的接口和实现类，主要是对数据库的操作，及一个简单的数据校验。 | <img src="img/CODE-2.png" alt="CODE-2" style="zoom:40%;" /> |
+| 注意model下会分dto、entity、vo以及excel的维度对实体类进行一定规范和控制，同时有利于Swagger文档生成。 | <img src="img/CODE-3.png" alt="CODE-3" style="zoom:60%;" /> |
+| 对于数据库的映射操作，可以在mapper中查看。                   | <img src="img/CODE-4.png" alt="CODE-4" style="zoom:60%;" /> |
 
-正在建设中...
+
+
+### **打包和部署**
+
+**正在建设中...**
