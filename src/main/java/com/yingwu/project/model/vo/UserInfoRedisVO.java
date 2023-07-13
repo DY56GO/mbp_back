@@ -1,11 +1,9 @@
 package com.yingwu.project.model.vo;
 
 import cn.hutool.core.lang.tree.Tree;
-import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
 
 import java.io.Serializable;
-import java.util.Date;
 import java.util.List;
 
 /**

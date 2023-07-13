@@ -1,8 +1,6 @@
 package com.yingwu.project.startup;
 
 import com.yingwu.project.config.PowerConfig;
-import com.yingwu.project.mapper.RoleSysInterfaceMapper;
-import com.yingwu.project.model.vo.SysInterfaceRoleVO;
 import com.yingwu.project.service.SysInterfaceService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.ApplicationArguments;
@@ -12,7 +10,8 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.StopWatch;
 
 import javax.annotation.Resource;
-import java.util.*;
+import java.util.Map;
+import java.util.Set;
 
 import static com.yingwu.project.constant.RedisConstant.SYS_INTERFACE_AUTH_KEY_REDIS;
 

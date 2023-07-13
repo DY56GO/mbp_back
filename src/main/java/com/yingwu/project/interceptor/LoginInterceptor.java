@@ -11,7 +11,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.concurrent.TimeUnit;
 
-import static com.yingwu.project.constant.RedisConstant.*;
+import static com.yingwu.project.constant.RedisConstant.TOKEN_EXPIRATION_TIME;
+import static com.yingwu.project.constant.RedisConstant.USER_ID_EXPIRATION_TIME;
 
 /**
  * 登录校验 拦截器
