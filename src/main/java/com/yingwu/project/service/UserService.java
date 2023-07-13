@@ -12,7 +12,7 @@ import java.util.List;
 /**
  * 用户服务
  *
- * @author Dy56
+ * @author yupi
  */
 public interface UserService extends IService<User> {
 

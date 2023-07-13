@@ -43,7 +43,8 @@ import static com.yingwu.project.util.Utils.encryptPassword;
 
 
 /**
- * @author Dy56
+ * @author yupi
+ * @revision Dy56
  * @description 针对表【user】的数据库操作Service实现
  */
 @Service
