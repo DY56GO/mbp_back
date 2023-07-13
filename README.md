@@ -139,7 +139,7 @@ powerconfig:
 
 主要分为两步，一：环境搭建，二：运行jar包。
 
-由于篇符过长，环境搭建请到deployment目录下查看“服务环境.md“进行操作。
+由于篇符过长，环境搭建请到deployment目录下查看“[服务环境.md](https://github.com/DY56GO/mbp_back/blob/master/deployment/%E6%9C%8D%E5%8A%A1%E5%99%A8%E7%8E%AF%E5%A2%83.md)“进行操作。
 
 运行jar，deployment目录下的“启动命令.txt”为相同内容。
 
