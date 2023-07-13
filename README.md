@@ -44,13 +44,13 @@ mbp是一个管理系统的基础项目模板，其主要作用是提供管理�
 
 #### 样例功能展示
 
-![image](C:\Users\Dy56\Pictures\笔记图片\MBP-1-16892434200771.png "BMP-2")
+![image](https://github.com/DY56GO/MarkdownImg/blob/master/MBP/MBP-2.png "BMP-2")
 
-![image](C:\Users\Dy56\Pictures\笔记图片\MBP-1-16892434303855.png "BMP-3")
+![image](https://github.com/DY56GO/MarkdownImg/blob/master/MBP/MBP-3.png "BMP-3")
 
-![image](C:\Users\Dy56\Pictures\笔记图片\MBP-1-16892434303855.png "BMP-4")
+![image](https://github.com/DY56GO/MarkdownImg/blob/master/MBP/MBP-4.png "BMP-4")
 
-![image](C:\Users\Dy56\Pictures\笔记图片\MBP-1-16892434303855.png "BMP-5")
+![image](https://github.com/DY56GO/MarkdownImg/blob/master/MBP/MBP-5.png "BMP-5")
 
 ### 技术栈
 
