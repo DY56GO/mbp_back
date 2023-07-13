@@ -4,7 +4,7 @@
 
 mbp是一个管理系统的基础项目模板，其主要作用是提供管理系统的基础功能，使开发者不必再次开发重复的功能，可以更快的进入核心业务的开发。
 
-![image](https://github.com/DY56GO/MarkdownImg/blob/master/MBP/MBP-1.png "BMP-1")
+![MBP-1](README.assets/MBP-1.png)
 
 
 
@@ -44,9 +44,9 @@ mbp是一个管理系统的基础项目模板，其主要作用是提供管理�
 
 #### 样例功能展示
 
-| ![image](https://github.com/DY56GO/MarkdownImg/blob/master/MBP/MBP-2.png "BMP-2") | ![image](https://github.com/DY56GO/MarkdownImg/blob/master/MBP/MBP-3.png "BMP-3") |
-| ------------------------------------------------------------ | ------------------------------------------------------------ |
-| ![image](https://github.com/DY56GO/MarkdownImg/blob/master/MBP/MBP-4.png "BMP-4") | ![image](https://github.com/DY56GO/MarkdownImg/blob/master/MBP/MBP-5.png "BMP-5") |
+| ![MBP-2](README.assets/MBP-2.png) | ![MBP-3](README.assets/MBP-3.png)         |
+| --------------------------------- | ----------------------------------------- |
+| ![MBP-4](README.assets/MBP-4.png) | ![MBP-5](../../MarkdownImg/MBP/MBP-5.png) |
 
 
 
@@ -108,6 +108,10 @@ powerconfig:
 
 
 
+### 开发上手
+
+正在建设中...
+
 ### 打包和部署
 
-待续
+正在建设中...
