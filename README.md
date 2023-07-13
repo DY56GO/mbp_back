@@ -68,6 +68,11 @@ mbp是一个管理系统的基础项目模板，其主要作用是提供管理�
 
 1.下载源码到本地。
 
+```shell
+# 克隆项目
+git clone https://github.com/DY56GO/mbp_back.git
+```
+
 2.更新maven确保引用正确。
 
 3.安装中间件：MySQL 8.0.20 和 Redis 6.05。
