@@ -4,7 +4,7 @@
 
 mbp是一个管理系统的基础项目模板，其主要作用是提供管理系统的基础功能，使开发者不必再次开发重复的功能，可以更快的进入核心业务的开发。
 
-![MBP-1](README.assets/MBP-1.png)
+![MBP-1](img/MBP-1.png)
 
 
 
@@ -44,9 +44,9 @@ mbp是一个管理系统的基础项目模板，其主要作用是提供管理�
 
 #### 样例功能展示
 
-| ![MBP-2](README.assets/MBP-2.png) | ![MBP-3](README.assets/MBP-3.png)         |
-| --------------------------------- | ----------------------------------------- |
-| ![MBP-4](README.assets/MBP-4.png) | ![MBP-5](../../MarkdownImg/MBP/MBP-5.png) |
+| ![MBP-2](img/MBP-2.png) | ![MBP-3](img/MBP-3.png) |
+| ----------------------- | ----------------------- |
+| ![MBP-4](img/MBP-4.png) | ![MBP-5](img/MBP-5.png) |
 
 
 
