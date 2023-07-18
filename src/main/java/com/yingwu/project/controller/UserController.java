@@ -271,16 +271,15 @@ public class UserController {
         if (userQueryRequest != null) {
             BeanUtil.copyProperties(userQueryRequest, userQuery);
         }
-        String userName = userQuery.getUserName();
-        userQuery.setUserName(null);
-        QueryWrapper<User> queryWrapper = new QueryWrapper<>(userQuery);
-        queryWrapper.like(org.apache.commons.lang3.StringUtils.isNotBlank(userName), "user_name", userName);
+        buildUserQueryWrapper(userQuery);
+        QueryWrapper<User> queryWrapper = buildUserQueryWrapper(userQuery);
 
         // 构建构建用户信息视图列表
         List<UserInfoListVO> userInfoList = buildUserInfoListVO(queryWrapper);
 
         return ResultUtils.success(userInfoList);
     }
+
 
     /**
      * 分页获取用户列表
@@ -300,10 +299,7 @@ public class UserController {
             size = userQueryRequest.getPageSize();
         }
 
-        String userName = userQuery.getUserName();
-        userQuery.setUserName(null);
-        QueryWrapper<User> queryWrapper = new QueryWrapper<>(userQuery);
-        queryWrapper.like(org.apache.commons.lang3.StringUtils.isNotBlank(userName), "user_name", userName);
+        QueryWrapper<User> queryWrapper = buildUserQueryWrapper(userQuery);
         Page<User> userPage = userService.page(new Page<>(current, size), queryWrapper);
 
         // 构建构建用户信息视图列表
@@ -313,6 +309,22 @@ public class UserController {
         userInfoPage.setRecords(userInfoList);
 
         return ResultUtils.success(userInfoPage);
+    }
+
+    /**
+     * 构建用户查询条件
+     * @param userQuery
+     * @return
+     */
+    private QueryWrapper<User> buildUserQueryWrapper(User userQuery) {
+        String userName = userQuery.getUserName();
+        String userAccount = userQuery.getUserAccount();
+        userQuery.setUserName(null);
+        userQuery.setUserAccount(null);
+        QueryWrapper<User> queryWrapper = new QueryWrapper<>(userQuery);
+        queryWrapper.like(org.apache.commons.lang3.StringUtils.isNotBlank(userName), "user_name", userName);
+        queryWrapper.like(org.apache.commons.lang3.StringUtils.isNotBlank(userAccount), "user_account", userAccount);
+        return queryWrapper;
     }
 
     // endregion

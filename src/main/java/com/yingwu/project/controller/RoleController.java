@@ -123,10 +123,7 @@ public class RoleController {
         if (roleQueryRequest != null) {
             BeanUtil.copyProperties(roleQueryRequest, roleQuery);
         }
-        String roleName = roleQuery.getRoleName();
-        roleQuery.setRoleName(null);
-        QueryWrapper<Role> queryWrapper = new QueryWrapper<>(roleQuery);
-        queryWrapper.like(StringUtils.isNotBlank(roleName), "roleName", roleName);
+        QueryWrapper<Role> queryWrapper = buildRoleQueryWrapper(roleQuery);
         List<Role> roleList = roleService.list(queryWrapper);
         return ResultUtils.success(roleList);
     }
@@ -148,12 +145,25 @@ public class RoleController {
             current = roleQueryRequest.getCurrent();
             size = roleQueryRequest.getPageSize();
         }
-        String roleName = roleQuery.getRoleName();
-        roleQuery.setRoleName(null);
-        QueryWrapper<Role> queryWrapper = new QueryWrapper<>(roleQuery);
-        queryWrapper.like(org.apache.commons.lang3.StringUtils.isNotBlank(roleName), "role_name", roleName);
+        QueryWrapper<Role> queryWrapper = buildRoleQueryWrapper(roleQuery);
         Page<Role> roleListPage = roleService.page(new Page<>(current, size), queryWrapper);
         return ResultUtils.success(roleListPage);
+    }
+
+    /**
+     * 构建角色查询条件
+     * @param roleQuery
+     * @return
+     */
+    private QueryWrapper<Role> buildRoleQueryWrapper(Role roleQuery) {
+        String roleName = roleQuery.getRoleName();
+        String roleIdentity = roleQuery.getRoleIdentity();
+        roleQuery.setRoleName(null);
+        roleQuery.setRoleIdentity(null);
+        QueryWrapper<Role> queryWrapper = new QueryWrapper<>(roleQuery);
+        queryWrapper.like(StringUtils.isNotBlank(roleName), "role_name", roleName);
+        queryWrapper.like(StringUtils.isNotBlank(roleIdentity), "role_identity", roleIdentity);
+        return queryWrapper;
     }
 
     // endregion
