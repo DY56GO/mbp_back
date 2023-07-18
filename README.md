@@ -120,7 +120,7 @@ powerconfig:
 | 描述                                                         | 图片                                                        |
 | ------------------------------------------------------------ | ----------------------------------------------------------- |
 | 在controller下提供样例功能（交易接口）Tradecontroller类，里面包含了简单的增删改查，以及一个表格导出。 | <img src="img/CODE-1.png" alt="CODE-1" style="zoom:60%;" /> |
-| 在service下通过交易接口服务的接口和实现类，主要是对数据库的操作，及一个简单的数据校验。 | <img src="img/CODE-2.png" alt="CODE-2" style="zoom:40%;" /> |
+| 在service下为交易接口服务的接口和实现类，主要是对数据库的操作，及一个简单的数据校验。 | <img src="img/CODE-2.png" alt="CODE-2" style="zoom:40%;" /> |
 | 注意model下会分dto、entity、vo以及excel的维度对实体类进行一定规范和控制，同时有利于Swagger文档生成。 | <img src="img/CODE-3.png" alt="CODE-3" style="zoom:60%;" /> |
 | 对于数据库的映射操作，可以在mapper中查看。                   | <img src="img/CODE-4.png" alt="CODE-4" style="zoom:60%;" /> |
 
@@ -134,7 +134,7 @@ powerconfig:
 
 | 描述                                                         | 图片                                                         |
 | ------------------------------------------------------------ | ------------------------------------------------------------ |
-| 1.建议是是新建一个生产环境的profiles文件，以来区分开发环境和生产环境。 | <img src="img/DEPLOY-1.png" alt="DEPLOY-1" style="zoom:60%;" /> |
+| 1.建议是新建一个生产环境的profiles文件，以来区分开发环境和生产环境。 | <img src="img/DEPLOY-1.png" alt="DEPLOY-1" style="zoom:60%;" /> |
 | 2.通过Maven的package命令打包为jar包。                        | <img src="img/DEPLOY-2.png" alt="DEPLOY-2" style="zoom:60%;" /> |
 | 3.打包后的jar包在项目的target文件夹下。                      | <img src="img/DEPLOY-3.png" alt="DEPLOY-3" style="zoom:60%;" /> |
 
@@ -146,7 +146,7 @@ powerconfig:
 
 由于篇符过长，环境搭建请到deployment目录下查看“[服务器环境.md](https://github.com/DY56GO/mbp_back/blob/master/deployment/%E6%9C%8D%E5%8A%A1%E5%99%A8%E7%8E%AF%E5%A2%83.md)“进行操作。
 
-运行jar，deployment目录下的“[启动命令.txt](https://github.com/DY56GO/mbp_back/blob/master/deployment/%E5%90%AF%E5%8A%A8%E5%91%BD%E4%BB%A4.txt)”为相同内容。
+运行jar，下面的命令与deployment目录下的“[启动命令.txt](https://github.com/DY56GO/mbp_back/blob/master/deployment/%E5%90%AF%E5%8A%A8%E5%91%BD%E4%BB%A4.txt)”为相同内容。
 
 ```shell
 # 查看当前运行的 Java 项目
