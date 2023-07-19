@@ -4,6 +4,7 @@ import cn.hutool.core.lang.tree.Tree;
 import cn.hutool.core.lang.tree.TreeNode;
 import cn.hutool.core.lang.tree.TreeNodeConfig;
 import cn.hutool.core.lang.tree.TreeUtil;
+import com.yingwu.project.model.entity.Department;
 import com.yingwu.project.model.entity.Menu;
 import com.yingwu.project.model.vo.UserMenuVO;
 import org.springframework.util.DigestUtils;
@@ -113,6 +114,47 @@ public class Utils {
                     extra.put("name", menu.getComponentName());
                     extra.put("title", menu.getMenuTitle());
                     extra.put("icon", menu.getMenuIcon());
+                    node.setExtra(extra);
+                    return node;
+                }).collect(Collectors.toList());
+
+        List<Tree<String>> result = TreeUtil.build(treeNodeList, parentId.toString());
+
+        return result;
+    }
+
+    /**
+     * 构建部门树
+     *
+     * @param departmentList
+     * @return
+     */
+    public static List<Tree<String>> buildDepartmentTree(List<Department> departmentList) {
+        // 获取当前list中的根节点
+        Long parentId = 0L;
+        if (!departmentList.isEmpty()) {
+            parentId = departmentList.stream().min((Comparator.comparing(Department::getParentId))).get().getParentId();
+        }
+
+        // 树形结构构建
+        TreeNodeConfig treeNodeConfig = new TreeNodeConfig();
+        treeNodeConfig.setIdKey("id");
+        treeNodeConfig.setParentIdKey("parentId");
+
+        List<TreeNode<String>> treeNodeList = departmentList.stream()
+                .map(department -> {
+                    TreeNode<String> node = new TreeNode<>();
+                    // 下面四个属性是树型结构必有的属性
+                    node.setId(String.valueOf(department.getId()));
+                    node.setName(department.getDepartmentName());
+                    node.setParentId(String.valueOf(department.getParentId()));
+                    node.setWeight(department.getDepartmentSort());
+                    // 以下为扩展属性
+                    Map<String, Object> extra = new HashMap<>(16);
+                    extra.put("departmentName", department.getDepartmentName());
+                    extra.put("description", department.getDescription());
+                    extra.put("usingStart", department.getUsingStart());
+                    extra.put("departmentSort", department.getDepartmentSort());
                     node.setExtra(extra);
                     return node;
                 }).collect(Collectors.toList());
