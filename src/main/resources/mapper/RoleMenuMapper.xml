@@ -5,12 +5,16 @@
 <mapper namespace="com.yingwu.project.mapper.RoleMenuMapper">
 
     <resultMap id="BaseResultMap" type="com.yingwu.project.model.entity.RoleMenu">
+        <id property="id" column="id" jdbcType="BIGINT"/>
         <result property="roleId" column="role_id" jdbcType="BIGINT"/>
         <result property="menuId" column="menu_id" jdbcType="BIGINT"/>
+        <result property="gmtCreate" column="gmt_create" jdbcType="TIMESTAMP"/>
+        <result property="gmtModified" column="gmt_modified" jdbcType="TIMESTAMP"/>
     </resultMap>
 
     <sql id="Base_Column_List">
-        role_id,menu_id
+        id,role_id,menu_id,
+        gmt_create,gmt_modified
     </sql>
 
     <delete id="removeBatch">
