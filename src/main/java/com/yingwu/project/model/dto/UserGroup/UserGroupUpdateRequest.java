@@ -1,4 +1,4 @@
-package com.yingwu.project.model.dto.Department;
+package com.yingwu.project.model.dto.UserGroup;
 
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
@@ -7,12 +7,12 @@ import lombok.Data;
 import java.io.Serializable;
 
 /**
- * 部门更新请求
+ * 用户组更新请求
  *
  * @author Dy56
  */
 @Data
-public class DepartmentUpdateRequest implements Serializable {
+public class UserGroupUpdateRequest implements Serializable {
 
     /**
      * id
@@ -21,9 +21,9 @@ public class DepartmentUpdateRequest implements Serializable {
     private Long id;
 
     /**
-     * 部门名称
+     * 用户组名称
      */
-    private String departmentName;
+    private String groupName;
 
     /**
      * 描述
@@ -36,9 +36,9 @@ public class DepartmentUpdateRequest implements Serializable {
     private Integer usingStart;
 
     /**
-     * 部门排序
+     * 用户组排序
      */
-    private Double departmentSort;
+    private Double groupSort;
 
     private static final long serialVersionUID = 1L;
 

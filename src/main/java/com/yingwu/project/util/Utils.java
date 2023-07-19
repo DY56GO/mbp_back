@@ -4,8 +4,8 @@ import cn.hutool.core.lang.tree.Tree;
 import cn.hutool.core.lang.tree.TreeNode;
 import cn.hutool.core.lang.tree.TreeNodeConfig;
 import cn.hutool.core.lang.tree.TreeUtil;
-import com.yingwu.project.model.entity.Department;
 import com.yingwu.project.model.entity.Menu;
+import com.yingwu.project.model.entity.UserGroup;
 import com.yingwu.project.model.vo.UserMenuVO;
 import org.springframework.util.DigestUtils;
 
@@ -124,16 +124,16 @@ public class Utils {
     }
 
     /**
-     * 构建部门树
+     * 构建用户组树
      *
-     * @param departmentList
+     * @param userGroupList
      * @return
      */
-    public static List<Tree<String>> buildDepartmentTree(List<Department> departmentList) {
+    public static List<Tree<String>> buildUserGroupTree(List<UserGroup> userGroupList) {
         // 获取当前list中的根节点
         Long parentId = 0L;
-        if (!departmentList.isEmpty()) {
-            parentId = departmentList.stream().min((Comparator.comparing(Department::getParentId))).get().getParentId();
+        if (!userGroupList.isEmpty()) {
+            parentId = userGroupList.stream().min((Comparator.comparing(UserGroup::getParentId))).get().getParentId();
         }
 
         // 树形结构构建
@@ -141,20 +141,20 @@ public class Utils {
         treeNodeConfig.setIdKey("id");
         treeNodeConfig.setParentIdKey("parentId");
 
-        List<TreeNode<String>> treeNodeList = departmentList.stream()
-                .map(department -> {
+        List<TreeNode<String>> treeNodeList = userGroupList.stream()
+                .map(userGroup -> {
                     TreeNode<String> node = new TreeNode<>();
                     // 下面四个属性是树型结构必有的属性
-                    node.setId(String.valueOf(department.getId()));
-                    node.setName(department.getDepartmentName());
-                    node.setParentId(String.valueOf(department.getParentId()));
-                    node.setWeight(department.getDepartmentSort());
+                    node.setId(String.valueOf(userGroup.getId()));
+                    node.setName(userGroup.getGroupName());
+                    node.setParentId(String.valueOf(userGroup.getParentId()));
+                    node.setWeight(userGroup.getGroupSort());
                     // 以下为扩展属性
                     Map<String, Object> extra = new HashMap<>(16);
-                    extra.put("departmentName", department.getDepartmentName());
-                    extra.put("description", department.getDescription());
-                    extra.put("usingStart", department.getUsingStart());
-                    extra.put("departmentSort", department.getDepartmentSort());
+                    extra.put("groupName", userGroup.getGroupName());
+                    extra.put("description", userGroup.getDescription());
+                    extra.put("usingStart", userGroup.getUsingStart());
+                    extra.put("groupSort", userGroup.getGroupSort());
                     node.setExtra(extra);
                     return node;
                 }).collect(Collectors.toList());

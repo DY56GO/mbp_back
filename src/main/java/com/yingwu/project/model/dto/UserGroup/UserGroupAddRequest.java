@@ -1,16 +1,16 @@
-package com.yingwu.project.model.dto.Department;
+package com.yingwu.project.model.dto.UserGroup;
 
 import lombok.Data;
 
 import java.io.Serializable;
 
 /**
- * 部门创建请求
+ * 用户组创建请求
  *
  * @author Dy56
  */
 @Data
-public class DepartmentAddRequest implements Serializable {
+public class UserGroupAddRequest implements Serializable {
 
     /**
      * id
@@ -18,9 +18,9 @@ public class DepartmentAddRequest implements Serializable {
     private Long id;
 
     /**
-     * 部门名称
+     * 用户组名称
      */
-    private String departmentName;
+    private String groupName;
 
     /**
      * 父id
@@ -33,9 +33,9 @@ public class DepartmentAddRequest implements Serializable {
     private String description;
 
     /**
-     * 部门排序
+     * 用户组排序
      */
-    private Double departmentSort;
+    private Double groupSort;
 
     private static final long serialVersionUID = 1L;
 

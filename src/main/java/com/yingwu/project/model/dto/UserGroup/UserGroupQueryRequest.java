@@ -1,4 +1,4 @@
-package com.yingwu.project.model.dto.Department;
+package com.yingwu.project.model.dto.UserGroup;
 
 import com.yingwu.project.common.PageRequest;
 import lombok.Data;
@@ -7,13 +7,13 @@ import lombok.EqualsAndHashCode;
 import java.io.Serializable;
 
 /**
- * 部门查询请求
+ * 用户组查询请求
  *
  * @author Dy56
  */
 @EqualsAndHashCode(callSuper = true)
 @Data
-public class DepartmentQueryRequest extends PageRequest implements Serializable {
+public class UserGroupQueryRequest extends PageRequest implements Serializable {
 
     /**
      * id
@@ -21,9 +21,9 @@ public class DepartmentQueryRequest extends PageRequest implements Serializable 
     private Long id;
 
     /**
-     * 部门名称
+     * 用户组名称
      */
-    private String departmentName;
+    private String groupName;
 
     /**
      * 父id
@@ -41,9 +41,9 @@ public class DepartmentQueryRequest extends PageRequest implements Serializable 
     private Integer usingStart;
 
     /**
-     * 部门排序
+     * 用户组排序
      */
-    private Double departmentSort;
+    private Double groupSort;
 
     private static final long serialVersionUID = 1L;
 
