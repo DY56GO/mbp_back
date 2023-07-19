@@ -17,6 +17,7 @@ import java.util.Date;
 @TableName(value = "trade")
 @Data
 public class Trade implements Serializable {
+
     /**
      * id
      */

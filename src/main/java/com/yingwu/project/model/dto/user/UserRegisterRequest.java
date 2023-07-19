@@ -12,8 +12,6 @@ import java.io.Serializable;
 @Data
 public class UserRegisterRequest implements Serializable {
 
-    private static final long serialVersionUID = 3191241716373120793L;
-
     /**
      * 用户账号
      */
@@ -28,5 +26,7 @@ public class UserRegisterRequest implements Serializable {
      * 确认密码
      */
     private String checkPassword;
+
+    private static final long serialVersionUID = 3191241716373120793L;
 
 }

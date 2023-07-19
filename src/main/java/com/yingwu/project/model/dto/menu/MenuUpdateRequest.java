@@ -18,11 +18,6 @@ public class MenuUpdateRequest implements Serializable {
     private Integer id;
 
     /**
-     * 父id
-     */
-    private Integer parentId;
-
-    /**
      * 菜单名称
      */
     private String menuTitle;
