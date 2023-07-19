@@ -2,7 +2,6 @@ package com.yingwu.project.controller;
 
 import cn.hutool.core.bean.BeanUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.yingwu.project.common.BaseResponse;
 import com.yingwu.project.common.ErrorCode;
@@ -85,18 +84,7 @@ public class SysInterfaceController {
      */
     @GetMapping(value = "/list", name = "获取系统接口列表")
     public BaseResponse<List<SysInterface>> listSysInterface(SysInterfaceQueryRequest sysInterfaceQueryRequest, HttpServletRequest request) {
-        SysInterface sysInterfaceQuery = new SysInterface();
-        if (sysInterfaceQueryRequest != null) {
-            BeanUtils.copyProperties(sysInterfaceQueryRequest, sysInterfaceQuery);
-        }
-        String sysInterfaceName = sysInterfaceQuery.getInterfaceName();
-        sysInterfaceQuery.setInterfaceName(null);
-        QueryWrapper<SysInterface> queryWrapper = new QueryWrapper<>(sysInterfaceQuery);
-        queryWrapper.like(StringUtils.isNotBlank(sysInterfaceName), "interface_name", sysInterfaceName);
-
-        // 设置排序
-        setSysInterQueryfaceOrder(sysInterfaceQueryRequest, queryWrapper);
-
+        QueryWrapper<SysInterface> queryWrapper = buildSysInterfaceQueryWrapper(sysInterfaceQueryRequest);
         List<SysInterface> sysInterfaceList = sysInterfaceService.list(queryWrapper);
 
         return ResultUtils.success(sysInterfaceList);
@@ -113,11 +101,27 @@ public class SysInterfaceController {
     public BaseResponse<Page<SysInterface>> listSysInterfaceByPage(SysInterfaceQueryRequest sysInterfaceQueryRequest, HttpServletRequest request) {
         long current = 1;
         long size = 10;
+        if (sysInterfaceQueryRequest != null) {
+            current = sysInterfaceQueryRequest.getCurrent();
+            size = sysInterfaceQueryRequest.getPageSize();
+        }
+        QueryWrapper<SysInterface> queryWrapper = buildSysInterfaceQueryWrapper(sysInterfaceQueryRequest);
+
+        Page<SysInterface> sysInterfaceListPage = sysInterfaceService.page(new Page<>(current, size), queryWrapper);
+
+        return ResultUtils.success(sysInterfaceListPage);
+    }
+
+    /**
+     * 构建系统接口查询条件
+     *
+     * @param sysInterfaceQueryRequest
+     * @return
+     */
+    private QueryWrapper<SysInterface> buildSysInterfaceQueryWrapper(SysInterfaceQueryRequest sysInterfaceQueryRequest) {
         SysInterface sysInterfaceQuery = new SysInterface();
         if (sysInterfaceQueryRequest != null) {
             BeanUtil.copyProperties(sysInterfaceQueryRequest, sysInterfaceQuery);
-            current = sysInterfaceQueryRequest.getCurrent();
-            size = sysInterfaceQueryRequest.getPageSize();
         }
         String interfaceName = sysInterfaceQuery.getInterfaceName();
         sysInterfaceQuery.setInterfaceName(null);
@@ -125,22 +129,6 @@ public class SysInterfaceController {
         queryWrapper.like(org.apache.commons.lang3.StringUtils.isNotBlank(interfaceName), "interface_name", interfaceName);
 
         // 设置排序
-        setSysInterQueryfaceOrder(sysInterfaceQueryRequest, queryWrapper);
-
-        Page<SysInterface> sysInterfaceListPage = sysInterfaceService.page(new Page<>(current, size), queryWrapper);
-
-        return ResultUtils.success(sysInterfaceListPage);
-    }
-
-    // endregion
-
-    /**
-     * 设置查询系统接口排序
-     *
-     * @param sysInterfaceQueryRequest
-     * @param queryWrapper
-     */
-    private QueryWrapper<SysInterface> setSysInterQueryfaceOrder(SysInterfaceQueryRequest sysInterfaceQueryRequest, QueryWrapper<SysInterface> queryWrapper) {
         List<String> orderList = new ArrayList<>();
         orderList.add("interface_url");
         orderList.add("interface_method");
@@ -152,4 +140,7 @@ public class SysInterfaceController {
 
         return queryWrapper;
     }
+
+    // endregion
+
 }

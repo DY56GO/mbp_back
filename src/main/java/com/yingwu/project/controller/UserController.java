@@ -267,12 +267,7 @@ public class UserController {
      */
     @GetMapping(value = "/list", name = "获取用户列表")
     public BaseResponse<List<UserInfoListVO>> getUserList(UserQueryRequest userQueryRequest, HttpServletRequest request) {
-        User userQuery = new User();
-        if (userQueryRequest != null) {
-            BeanUtil.copyProperties(userQueryRequest, userQuery);
-        }
-        buildUserQueryWrapper(userQuery);
-        QueryWrapper<User> queryWrapper = buildUserQueryWrapper(userQuery);
+        QueryWrapper<User> queryWrapper = buildUserQueryWrapper(userQueryRequest);
 
         // 构建构建用户信息视图列表
         List<UserInfoListVO> userInfoList = buildUserInfoListVO(queryWrapper);
@@ -292,14 +287,11 @@ public class UserController {
     public BaseResponse<Page<UserInfoListVO>> getUserListByPage(UserQueryRequest userQueryRequest, HttpServletRequest request) {
         long current = 1;
         long size = 10;
-        User userQuery = new User();
         if (userQueryRequest != null) {
-            BeanUtil.copyProperties(userQueryRequest, userQuery);
             current = userQueryRequest.getCurrent();
             size = userQueryRequest.getPageSize();
         }
-
-        QueryWrapper<User> queryWrapper = buildUserQueryWrapper(userQuery);
+        QueryWrapper<User> queryWrapper = buildUserQueryWrapper(userQueryRequest);
         Page<User> userPage = userService.page(new Page<>(current, size), queryWrapper);
 
         // 构建构建用户信息视图列表
@@ -313,10 +305,14 @@ public class UserController {
 
     /**
      * 构建用户查询条件
-     * @param userQuery
+     * @param userQueryRequest
      * @return
      */
-    private QueryWrapper<User> buildUserQueryWrapper(User userQuery) {
+    private QueryWrapper<User> buildUserQueryWrapper(UserQueryRequest userQueryRequest) {
+        User userQuery = new User();
+        if (userQueryRequest != null) {
+            BeanUtil.copyProperties(userQueryRequest, userQuery);
+        }
         String userName = userQuery.getUserName();
         String userAccount = userQuery.getUserAccount();
         userQuery.setUserName(null);
@@ -325,6 +321,23 @@ public class UserController {
         queryWrapper.like(org.apache.commons.lang3.StringUtils.isNotBlank(userName), "user_name", userName);
         queryWrapper.like(org.apache.commons.lang3.StringUtils.isNotBlank(userAccount), "user_account", userAccount);
         return queryWrapper;
+    }
+
+    /**
+     * 构建构建用户信息视图列表
+     *
+     * @param queryWrapper
+     * @return
+     */
+    private List<UserInfoListVO> buildUserInfoListVO(QueryWrapper<User> queryWrapper) {
+        List<User> userList = userService.list(queryWrapper);
+        List<UserInfoListVO> userInfoList = new ArrayList<>();
+        for (User user : userList) {
+            UserInfoListVO userInfoListVO = new UserInfoListVO();
+            BeanUtils.copyProperties(user, userInfoListVO);
+            userInfoList.add(userInfoListVO);
+        }
+        return userInfoList;
     }
 
     // endregion
@@ -371,21 +384,4 @@ public class UserController {
     }
 
     // endregion
-
-    /**
-     * 构建构建用户信息视图列表
-     *
-     * @param queryWrapper
-     * @return
-     */
-    private List<UserInfoListVO> buildUserInfoListVO(QueryWrapper<User> queryWrapper) {
-        List<User> userList = userService.list(queryWrapper);
-        List<UserInfoListVO> userInfoList = new ArrayList<>();
-        for (User user : userList) {
-            UserInfoListVO userInfoListVO = new UserInfoListVO();
-            BeanUtils.copyProperties(user, userInfoListVO);
-            userInfoList.add(userInfoListVO);
-        }
-        return userInfoList;
-    }
 }

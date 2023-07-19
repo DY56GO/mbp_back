@@ -129,7 +129,6 @@ public class TradeController {
     @GetMapping(value = "/list", name = "获取交易列表")
     public BaseResponse<List<Trade>> listTrade(TradeQueryRequest tradeQueryRequest, HttpServletRequest request) {
         QueryWrapper<Trade> queryWrapper = buildTradeQueryWrapper(tradeQueryRequest);
-        queryWrapper.orderByDesc("trade_date");
         List<Trade> tradeList = tradeService.list(queryWrapper);
         return ResultUtils.success(tradeList);
     }
@@ -152,11 +151,39 @@ public class TradeController {
             ThrowUtils.throwIf(size > MAX_PAGE_SIZE, ErrorCode.PARAMS_ERROR);
         }
         QueryWrapper<Trade> queryWrapper = buildTradeQueryWrapper(tradeQueryRequest);
-        queryWrapper.orderByDesc("trade_date");
 
         Page<Trade> tradeListPage = tradeService.page(new Page<>(current, size), queryWrapper);
 
         return ResultUtils.success(tradeListPage);
+    }
+
+    /**
+     * 构建交易查询条件
+     *
+     * @param tradeQueryRequest
+     * @return
+     */
+    private QueryWrapper<Trade> buildTradeQueryWrapper(TradeQueryRequest tradeQueryRequest) {
+        Trade tradeQuery = new Trade();
+        if (tradeQueryRequest != null) {
+            BeanUtil.copyProperties(tradeQueryRequest, tradeQuery);
+        }
+        String tsCode = tradeQuery.getTsCode();
+        tradeQuery.setTsCode(null);
+
+        QueryWrapper<Trade> queryWrapper = new QueryWrapper<>(tradeQuery);
+        queryWrapper.like(StringUtils.isNotBlank(tsCode), "ts_code", tsCode);
+
+        // 设置排序
+        List<String> orderList = new ArrayList<>();
+        orderList.add("trade_date");
+        if(tradeQueryRequest.getSortOrder().equals(SORT_ORDER_ASC)){
+            queryWrapper.orderByAsc(orderList);
+        }else{
+            queryWrapper.orderByDesc(orderList);
+        }
+
+        return queryWrapper;
     }
 
     // endregion
@@ -221,54 +248,6 @@ public class TradeController {
         } catch (IOException e) {
             throw new BusinessException(ErrorCode.OPERATION_ERROR);
         }
-    }
-
-    /**
-     * 构建交易查询条件
-     *
-     * @param tradeQueryRequest
-     * @return
-     */
-    private QueryWrapper<Trade> buildTradeQueryWrapper(TradeQueryRequest tradeQueryRequest) {
-        Trade tradeQuery = new Trade();
-        if (tradeQueryRequest != null) {
-            BeanUtil.copyProperties(tradeQueryRequest, tradeQuery);
-        }
-        String tsCode = tradeQuery.getTsCode();
-        tradeQuery.setTsCode(null);
-
-        QueryWrapper<Trade> queryWrapper = new QueryWrapper<>(tradeQuery);
-        queryWrapper.like(StringUtils.isNotBlank(tsCode), "ts_code", tsCode);
-
-        if (tradeQueryRequest.getStartTradeDate() != null) {
-            queryWrapper.ge("trade_date", tradeQueryRequest.getStartTradeDate());
-        }
-        if (tradeQueryRequest.getEndTradeDate() != null) {
-            queryWrapper.le("trade_date", tradeQueryRequest.getEndTradeDate());
-        }
-
-        // 设置排序
-        setTradeQueryOrder(tradeQueryRequest, queryWrapper);
-
-        return queryWrapper;
-    }
-
-    /**
-     * 设置交易查询排序
-     *
-     * @param tradeQueryRequest
-     * @param queryWrapper
-     */
-    private QueryWrapper<Trade> setTradeQueryOrder(TradeQueryRequest tradeQueryRequest, QueryWrapper<Trade> queryWrapper) {
-        List<String> orderList = new ArrayList<>();
-        orderList.add("trade_date");
-        if(tradeQueryRequest.getSortOrder().equals(SORT_ORDER_ASC)){
-            queryWrapper.orderByAsc(orderList);
-        }else{
-            queryWrapper.orderByDesc(orderList);
-        }
-
-        return queryWrapper;
     }
 
 }

@@ -119,11 +119,7 @@ public class RoleController {
      */
     @GetMapping(value = "/list", name = "获取角色列表")
     public BaseResponse<List<Role>> listRole(RoleQueryRequest roleQueryRequest, HttpServletRequest request) {
-        Role roleQuery = new Role();
-        if (roleQueryRequest != null) {
-            BeanUtil.copyProperties(roleQueryRequest, roleQuery);
-        }
-        QueryWrapper<Role> queryWrapper = buildRoleQueryWrapper(roleQuery);
+        QueryWrapper<Role> queryWrapper = buildRoleQueryWrapper(roleQueryRequest);
         List<Role> roleList = roleService.list(queryWrapper);
         return ResultUtils.success(roleList);
     }
@@ -139,23 +135,25 @@ public class RoleController {
     public BaseResponse<Page<Role>> listRoleByPage(RoleQueryRequest roleQueryRequest, HttpServletRequest request) {
         long current = 1;
         long size = 10;
-        Role roleQuery = new Role();
         if (roleQueryRequest != null) {
-            BeanUtil.copyProperties(roleQueryRequest, roleQuery);
             current = roleQueryRequest.getCurrent();
             size = roleQueryRequest.getPageSize();
         }
-        QueryWrapper<Role> queryWrapper = buildRoleQueryWrapper(roleQuery);
+        QueryWrapper<Role> queryWrapper = buildRoleQueryWrapper(roleQueryRequest);
         Page<Role> roleListPage = roleService.page(new Page<>(current, size), queryWrapper);
         return ResultUtils.success(roleListPage);
     }
 
     /**
      * 构建角色查询条件
-     * @param roleQuery
+     * @param roleQueryRequest
      * @return
      */
-    private QueryWrapper<Role> buildRoleQueryWrapper(Role roleQuery) {
+    private QueryWrapper<Role> buildRoleQueryWrapper(RoleQueryRequest roleQueryRequest) {
+        Role roleQuery = new Role();
+        if (roleQueryRequest != null) {
+            BeanUtil.copyProperties(roleQueryRequest, roleQuery);
+        }
         String roleName = roleQuery.getRoleName();
         String roleIdentity = roleQuery.getRoleIdentity();
         roleQuery.setRoleName(null);
