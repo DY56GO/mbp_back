@@ -13,7 +13,7 @@ import java.util.Date;
  * @author Dy56
  * @TableName UserGroup
  */
-@TableName(value ="user_group")
+@TableName(value = "user_group")
 @Data
 public class UserGroup implements Serializable {
 

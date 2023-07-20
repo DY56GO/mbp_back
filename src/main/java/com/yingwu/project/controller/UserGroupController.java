@@ -26,13 +26,13 @@ import static com.yingwu.project.util.Utils.buildUserGroupTree;
 
 /**
  * 用户组接口
- * 
+ *
  * @author Dy56
  */
 @RestController
 @RequestMapping("/userGroup")
 public class UserGroupController {
-    
+
     @Resource
     private UserGroupService userGroupService;
 
@@ -171,9 +171,9 @@ public class UserGroupController {
         // 设置排序
         List<String> orderList = new ArrayList<>();
         orderList.add("parent_id");
-        if(userGroupQueryRequest.getSortOrder().equals(SORT_ORDER_ASC)){
+        if (userGroupQueryRequest.getSortOrder().equals(SORT_ORDER_ASC)) {
             queryWrapper.orderByAsc(orderList);
-        }else{
+        } else {
             queryWrapper.orderByDesc(orderList);
         }
 
@@ -181,5 +181,5 @@ public class UserGroupController {
     }
 
     // endregion
-    
+
 }

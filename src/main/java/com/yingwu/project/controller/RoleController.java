@@ -146,6 +146,7 @@ public class RoleController {
 
     /**
      * 构建角色查询条件
+     *
      * @param roleQueryRequest
      * @return
      */

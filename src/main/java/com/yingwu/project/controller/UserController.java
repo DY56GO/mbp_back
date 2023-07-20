@@ -309,6 +309,7 @@ public class UserController {
 
     /**
      * 构建用户查询条件
+     *
      * @param userQueryRequest
      * @return
      */
@@ -324,7 +325,7 @@ public class UserController {
         QueryWrapper<User> queryWrapper = new QueryWrapper<>(userQuery);
         queryWrapper.like(org.apache.commons.lang3.StringUtils.isNotBlank(userName), "user_name", userName);
         queryWrapper.like(org.apache.commons.lang3.StringUtils.isNotBlank(userAccount), "user_account", userAccount);
-        queryWrapper.in(!userQueryRequest.getUserGroupIdList().equals(""),"user_group_id", Arrays.asList(userQueryRequest.getUserGroupIdList().split(",")));
+        queryWrapper.in(!userQueryRequest.getUserGroupIdList().equals(""), "user_group_id", Arrays.asList(userQueryRequest.getUserGroupIdList().split(",")));
         return queryWrapper;
     }
 
@@ -339,7 +340,7 @@ public class UserController {
 
         List<UserGroup> userGroupList = userGroupService.list();
         Map<Long, String> userGroupMap = new HashMap<>(512);
-        userGroupList.forEach(item->{
+        userGroupList.forEach(item -> {
             userGroupMap.put(item.getId(), item.getGroupName());
         });
 

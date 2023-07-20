@@ -177,9 +177,9 @@ public class TradeController {
         // 设置排序
         List<String> orderList = new ArrayList<>();
         orderList.add("trade_date");
-        if(tradeQueryRequest.getSortOrder().equals(SORT_ORDER_ASC)){
+        if (tradeQueryRequest.getSortOrder().equals(SORT_ORDER_ASC)) {
             queryWrapper.orderByAsc(orderList);
-        }else{
+        } else {
             queryWrapper.orderByDesc(orderList);
         }
 
@@ -195,7 +195,7 @@ public class TradeController {
      * @param request
      */
     @GetMapping(value = "/excel", name = "交易数据导出")
-    public void TradeExcelExport(TradeQueryRequest tradeQueryRequest, HttpServletRequest request){
+    public void TradeExcelExport(TradeQueryRequest tradeQueryRequest, HttpServletRequest request) {
 
         ServletRequestAttributes requestAttributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
         HttpServletResponse response = requestAttributes.getResponse();
@@ -216,7 +216,7 @@ public class TradeController {
             pageCount = pageCount + 1;
         }
 
-        for(long current = 1; current<= pageCount; current++) {
+        for (long current = 1; current <= pageCount; current++) {
             Page<Trade> tradeListPage = tradeService.page(new Page<>(current, MAX_PAGE_SIZE), queryWrapper);
             List<Trade> tradeList = tradeListPage.getRecords();
             List<TradeExcl> tradeExclList = new ArrayList<>();

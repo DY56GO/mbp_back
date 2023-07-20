@@ -132,9 +132,9 @@ public class SysInterfaceController {
         List<String> orderList = new ArrayList<>();
         orderList.add("interface_url");
         orderList.add("interface_method");
-        if(sysInterfaceQueryRequest.getSortOrder().equals(SORT_ORDER_ASC)){
+        if (sysInterfaceQueryRequest.getSortOrder().equals(SORT_ORDER_ASC)) {
             queryWrapper.orderByAsc(orderList);
-        }else{
+        } else {
             queryWrapper.orderByDesc(orderList);
         }
 

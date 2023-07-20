@@ -171,9 +171,9 @@ public class MenuController {
         // 设置排序
         List<String> orderList = new ArrayList<>();
         orderList.add("parent_id");
-        if(menuQueryRequest.getSortOrder().equals(SORT_ORDER_ASC)){
+        if (menuQueryRequest.getSortOrder().equals(SORT_ORDER_ASC)) {
             queryWrapper.orderByAsc(orderList);
-        }else{
+        } else {
             queryWrapper.orderByDesc(orderList);
         }
 
