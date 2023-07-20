@@ -35,6 +35,16 @@ public class UserInfoFrontVO implements Serializable {
     private Integer gender;
 
     /**
+     * 用户组id
+     */
+    private Long userGroupId;
+
+    /**
+     * 用户组名称
+     */
+    private String userGroupName;
+
+    /**
      * 用户菜单树
      */
     private List<Tree<String>> userMenuTree;

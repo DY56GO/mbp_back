@@ -1,4 +1,4 @@
-package com.yingwu.project.model.dto.UserGroup;
+package com.yingwu.project.model.dto.userGroup;
 
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;

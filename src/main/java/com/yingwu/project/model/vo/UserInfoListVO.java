@@ -50,6 +50,16 @@ public class UserInfoListVO implements Serializable {
     private Integer usingStart;
 
     /**
+     * 用户组id
+     */
+    private Long userGroupId;
+
+    /**
+     * 用户组名称
+     */
+    private String userGroupName;
+
+    /**
      * 创建时间
      */
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", locale = "zh", timezone = "GMT+8")

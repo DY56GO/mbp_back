@@ -47,6 +47,11 @@ public class UserUpdateRequest implements Serializable {
      */
     private Integer usingStart;
 
+    /**
+     * 用户组id
+     */
+    private Long userGroupId;
+
     private static final long serialVersionUID = 1L;
 
 }

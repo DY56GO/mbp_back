@@ -45,6 +45,11 @@ public class UserInfoRedisVO implements Serializable {
     private Integer gender;
 
     /**
+     * 用户组id
+     */
+    private Long userGroupId;
+
+    /**
      * 用户角色列表
      */
     private List<UserRoleVO> userRoleList;

@@ -57,6 +57,11 @@ public class User implements Serializable {
     private Integer usingStart;
 
     /**
+     * 用户组id
+     */
+    private Long userGroupId;
+
+    /**
      * 创建时间
      */
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", locale = "zh", timezone = "GMT+8")

@@ -10,10 +10,12 @@ import com.yingwu.project.common.ResultUtils;
 import com.yingwu.project.exception.BusinessException;
 import com.yingwu.project.model.dto.user.*;
 import com.yingwu.project.model.entity.User;
+import com.yingwu.project.model.entity.UserGroup;
 import com.yingwu.project.model.vo.UserInfoFrontVO;
 import com.yingwu.project.model.vo.UserInfoListVO;
 import com.yingwu.project.model.vo.UserInfoRedisVO;
 import com.yingwu.project.model.vo.UserRoleVO;
+import com.yingwu.project.service.UserGroupService;
 import com.yingwu.project.service.UserRoleService;
 import com.yingwu.project.service.UserService;
 import org.springframework.beans.BeanUtils;
@@ -22,8 +24,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 import static com.yingwu.project.constant.PasswordConstant.SALT;
 import static com.yingwu.project.util.Utils.encryptPassword;
@@ -45,6 +46,9 @@ public class UserController {
 
     @Resource
     private UserRoleService userRoleService;
+
+    @Resource
+    private UserGroupService userGroupService;
 
     // region 登录相关
 
@@ -320,6 +324,7 @@ public class UserController {
         QueryWrapper<User> queryWrapper = new QueryWrapper<>(userQuery);
         queryWrapper.like(org.apache.commons.lang3.StringUtils.isNotBlank(userName), "user_name", userName);
         queryWrapper.like(org.apache.commons.lang3.StringUtils.isNotBlank(userAccount), "user_account", userAccount);
+        queryWrapper.in(!userQueryRequest.getUserGroupIdList().equals(""),"user_group_id", Arrays.asList(userQueryRequest.getUserGroupIdList().split(",")));
         return queryWrapper;
     }
 
@@ -331,10 +336,18 @@ public class UserController {
      */
     private List<UserInfoListVO> buildUserInfoListVO(QueryWrapper<User> queryWrapper) {
         List<User> userList = userService.list(queryWrapper);
+
+        List<UserGroup> userGroupList = userGroupService.list();
+        Map<Long, String> userGroupMap = new HashMap<>(512);
+        userGroupList.forEach(item->{
+            userGroupMap.put(item.getId(), item.getGroupName());
+        });
+
         List<UserInfoListVO> userInfoList = new ArrayList<>();
         for (User user : userList) {
             UserInfoListVO userInfoListVO = new UserInfoListVO();
             BeanUtils.copyProperties(user, userInfoListVO);
+            userInfoListVO.setUserGroupName(userGroupMap.get(userInfoListVO.getUserGroupId()));
             userInfoList.add(userInfoListVO);
         }
         return userInfoList;

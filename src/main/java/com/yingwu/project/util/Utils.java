@@ -62,6 +62,8 @@ public class Utils {
                     node.setWeight(menu.getMenuSort());
                     // 以下为扩展属性
                     Map<String, Object> extra = new HashMap<>(16);
+                    extra.put("label", menu.getMenuTitle());
+                    extra.put("value", menu.getId());
                     extra.put("menuTitle", menu.getMenuTitle());
                     extra.put("menuIcon", menu.getMenuIcon());
                     extra.put("routePath", menu.getRoutePath());
@@ -151,6 +153,8 @@ public class Utils {
                     node.setWeight(userGroup.getGroupSort());
                     // 以下为扩展属性
                     Map<String, Object> extra = new HashMap<>(16);
+                    extra.put("label", userGroup.getGroupName());
+                    extra.put("value", userGroup.getId());
                     extra.put("groupName", userGroup.getGroupName());
                     extra.put("description", userGroup.getDescription());
                     extra.put("usingStart", userGroup.getUsingStart());

@@ -12,6 +12,7 @@
         <result property="gender" column="gender" jdbcType="TINYINT"/>
         <result property="userPassword" column="user_password" jdbcType="VARCHAR"/>
         <result property="usingStart" column="is_using" jdbcType="TINYINT"/>
+        <result property="userGroupId" column="user_group_id" jdbcType="BIGINT"/>
         <result property="gmtCreate" column="gmt_create" jdbcType="TIMESTAMP"/>
         <result property="gmtModified" column="gmt_modified" jdbcType="TIMESTAMP"/>
         <result property="del" column="is_delete" jdbcType="TINYINT"/>
@@ -20,8 +21,8 @@
     <sql id="Base_Column_List">
         id,user_name,user_account,
         user_avatar,gender,user_password,
-        is_sing,gmt_create,gmt_modified,
-        is_delete
+        is_using,user_group_id,gmt_create,
+        gmt_modified,is_delete
     </sql>
 
 </mapper>
