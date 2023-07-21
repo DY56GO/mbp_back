@@ -24,9 +24,6 @@ public class MvcConfig implements WebMvcConfigurer {
     private PowerConfig powerConfig;
 
     @Resource
-    private RedisTemplate redisTemplate;
-
-    @Resource
     private LoginInterceptor loginInterceptor;
 
     @Resource
