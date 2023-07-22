@@ -198,11 +198,12 @@ public class UserController {
         // 更新
         boolean result = userService.updateById(user);
         if (result) {
-            // Redis数据同步
-            userService.updateRedisUser(user.getId());
             // 判断用户是否启用，如果非启用，则删除Redis中的用户，使其下线
             if (user.getUsingStart() == 0) {
                 userService.deleteRedisUser(user.getId());
+            }else {
+                // Redis数据同步
+                userService.updateRedisUser(user.getId());
             }
         }
         return ResultUtils.success(result);
