@@ -5,6 +5,7 @@ import com.yingwu.project.common.ErrorCode;
 import com.yingwu.project.exception.BusinessException;
 import com.yingwu.project.model.vo.UserInfoRedisVO;
 import com.yingwu.project.model.vo.UserRoleVO;
+import com.yingwu.project.service.SysInterfaceService;
 import com.yingwu.project.service.UserService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Configuration;
@@ -35,6 +36,9 @@ public class SysInterfaceAuthInterceptor implements HandlerInterceptor {
     private RedisTemplate redisTemplate;
 
     @Resource
+    private SysInterfaceService sysInterfaceService;
+
+    @Resource
     private UserService userService;
 
     public SysInterfaceAuthInterceptor(RedisTemplate redisTemplate) {
@@ -56,8 +60,12 @@ public class SysInterfaceAuthInterceptor implements HandlerInterceptor {
         // 1.获取系统鉴权数据
         Map sysInterfaceAuthMap = redisTemplate.opsForHash().entries(SYS_INTERFACE_AUTH_KEY_REDIS);
 
+        // 如果Redis中没有则去查询并重新写入Redis
         if (sysInterfaceAuthMap.size() == 0) {
-
+            // 构建系统接口鉴权数据
+            sysInterfaceAuthMap = sysInterfaceService.buildSysInterfaceAuthMap();
+            // 写入Redis中
+            redisTemplate.opsForHash().putAll(SYS_INTERFACE_AUTH_KEY_REDIS, sysInterfaceAuthMap);
         }
 
         // 2.获取用户角色信息
@@ -71,7 +79,7 @@ public class SysInterfaceAuthInterceptor implements HandlerInterceptor {
             UserInfoRedisVO userInfo = userService.createUserRedisData(Long.valueOf(userId));
             userInfo.setToken(token);
 
-            // 6.将token和用户信息写入Redis
+            // 将token和用户信息写入Redis
             redisTemplate.opsForValue().set(token, userKey);
             userInfoMap = BeanUtil.beanToMap(userInfo);
             redisTemplate.opsForHash().putAll(userKey, userInfoMap);
@@ -99,12 +107,10 @@ public class SysInterfaceAuthInterceptor implements HandlerInterceptor {
             }
         } else {
             // 系统接口鉴权数据中没有接口
-            log.info(interfaceKey);
             throw new BusinessException(ErrorCode.NO_AUTH_ERROR);
         }
 
         // 4.未通过
-        log.info(interfaceKey);
         throw new BusinessException(ErrorCode.NO_AUTH_ERROR);
     }
 }
