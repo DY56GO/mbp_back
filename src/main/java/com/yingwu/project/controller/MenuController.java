@@ -8,6 +8,7 @@ import com.yingwu.project.common.BaseResponse;
 import com.yingwu.project.common.DeleteRequest;
 import com.yingwu.project.common.ErrorCode;
 import com.yingwu.project.common.ResultUtils;
+import com.yingwu.project.exception.ThrowUtils;
 import com.yingwu.project.model.dto.menu.MenuAddRequest;
 import com.yingwu.project.model.dto.menu.MenuQueryRequest;
 import com.yingwu.project.model.dto.menu.MenuUpdateRequest;
@@ -21,6 +22,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static com.yingwu.project.constant.OrderConstant.SORT_ORDER_ASC;
+import static com.yingwu.project.constant.SysConstant.MAX_PAGE_SIZE;
 import static com.yingwu.project.exception.ThrowUtils.throwIf;
 import static com.yingwu.project.util.Utils.buildMenuTree;
 
@@ -132,6 +134,8 @@ public class MenuController {
         if (menuQueryRequest != null) {
             current = menuQueryRequest.getCurrent();
             size = menuQueryRequest.getPageSize();
+            // 限制爬虫
+            ThrowUtils.throwIf(size > MAX_PAGE_SIZE, ErrorCode.PARAMS_ERROR);
         }
         QueryWrapper<Menu> queryWrapper = buildMenuQueryWrapper(menuQueryRequest);
         Page<Menu> menuListPage = menuService.page(new Page<>(current, size), queryWrapper);

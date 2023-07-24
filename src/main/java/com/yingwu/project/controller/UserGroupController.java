@@ -8,6 +8,7 @@ import com.yingwu.project.common.BaseResponse;
 import com.yingwu.project.common.DeleteRequest;
 import com.yingwu.project.common.ErrorCode;
 import com.yingwu.project.common.ResultUtils;
+import com.yingwu.project.exception.ThrowUtils;
 import com.yingwu.project.model.dto.userGroup.UserGroupAddRequest;
 import com.yingwu.project.model.dto.userGroup.UserGroupQueryRequest;
 import com.yingwu.project.model.dto.userGroup.UserGroupUpdateRequest;
@@ -21,6 +22,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static com.yingwu.project.constant.OrderConstant.SORT_ORDER_ASC;
+import static com.yingwu.project.constant.SysConstant.MAX_PAGE_SIZE;
 import static com.yingwu.project.exception.ThrowUtils.throwIf;
 import static com.yingwu.project.util.Utils.buildUserGroupTree;
 
@@ -131,6 +133,8 @@ public class UserGroupController {
         if (userGroupQueryRequest != null) {
             current = userGroupQueryRequest.getCurrent();
             size = userGroupQueryRequest.getPageSize();
+            // 限制爬虫
+            ThrowUtils.throwIf(size > MAX_PAGE_SIZE, ErrorCode.PARAMS_ERROR);
         }
         QueryWrapper<UserGroup> queryWrapper = buildUserGroupQueryWrapper(userGroupQueryRequest);
         Page<UserGroup> userGroupListPage = userGroupService.page(new Page<>(current, size), queryWrapper);

@@ -7,6 +7,7 @@ import com.yingwu.project.common.BaseResponse;
 import com.yingwu.project.common.DeleteRequest;
 import com.yingwu.project.common.ErrorCode;
 import com.yingwu.project.common.ResultUtils;
+import com.yingwu.project.exception.ThrowUtils;
 import com.yingwu.project.model.dto.role.*;
 import com.yingwu.project.model.entity.Role;
 import com.yingwu.project.model.vo.RoleMenuVO;
@@ -21,6 +22,7 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
+import static com.yingwu.project.constant.SysConstant.MAX_PAGE_SIZE;
 import static com.yingwu.project.exception.ThrowUtils.throwIf;
 
 
@@ -134,6 +136,8 @@ public class RoleController {
         if (roleQueryRequest != null) {
             current = roleQueryRequest.getCurrent();
             size = roleQueryRequest.getPageSize();
+            // 限制爬虫
+            ThrowUtils.throwIf(size > MAX_PAGE_SIZE, ErrorCode.PARAMS_ERROR);
         }
         QueryWrapper<Role> queryWrapper = buildRoleQueryWrapper(roleQueryRequest);
         Page<Role> roleListPage = roleService.page(new Page<>(current, size), queryWrapper);

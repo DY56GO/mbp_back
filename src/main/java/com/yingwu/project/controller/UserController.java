@@ -7,6 +7,7 @@ import com.yingwu.project.common.BaseResponse;
 import com.yingwu.project.common.DeleteRequest;
 import com.yingwu.project.common.ErrorCode;
 import com.yingwu.project.common.ResultUtils;
+import com.yingwu.project.exception.ThrowUtils;
 import com.yingwu.project.model.dto.user.*;
 import com.yingwu.project.model.entity.User;
 import com.yingwu.project.model.entity.UserGroup;
@@ -26,6 +27,7 @@ import javax.servlet.http.HttpServletRequest;
 import java.util.*;
 
 import static com.yingwu.project.constant.PasswordConstant.SALT;
+import static com.yingwu.project.constant.SysConstant.MAX_PAGE_SIZE;
 import static com.yingwu.project.exception.ThrowUtils.throwIf;
 import static com.yingwu.project.util.Utils.encryptPassword;
 
@@ -287,6 +289,8 @@ public class UserController {
         if (userQueryRequest != null) {
             current = userQueryRequest.getCurrent();
             size = userQueryRequest.getPageSize();
+            // 限制爬虫
+            ThrowUtils.throwIf(size > MAX_PAGE_SIZE, ErrorCode.PARAMS_ERROR);
         }
         QueryWrapper<User> queryWrapper = buildUserQueryWrapper(userQueryRequest);
         Page<User> userPage = userService.page(new Page<>(current, size), queryWrapper);
