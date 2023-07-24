@@ -33,7 +33,7 @@ import static com.yingwu.project.util.Utils.encryptPassword;
 /**
  * 用户接口
  *
- * @author Dy56
+ * @author yupi
  * @revision Dy56
  */
 @CrossOrigin
