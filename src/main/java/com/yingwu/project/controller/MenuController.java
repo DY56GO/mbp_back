@@ -8,7 +8,6 @@ import com.yingwu.project.common.BaseResponse;
 import com.yingwu.project.common.DeleteRequest;
 import com.yingwu.project.common.ErrorCode;
 import com.yingwu.project.common.ResultUtils;
-import com.yingwu.project.exception.BusinessException;
 import com.yingwu.project.model.dto.menu.MenuAddRequest;
 import com.yingwu.project.model.dto.menu.MenuQueryRequest;
 import com.yingwu.project.model.dto.menu.MenuUpdateRequest;
@@ -22,6 +21,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static com.yingwu.project.constant.OrderConstant.SORT_ORDER_ASC;
+import static com.yingwu.project.exception.ThrowUtils.throwIf;
 import static com.yingwu.project.util.Utils.buildMenuTree;
 
 
@@ -49,18 +49,16 @@ public class MenuController {
     @PostMapping(value = "/add", name = "新增菜单")
     public BaseResponse<Long> addMenu(@RequestBody MenuAddRequest menuAddRequest, HttpServletRequest request) {
         // 校验
-        if (menuAddRequest == null) {
-            throw new BusinessException(ErrorCode.PARAMS_ERROR);
-        }
+        throwIf(menuAddRequest == null, ErrorCode.PARAMS_ERROR);
+
         Menu menu = new Menu();
         BeanUtil.copyProperties(menuAddRequest, menu);
         menuService.validMenuInfo(menu);
 
         // 新增
         boolean result = menuService.save(menu);
-        if (!result) {
-            throw new BusinessException(ErrorCode.OPERATION_ERROR);
-        }
+        throwIf(!result, ErrorCode.OPERATION_ERROR);
+
         return ResultUtils.success(menu.getId());
     }
 
@@ -73,9 +71,7 @@ public class MenuController {
      */
     @PostMapping(value = "/delete", name = "删除菜单")
     public BaseResponse<Boolean> deleteMenu(@RequestBody DeleteRequest deleteRequest, HttpServletRequest request) {
-        if (deleteRequest == null || deleteRequest.getId() <= 0) {
-            throw new BusinessException(ErrorCode.PARAMS_ERROR);
-        }
+        throwIf(deleteRequest == null || deleteRequest.getId() <= 0, ErrorCode.PARAMS_ERROR);
 
         // 删除
         boolean result = menuService.deleteMenu(deleteRequest.getId());
@@ -93,9 +89,8 @@ public class MenuController {
     @PostMapping(value = "/update", name = "更新菜单")
     public BaseResponse<Boolean> updateMenu(@RequestBody MenuUpdateRequest menuUpdateRequest, HttpServletRequest request) {
         // 校验
-        if (menuUpdateRequest == null) {
-            throw new BusinessException(ErrorCode.PARAMS_ERROR);
-        }
+        throwIf(menuUpdateRequest == null, ErrorCode.PARAMS_ERROR);
+
         Menu menu = new Menu();
         BeanUtil.copyProperties(menuUpdateRequest, menu);
         menuService.validMenuInfo(menu);

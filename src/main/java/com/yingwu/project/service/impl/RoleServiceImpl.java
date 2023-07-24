@@ -19,6 +19,8 @@ import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.yingwu.project.exception.ThrowUtils.throwIf;
+
 /**
  * @author Dy56
  * @description 针对表【role】的数据库操作Service实现
@@ -51,16 +53,11 @@ public class RoleServiceImpl extends ServiceImpl<RoleMapper, Role> implements Ro
      */
     @Override
     public void validRoleInfo(Role role) {
-        if (role == null) {
-            throw new BusinessException(ErrorCode.PARAMS_ERROR);
-        }
+        throwIf(role == null, ErrorCode.PARAMS_ERROR);
 
         String roleName = role.getRoleName();
         String roleIdentity = role.getRoleIdentity();
-
-        if (StringUtils.isAnyBlank(roleName, roleIdentity)) {
-            throw new BusinessException(ErrorCode.PARAMS_ERROR, "参数为空");
-        }
+        throwIf(StringUtils.isAnyBlank(roleName, roleIdentity), ErrorCode.PARAMS_ERROR, "参数为空");
 
         // 角色标识不能重复
         QueryWrapper<Role> queryWrapper = new QueryWrapper<>();
@@ -69,9 +66,7 @@ public class RoleServiceImpl extends ServiceImpl<RoleMapper, Role> implements Ro
             queryWrapper.ne("id", role.getId());
         }
         long count = count(queryWrapper);
-        if (count != 0) {
-            throw new BusinessException(ErrorCode.PARAMS_ERROR, "角色标识重复");
-        }
+        throwIf(count != 0, ErrorCode.PARAMS_ERROR, "角色标识重复");
     }
 
     /**

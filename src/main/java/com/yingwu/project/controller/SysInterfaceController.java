@@ -6,7 +6,6 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.yingwu.project.common.BaseResponse;
 import com.yingwu.project.common.ErrorCode;
 import com.yingwu.project.common.ResultUtils;
-import com.yingwu.project.exception.BusinessException;
 import com.yingwu.project.model.dto.sysinterface.SysInterfaceQueryRequest;
 import com.yingwu.project.model.dto.sysinterface.SysInterfaceUpdateRequest;
 import com.yingwu.project.model.entity.SysInterface;
@@ -20,6 +19,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static com.yingwu.project.constant.OrderConstant.SORT_ORDER_ASC;
+import static com.yingwu.project.exception.ThrowUtils.throwIf;
 
 
 /**
@@ -59,9 +59,8 @@ public class SysInterfaceController {
     @PostMapping(value = "/update", name = "更新系统接口（仅更新开启和关闭）")
     public BaseResponse<Boolean> updateSysInterface(@RequestBody SysInterfaceUpdateRequest sysInterfaceUpdateRequest, HttpServletRequest request) {
         // 校验
-        if (sysInterfaceUpdateRequest == null) {
-            throw new BusinessException(ErrorCode.PARAMS_ERROR);
-        }
+        throwIf(sysInterfaceUpdateRequest == null, ErrorCode.PARAMS_ERROR);
+
         SysInterface sysInterface = new SysInterface();
         BeanUtils.copyProperties(sysInterfaceUpdateRequest, sysInterface);
 

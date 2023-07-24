@@ -7,7 +7,6 @@ import com.yingwu.project.common.BaseResponse;
 import com.yingwu.project.common.DeleteRequest;
 import com.yingwu.project.common.ErrorCode;
 import com.yingwu.project.common.ResultUtils;
-import com.yingwu.project.exception.BusinessException;
 import com.yingwu.project.model.dto.user.*;
 import com.yingwu.project.model.entity.User;
 import com.yingwu.project.model.entity.UserGroup;
@@ -27,6 +26,7 @@ import javax.servlet.http.HttpServletRequest;
 import java.util.*;
 
 import static com.yingwu.project.constant.PasswordConstant.SALT;
+import static com.yingwu.project.exception.ThrowUtils.throwIf;
 import static com.yingwu.project.util.Utils.encryptPassword;
 
 
@@ -61,9 +61,8 @@ public class UserController {
     @PostMapping(value = "/register", name = "用户注册")
     public BaseResponse<Long> userRegister(@RequestBody UserRegisterRequest userRegisterRequest) {
         // 校验
-        if (userRegisterRequest == null) {
-            throw new BusinessException(ErrorCode.PARAMS_ERROR);
-        }
+        throwIf(userRegisterRequest == null, ErrorCode.PARAMS_ERROR);
+
         User user = new User();
         BeanUtils.copyProperties(userRegisterRequest, user);
         userService.validUserRegisterInfo(user);
@@ -83,9 +82,8 @@ public class UserController {
     @PostMapping(value = "/login", name = "用户登录")
     public BaseResponse<String> userLogin(@RequestBody UserLoginRequest userLoginRequest, HttpServletRequest request) {
         // 校验
-        if (userLoginRequest == null) {
-            throw new BusinessException(ErrorCode.PARAMS_ERROR);
-        }
+        throwIf(userLoginRequest == null, ErrorCode.PARAMS_ERROR);
+
         User user = new User();
         BeanUtils.copyProperties(userLoginRequest, user);
         userService.validUserLoginInfo(user);
@@ -135,9 +133,8 @@ public class UserController {
     @PostMapping(value = "/add", name = "新增用户")
     public BaseResponse<Long> addUser(@RequestBody UserAddRequest userAddRequest, HttpServletRequest request) {
         // 校验
-        if (userAddRequest == null) {
-            throw new BusinessException(ErrorCode.PARAMS_ERROR);
-        }
+        throwIf(userAddRequest == null, ErrorCode.PARAMS_ERROR);
+
         User user = new User();
         BeanUtil.copyProperties(userAddRequest, user);
         userService.validAddUserInfo(user);
@@ -147,9 +144,8 @@ public class UserController {
 
         // 新增
         boolean result = userService.save(user);
-        if (!result) {
-            throw new BusinessException(ErrorCode.OPERATION_ERROR);
-        }
+        throwIf(!result, ErrorCode.OPERATION_ERROR);
+
         return ResultUtils.success(user.getId());
     }
 
@@ -163,9 +159,7 @@ public class UserController {
     @PostMapping(value = "/delete", name = "删除用户")
     public BaseResponse<Boolean> deleteUser(@RequestBody DeleteRequest deleteRequest, HttpServletRequest request) {
         // 校验
-        if (deleteRequest == null || deleteRequest.getId() <= 0) {
-            throw new BusinessException(ErrorCode.PARAMS_ERROR);
-        }
+        throwIf(deleteRequest == null || deleteRequest.getId() <= 0, ErrorCode.PARAMS_ERROR);
 
         // 删除
         boolean result = userService.deleteUser(deleteRequest.getId());
@@ -183,9 +177,8 @@ public class UserController {
     @PostMapping(value = "/update", name = "更新用户")
     public BaseResponse<Boolean> updateUser(@RequestBody UserUpdateRequest userUpdateRequest, HttpServletRequest request) {
         // 校验
-        if (userUpdateRequest == null) {
-            throw new BusinessException(ErrorCode.PARAMS_ERROR);
-        }
+        throwIf(userUpdateRequest == null, ErrorCode.PARAMS_ERROR);
+
         User user = new User();
         BeanUtil.copyProperties(userUpdateRequest, user);
         userService.validUserUpdateInfo(user);
@@ -220,9 +213,8 @@ public class UserController {
     public BaseResponse<Boolean> userUpdateOneself(@RequestBody UserUpdateSelfRequest userUpdateSelfRequest, HttpServletRequest request) {
         // 校验
         UserInfoRedisVO userInfo = userService.getLoginUser(request);
-        if (userUpdateSelfRequest == null) {
-            throw new BusinessException(ErrorCode.PARAMS_ERROR);
-        }
+        throwIf(userUpdateSelfRequest == null, ErrorCode.PARAMS_ERROR);
+
         User user = new User();
         BeanUtil.copyProperties(userUpdateSelfRequest, user);
         user.setId(userInfo.getId());
@@ -368,9 +360,8 @@ public class UserController {
      */
     @GetMapping(value = "/role", name = "获取用户角色")
     public BaseResponse<List<UserRoleVO>> getUserRoleByUserId(UserRoleUpdateRequest userRoleQueryRequest, HttpServletRequest request) {
-        if (userRoleQueryRequest == null) {
-            throw new BusinessException(ErrorCode.PARAMS_ERROR);
-        }
+        throwIf(userRoleQueryRequest == null, ErrorCode.PARAMS_ERROR);
+
         List<UserRoleVO> userRoleList = userService.getUserInfoById(userRoleQueryRequest.getId());
         return ResultUtils.success(userRoleList);
     }
@@ -385,9 +376,7 @@ public class UserController {
     @PostMapping(value = "/updateRole", name = "更新用户角色")
     public BaseResponse<Boolean> updateUserRole(@RequestBody UserRoleUpdateRequest userRoleUpdateRequest, HttpServletRequest request) {
         // 校验
-        if (userRoleUpdateRequest == null) {
-            throw new BusinessException(ErrorCode.PARAMS_ERROR);
-        }
+        throwIf(userRoleUpdateRequest == null, ErrorCode.PARAMS_ERROR);
 
         //  更新
         boolean result = userRoleService.updateUserRole(userRoleUpdateRequest);

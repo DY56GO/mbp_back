@@ -15,6 +15,8 @@ import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.yingwu.project.exception.ThrowUtils.throwIf;
+
 /**
  * @author Dy56
  * @description 针对表【userRole】的数据库操作Service实现
@@ -35,17 +37,13 @@ public class UserRoleServiceImpl extends ServiceImpl<UserRoleMapper, UserRole> i
     @Transactional(rollbackFor = Exception.class)
     public boolean updateUserRole(UserRoleUpdateRequest userRoleUpdateRequest) {
         // 校验
-        if (userRoleUpdateRequest == null) {
-            throw new BusinessException(ErrorCode.PARAMS_ERROR);
-        }
+        throwIf(userRoleUpdateRequest == null, ErrorCode.PARAMS_ERROR);
 
         Long userId = userRoleUpdateRequest.getId();
         List<Long> addRoleList = userRoleUpdateRequest.getAddRoleList();
         List<Long> deleteRoleList = userRoleUpdateRequest.getDeleteRoleList();
 
-        if (userId == null || addRoleList == null || deleteRoleList == null) {
-            throw new BusinessException(ErrorCode.PARAMS_ERROR, "参数为空");
-        }
+        throwIf(userId == null || addRoleList == null || deleteRoleList == null, ErrorCode.PARAMS_ERROR, "参数为空");
 
         // 组装新增用户角色列表和删除用户角色列表
         List<UserRole> addUserRoleList = new ArrayList<>();

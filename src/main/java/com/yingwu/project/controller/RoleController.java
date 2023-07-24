@@ -7,7 +7,6 @@ import com.yingwu.project.common.BaseResponse;
 import com.yingwu.project.common.DeleteRequest;
 import com.yingwu.project.common.ErrorCode;
 import com.yingwu.project.common.ResultUtils;
-import com.yingwu.project.exception.BusinessException;
 import com.yingwu.project.model.dto.role.*;
 import com.yingwu.project.model.entity.Role;
 import com.yingwu.project.model.vo.RoleMenuVO;
@@ -21,6 +20,8 @@ import org.springframework.web.bind.annotation.*;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
+
+import static com.yingwu.project.exception.ThrowUtils.throwIf;
 
 
 /**
@@ -53,18 +54,16 @@ public class RoleController {
     @PostMapping(value = "/add", name = "新增角色")
     public BaseResponse<Long> addRole(@RequestBody RoleAddRequest roleAddRequest, HttpServletRequest request) {
         // 校验
-        if (roleAddRequest == null) {
-            throw new BusinessException(ErrorCode.PARAMS_ERROR);
-        }
+        throwIf(roleAddRequest == null, ErrorCode.PARAMS_ERROR);
+
         Role role = new Role();
         BeanUtil.copyProperties(roleAddRequest, role);
         roleService.validRoleInfo(role);
 
         // 新增
         boolean result = roleService.save(role);
-        if (!result) {
-            throw new BusinessException(ErrorCode.OPERATION_ERROR);
-        }
+        throwIf(!result, ErrorCode.OPERATION_ERROR);
+
         return ResultUtils.success(role.getId());
     }
 
@@ -78,9 +77,7 @@ public class RoleController {
     @PostMapping(value = "/delete", name = "删除角色")
     public BaseResponse<Boolean> deleteRole(@RequestBody DeleteRequest deleteRequest, HttpServletRequest request) {
         // 校验
-        if (deleteRequest == null || deleteRequest.getId() <= 0) {
-            throw new BusinessException(ErrorCode.PARAMS_ERROR);
-        }
+        throwIf(deleteRequest == null || deleteRequest.getId() <= 0, ErrorCode.PARAMS_ERROR);
 
         boolean result = roleService.deleteRole(deleteRequest.getId());
 
@@ -97,9 +94,8 @@ public class RoleController {
     @PostMapping(value = "/update", name = "更新角色")
     public BaseResponse<Boolean> updateRole(@RequestBody RoleUpdateRequest roleUpdateRequest, HttpServletRequest request) {
         // 校验
-        if (roleUpdateRequest == null) {
-            throw new BusinessException(ErrorCode.PARAMS_ERROR);
-        }
+        throwIf(roleUpdateRequest == null, ErrorCode.PARAMS_ERROR);
+
         Role role = new Role();
         BeanUtil.copyProperties(roleUpdateRequest, role);
         roleService.validRoleInfo(role);
@@ -178,9 +174,8 @@ public class RoleController {
      */
     @GetMapping(value = "/menu", name = "获取角色菜单通过角色id")
     public BaseResponse<List<RoleMenuVO>> getRoleMenuByRoleId(RoleSysInterfaceQueryRequest roleMenuQueryRequest, HttpServletRequest request) {
-        if (roleMenuQueryRequest == null) {
-            throw new BusinessException(ErrorCode.PARAMS_ERROR);
-        }
+        throwIf(roleMenuQueryRequest == null, ErrorCode.PARAMS_ERROR);
+
         List<RoleMenuVO> roleMenuList = roleService.getRoleMenuByRoleId(roleMenuQueryRequest.getId(), true);
         return ResultUtils.success(roleMenuList);
     }
@@ -195,9 +190,7 @@ public class RoleController {
     @PostMapping(value = "/updateMenu", name = "更新角色菜单")
     public BaseResponse<Boolean> updateRoleMenu(@RequestBody RoleMenuUpdateRequest roleMenuUpdateRequest, HttpServletRequest request) {
         // 校验
-        if (roleMenuUpdateRequest == null) {
-            throw new BusinessException(ErrorCode.PARAMS_ERROR);
-        }
+        throwIf(roleMenuUpdateRequest == null, ErrorCode.PARAMS_ERROR);
 
         roleMenuService.updateRoleMenu(roleMenuUpdateRequest);
 
@@ -217,9 +210,8 @@ public class RoleController {
      */
     @GetMapping(value = "/sysInterface", name = "获取角色系统接口通过角色id")
     public BaseResponse<List<RoleSysInterfaceVO>> getRoleSysInterfaceByRoleId(RoleSysInterfaceQueryRequest roleSysInterfaceQueryRequest, HttpServletRequest request) {
-        if (roleSysInterfaceQueryRequest == null) {
-            throw new BusinessException(ErrorCode.PARAMS_ERROR);
-        }
+        throwIf(roleSysInterfaceQueryRequest == null, ErrorCode.PARAMS_ERROR);
+
         List<RoleSysInterfaceVO> roleSysInterfaceList = roleService.getRoleSysInterfaceByRoleId(roleSysInterfaceQueryRequest.getId());
         return ResultUtils.success(roleSysInterfaceList);
     }
@@ -234,9 +226,7 @@ public class RoleController {
     @PostMapping(value = "/updateSysInterface", name = "更新角色系统接口")
     public BaseResponse<Boolean> updateRoleSysInterface(@RequestBody RoleSysInterfaceUpdateRequest roleSysInterfaceUpdateRequest, HttpServletRequest request) {
         // 校验
-        if (roleSysInterfaceUpdateRequest == null) {
-            throw new BusinessException(ErrorCode.PARAMS_ERROR);
-        }
+        throwIf(roleSysInterfaceUpdateRequest == null, ErrorCode.PARAMS_ERROR);
 
         roleSysInterfaceService.updateRoleSysInterface(roleSysInterfaceUpdateRequest);
 

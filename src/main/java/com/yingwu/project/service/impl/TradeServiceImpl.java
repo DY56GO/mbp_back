@@ -2,7 +2,6 @@ package com.yingwu.project.service.impl;
 
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.yingwu.project.common.ErrorCode;
-import com.yingwu.project.exception.BusinessException;
 import com.yingwu.project.mapper.TradeMapper;
 import com.yingwu.project.model.entity.Trade;
 import com.yingwu.project.service.TradeService;
@@ -10,6 +9,8 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
+
+import static com.yingwu.project.exception.ThrowUtils.throwIf;
 
 /**
  * @author Dy56
@@ -25,16 +26,11 @@ public class TradeServiceImpl extends ServiceImpl<TradeMapper, Trade> implements
      */
     @Override
     public void validTradeInfo(Trade trade) {
-        if (trade == null) {
-            throw new BusinessException(ErrorCode.PARAMS_ERROR);
-        }
+        throwIf(trade == null, ErrorCode.PARAMS_ERROR);
 
         String tsCode = trade.getTsCode();
         Date tradeDate = trade.getTradeDate();
-
-        if (StringUtils.isAnyBlank(tsCode) || tradeDate == null) {
-            throw new BusinessException(ErrorCode.PARAMS_ERROR, "参数为空");
-        }
+        throwIf(StringUtils.isAnyBlank(tsCode) || tradeDate == null, ErrorCode.PARAMS_ERROR, "参数为空");
     }
 }
 

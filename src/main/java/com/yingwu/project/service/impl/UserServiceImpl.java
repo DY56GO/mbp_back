@@ -37,6 +37,7 @@ import java.util.concurrent.TimeUnit;
 import static com.yingwu.project.constant.PasswordConstant.SALT;
 import static com.yingwu.project.constant.RedisConstant.*;
 import static com.yingwu.project.constant.UserConstant.*;
+import static com.yingwu.project.exception.ThrowUtils.throwIf;
 import static com.yingwu.project.util.Utils.buildUserRouter;
 import static com.yingwu.project.util.Utils.encryptPassword;
 
@@ -86,9 +87,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
             QueryWrapper<User> queryWrapper = new QueryWrapper<>();
             queryWrapper.eq("user_account", userAccount);
             long count = userMapper.selectCount(queryWrapper);
-            if (count > 0) {
-                throw new BusinessException(ErrorCode.PARAMS_ERROR, "用户账号重复");
-            }
+            throwIf(count > 0, ErrorCode.PARAMS_ERROR, "用户账号重复");
 
             // 2. 加密
             userPassword = encryptPassword(userPassword);
@@ -97,9 +96,8 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
             user.setUserAccount(userAccount);
             user.setUserPassword(userPassword);
             boolean saveResult = this.save(user);
-            if (!saveResult) {
-                throw new BusinessException(ErrorCode.SYSTEM_ERROR, "注册失败");
-            }
+            throwIf(!saveResult, ErrorCode.SYSTEM_ERROR, "注册失败");
+
             return user.getId();
         }
     }
@@ -111,36 +109,21 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
      */
     @Override
     public void validUserRegisterInfo(User user) {
-        if (user == null) {
-            throw new BusinessException(ErrorCode.PARAMS_ERROR);
-        }
+        throwIf(user == null, ErrorCode.PARAMS_ERROR);
 
         String userAccount = user.getUserAccount();
         String userPassword = user.getUserPassword();
         String checkPassword = user.getUserPassword();
 
-        if (StringUtils.isAnyBlank(userAccount, userPassword, checkPassword)) {
-            throw new BusinessException(ErrorCode.PARAMS_ERROR, "参数为空");
-        }
-        if (userAccount.length() < USER_ACCOUNT_MIN_LENGTH) {
-            throw new BusinessException(ErrorCode.PARAMS_ERROR, "用户账号过短");
-        }
-        if (userAccount.length() > USER_ACCOUNT_MAX_LENGTH) {
-            throw new BusinessException(ErrorCode.PARAMS_ERROR, "用户账号过长");
-        }
-        if (userPassword.length() < USER_PASSWORD_MIN_LENGTH || checkPassword.length() < USER_PASSWORD_MIN_LENGTH) {
-            throw new BusinessException(ErrorCode.PARAMS_ERROR, "密码过短");
-        }
-        if (userPassword.length() > USER_PASSWORD_MAX_LENGTH) {
-            throw new BusinessException(ErrorCode.PARAMS_ERROR, "密码过长");
-        }
-        if (checkPassword.length() > USER_PASSWORD_MAX_LENGTH) {
-            throw new BusinessException(ErrorCode.PARAMS_ERROR, "确认密码过长");
-        }
+        throwIf(StringUtils.isAnyBlank(userAccount, userPassword, checkPassword), ErrorCode.PARAMS_ERROR, "参数为空");
+        throwIf(userAccount.length() < USER_ACCOUNT_MIN_LENGTH, ErrorCode.PARAMS_ERROR, "用户账号过短");
+        throwIf(userAccount.length() > USER_ACCOUNT_MAX_LENGTH, ErrorCode.PARAMS_ERROR, "用户账号过长");
+        throwIf(userPassword.length() < USER_PASSWORD_MIN_LENGTH || checkPassword.length() < USER_PASSWORD_MIN_LENGTH, ErrorCode.PARAMS_ERROR, "密码过短");
+        throwIf(userPassword.length() > USER_PASSWORD_MAX_LENGTH, ErrorCode.PARAMS_ERROR, "密码过长");
+        throwIf(checkPassword.length() > USER_PASSWORD_MAX_LENGTH, ErrorCode.PARAMS_ERROR, "确认密码过长");
+
         // 密码和校验密码相同
-        if (!userPassword.equals(checkPassword)) {
-            throw new BusinessException(ErrorCode.PARAMS_ERROR, "密码和确认密码不一致");
-        }
+        throwIf(!userPassword.equals(checkPassword), ErrorCode.PARAMS_ERROR, "密码和确认密码不一致");
     }
 
     /**
@@ -162,10 +145,9 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         queryWrapper.eq("user_password", userPassword);
         queryWrapper.eq("is_using", 1);
         User hasUser = userMapper.selectOne(queryWrapper);
+
         // 用户不存在
-        if (hasUser == null) {
-            throw new BusinessException(ErrorCode.PARAMS_ERROR, "用户不存在或密码错误");
-        }
+        throwIf(hasUser == null, ErrorCode.PARAMS_ERROR, "用户不存在或密码错误");
 
         // 3.通过用户id为key，判断Redis中是否存在，存在为已登录，返回value中的token
         String userKey = USER_ID_KEY_REDIS + hasUser.getId();
@@ -206,22 +188,14 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
      */
     @Override
     public void validUserLoginInfo(User user) {
-        if (user == null) {
-            throw new BusinessException(ErrorCode.PARAMS_ERROR);
-        }
+        throwIf(user == null, ErrorCode.PARAMS_ERROR);
 
         String userAccount = user.getUserAccount();
         String userPassword = user.getUserPassword();
 
-        if (StringUtils.isAnyBlank(userAccount, userPassword)) {
-            throw new BusinessException(ErrorCode.PARAMS_ERROR, "参数为空");
-        }
-        if (userAccount.length() < USER_ACCOUNT_MIN_LENGTH) {
-            throw new BusinessException(ErrorCode.PARAMS_ERROR, "用户账号错误");
-        }
-        if (userPassword.length() < USER_PASSWORD_MIN_LENGTH) {
-            throw new BusinessException(ErrorCode.PARAMS_ERROR, "密码错误");
-        }
+        throwIf(StringUtils.isAnyBlank(userAccount, userPassword), ErrorCode.PARAMS_ERROR, "参数为空");
+        throwIf(userAccount.length() < USER_ACCOUNT_MIN_LENGTH, ErrorCode.PARAMS_ERROR, "用户账号错误");
+        throwIf(userPassword.length() < USER_PASSWORD_MIN_LENGTH, ErrorCode.PARAMS_ERROR, "密码错误");
     }
 
     /**
@@ -278,37 +252,22 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
      */
     @Override
     public void validAddUserInfo(User user) {
-        if (user == null) {
-            throw new BusinessException(ErrorCode.PARAMS_ERROR);
-        }
+        throwIf(user == null, ErrorCode.PARAMS_ERROR);
 
         String userAccount = user.getUserAccount();
         String userPassword = user.getUserPassword();
 
-        if (StringUtils.isAnyBlank(userAccount, userPassword)) {
-            throw new BusinessException(ErrorCode.PARAMS_ERROR, "参数为空");
-        }
-        if (userAccount.length() < USER_ACCOUNT_MIN_LENGTH) {
-            throw new BusinessException(ErrorCode.PARAMS_ERROR, "用户账号过短");
-        }
-        if (userAccount.length() > USER_ACCOUNT_MAX_LENGTH) {
-            throw new BusinessException(ErrorCode.PARAMS_ERROR, "用户账号过长");
-        }
-        if (userPassword.length() < USER_PASSWORD_MIN_LENGTH) {
-            throw new BusinessException(ErrorCode.PARAMS_ERROR, "密码过短");
-        }
-        if (userPassword.length() > USER_PASSWORD_MAX_LENGTH) {
-            throw new BusinessException(ErrorCode.PARAMS_ERROR, "密码过长");
-        }
+        throwIf(StringUtils.isAnyBlank(userAccount, userPassword), ErrorCode.PARAMS_ERROR, "参数为空");
+        throwIf(userAccount.length() < USER_ACCOUNT_MIN_LENGTH, ErrorCode.PARAMS_ERROR, "用户账号过短");
+        throwIf(userAccount.length() > USER_ACCOUNT_MAX_LENGTH, ErrorCode.PARAMS_ERROR, "用户账号过长");
+        throwIf(userPassword.length() < USER_PASSWORD_MIN_LENGTH, ErrorCode.PARAMS_ERROR, "密码过短");
+        throwIf(userPassword.length() > USER_PASSWORD_MAX_LENGTH, ErrorCode.PARAMS_ERROR, "密码过长");
 
         // 用户账号不能重复
         QueryWrapper<User> queryWrapper = new QueryWrapper<>();
         queryWrapper.eq("user_account", userAccount);
         long count = count(queryWrapper);
-        if (count != 0) {
-            throw new BusinessException(ErrorCode.PARAMS_ERROR, "用户账号重复");
-        }
-
+        throwIf(count != 0, ErrorCode.PARAMS_ERROR, "用户账号重复");
     }
 
     /**
@@ -318,28 +277,21 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
      */
     @Override
     public void validUserUpdateInfo(User user) {
-        if (user == null) {
-            throw new BusinessException(ErrorCode.PARAMS_ERROR);
-        }
+        throwIf(user == null, ErrorCode.PARAMS_ERROR);
 
         Long id = user.getId();
         String userAccount = user.getUserAccount();
 
-        if (StringUtils.isAnyBlank(userAccount)) {
-            throw new BusinessException(ErrorCode.PARAMS_ERROR, "参数为空");
-        }
-        if (userAccount.length() < 4) {
-            throw new BusinessException(ErrorCode.PARAMS_ERROR, "用户账号错误");
-        }
+        throwIf(StringUtils.isAnyBlank(userAccount), ErrorCode.PARAMS_ERROR, "参数为空");
+        throwIf(userAccount.length() < USER_ACCOUNT_MIN_LENGTH, ErrorCode.PARAMS_ERROR, "用户账号过短");
+        throwIf(userAccount.length() > USER_ACCOUNT_MAX_LENGTH, ErrorCode.PARAMS_ERROR, "用户账号过长");
 
         // 用户账号不能重复
         QueryWrapper<User> queryWrapper = new QueryWrapper<>();
         queryWrapper.eq("user_account", userAccount);
         queryWrapper.ne("id", id);
         long count = count(queryWrapper);
-        if (count != 0) {
-            throw new BusinessException(ErrorCode.PARAMS_ERROR, "用户账号重复");
-        }
+        throwIf(count != 0, ErrorCode.PARAMS_ERROR, "用户账号重复");
     }
 
     /**
@@ -350,17 +302,13 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
      */
     @Override
     public void validUserPasswordUpdateInfo(UserPasswordUpdateRequest userPasswordUpdateRequest, Long userId) {
-        if (userPasswordUpdateRequest == null) {
-            throw new BusinessException(ErrorCode.PARAMS_ERROR);
-        }
+        throwIf(userPasswordUpdateRequest == null, ErrorCode.PARAMS_ERROR);
 
         String userOldPassword = userPasswordUpdateRequest.getUserOldPassword();
         String userNewPassword = userPasswordUpdateRequest.getUserNewPassword();
         String newCheckPassword = userPasswordUpdateRequest.getNewCheckPassword();
 
-        if (StringUtils.isAnyBlank(userOldPassword, userNewPassword, newCheckPassword)) {
-            throw new BusinessException(ErrorCode.PARAMS_ERROR, "参数为空");
-        }
+        throwIf(StringUtils.isAnyBlank(userOldPassword, userNewPassword, newCheckPassword), ErrorCode.PARAMS_ERROR, "参数为空");
 
         // 验证旧密码
         User userQuery = new User();
@@ -368,22 +316,15 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         userQuery.setUserPassword(DigestUtils.md5DigestAsHex((SALT + userOldPassword).getBytes()));
         QueryWrapper<User> queryWrapper = new QueryWrapper<>(userQuery);
         long count = count(queryWrapper);
-        if (count == 0) {
-            throw new BusinessException(ErrorCode.PARAMS_ERROR, "旧密码错误");
-        }
-        if (userNewPassword.length() < USER_PASSWORD_MIN_LENGTH || newCheckPassword.length() < USER_PASSWORD_MIN_LENGTH) {
-            throw new BusinessException(ErrorCode.PARAMS_ERROR, "密码过短");
-        }
-        if (userNewPassword.length() > USER_PASSWORD_MAX_LENGTH) {
-            throw new BusinessException(ErrorCode.PARAMS_ERROR, "新密码过长");
-        }
-        if (newCheckPassword.length() > USER_PASSWORD_MAX_LENGTH) {
-            throw new BusinessException(ErrorCode.PARAMS_ERROR, "新确认密码过长");
-        }
+
+        throwIf(count == 0, ErrorCode.PARAMS_ERROR, "旧密码错误");
+        throwIf(userNewPassword.length() < USER_PASSWORD_MIN_LENGTH || newCheckPassword.length() < USER_PASSWORD_MIN_LENGTH, ErrorCode.PARAMS_ERROR, "密码过短");
+        throwIf(userNewPassword.length() > USER_PASSWORD_MAX_LENGTH, ErrorCode.PARAMS_ERROR, "新密码过长");
+        throwIf(newCheckPassword.length() > USER_PASSWORD_MAX_LENGTH, ErrorCode.PARAMS_ERROR, "新确认密码过长");
+        throwIf(StringUtils.isAnyBlank(userOldPassword, userNewPassword, newCheckPassword), ErrorCode.PARAMS_ERROR, "参数为空");
+
         // 验证新密码和确认密码是否否一致
-        if (!userNewPassword.equals(newCheckPassword)) {
-            throw new BusinessException(ErrorCode.PARAMS_ERROR, "新密码和新确认密码不一致");
-        }
+        throwIf(!userNewPassword.equals(newCheckPassword), ErrorCode.PARAMS_ERROR, "新密码和新确认密码不一致");
     }
 
     /**
@@ -442,9 +383,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         // 1.获取用户基本信息
         User hasUser = userMapper.selectById(userId);
         // 用户不存在
-        if (hasUser == null) {
-            throw new BusinessException(ErrorCode.PARAMS_ERROR, "用户不存");
-        }
+        throwIf(hasUser == null, ErrorCode.PARAMS_ERROR, "用户不存");
 
         // 2.数据脱敏和添加权限信息
         UserInfoRedisVO userInfo = new UserInfoRedisVO();

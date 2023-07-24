@@ -14,6 +14,8 @@ import org.springframework.transaction.interceptor.TransactionAspectSupport;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.yingwu.project.exception.ThrowUtils.throwIf;
+
 /**
  * @author Dy56
  * @description 针对表【roleMenu】的数据库操作Service实现
@@ -31,17 +33,12 @@ public class RoleMenuServiceImpl extends ServiceImpl<RoleMenuMapper, RoleMenu> i
     @Transactional(rollbackFor = Exception.class)
     public boolean updateRoleMenu(RoleMenuUpdateRequest roleMenuUpdateRequest) {
         // 校验
-        if (roleMenuUpdateRequest == null) {
-            throw new BusinessException(ErrorCode.PARAMS_ERROR);
-        }
+        throwIf(roleMenuUpdateRequest == null, ErrorCode.PARAMS_ERROR);
 
         Long roleId = roleMenuUpdateRequest.getId();
         List<Long> addMenuList = roleMenuUpdateRequest.getAddMenuList();
         List<Long> deleteMenuList = roleMenuUpdateRequest.getDeleteMenuList();
-
-        if (roleId == null || addMenuList == null || deleteMenuList == null) {
-            throw new BusinessException(ErrorCode.PARAMS_ERROR, "参数为空");
-        }
+        throwIf(roleId == null || addMenuList == null || deleteMenuList == null, ErrorCode.PARAMS_ERROR, "参数为空");
 
         // 组装新增角色菜单列表和删除角色菜单列表
         List<RoleMenu> addRoleMenuList = new ArrayList<>();

@@ -37,6 +37,7 @@ import java.util.List;
 
 import static com.yingwu.project.constant.OrderConstant.SORT_ORDER_ASC;
 import static com.yingwu.project.constant.SysConstant.MAX_PAGE_SIZE;
+import static com.yingwu.project.exception.ThrowUtils.throwIf;
 
 /**
  * 交易接口
@@ -63,18 +64,16 @@ public class TradeController {
     @PostMapping(value = "/add", name = "新增交易")
     public BaseResponse<Long> addTrade(@RequestBody TradeAddRequest tradeAddRequest, HttpServletRequest request) {
         // 校验
-        if (tradeAddRequest == null) {
-            throw new BusinessException(ErrorCode.PARAMS_ERROR);
-        }
+        throwIf(tradeAddRequest == null, ErrorCode.PARAMS_ERROR);
+
         Trade trade = new Trade();
         BeanUtil.copyProperties(tradeAddRequest, trade);
         tradeService.validTradeInfo(trade);
 
         // 新增
         boolean result = tradeService.save(trade);
-        if (!result) {
-            throw new BusinessException(ErrorCode.OPERATION_ERROR);
-        }
+        throwIf(!result, ErrorCode.OPERATION_ERROR);
+
         return ResultUtils.success(trade.getId());
     }
 
@@ -87,9 +86,7 @@ public class TradeController {
      */
     @PostMapping(value = "/delete", name = "删除交易")
     public BaseResponse<Boolean> deleteTrade(@RequestBody DeleteRequest deleteRequest, HttpServletRequest request) {
-        if (deleteRequest == null || deleteRequest.getId() <= 0) {
-            throw new BusinessException(ErrorCode.PARAMS_ERROR);
-        }
+        throwIf(deleteRequest == null || deleteRequest.getId() <= 0, ErrorCode.PARAMS_ERROR);
 
         // 删除
         boolean result = tradeService.removeById(deleteRequest.getId());
@@ -107,9 +104,8 @@ public class TradeController {
     @PostMapping(value = "/update", name = "更新交易")
     public BaseResponse<Boolean> updateTrade(@RequestBody TradeUpdateRequest tradeUpdateRequest, HttpServletRequest request) {
         // 校验
-        if (tradeUpdateRequest == null) {
-            throw new BusinessException(ErrorCode.PARAMS_ERROR);
-        }
+        throwIf(tradeUpdateRequest == null, ErrorCode.PARAMS_ERROR);
+
         Trade trade = new Trade();
         BeanUtil.copyProperties(tradeUpdateRequest, trade);
         tradeService.validTradeInfo(trade);

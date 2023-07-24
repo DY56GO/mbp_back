@@ -12,6 +12,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.interceptor.TransactionAspectSupport;
 
+import static com.yingwu.project.exception.ThrowUtils.throwIf;
+
 /**
  * @author Dy56
  * @description 针对表【user_group】的数据库操作Service实现
@@ -26,15 +28,10 @@ public class UserGroupServiceImpl extends ServiceImpl<UserGroupMapper, UserGroup
      */
     @Override
     public void validUserGroupInfo(UserGroup group) {
-        if (group == null) {
-            throw new BusinessException(ErrorCode.PARAMS_ERROR);
-        }
+        throwIf(group == null, ErrorCode.PARAMS_ERROR);
 
         String groupName = group.getGroupName();
-
-        if (StringUtils.isAnyBlank(groupName)) {
-            throw new BusinessException(ErrorCode.PARAMS_ERROR, "参数为空");
-        }
+        throwIf(StringUtils.isAnyBlank(groupName), ErrorCode.PARAMS_ERROR, "参数为空");
     }
 
     /**
@@ -51,9 +48,7 @@ public class UserGroupServiceImpl extends ServiceImpl<UserGroupMapper, UserGroup
         userGroup.setParentId(groupId);
         QueryWrapper<UserGroup> queryWrapper = new QueryWrapper<>(userGroup);
         long count = count(queryWrapper);
-        if (count != 0) {
-            throw new BusinessException(ErrorCode.PARAMS_ERROR, "存在子用户组");
-        }
+        throwIf(count != 0, ErrorCode.PARAMS_ERROR, "存在子用户组");
 
         Object savePoint = TransactionAspectSupport.currentTransactionStatus().createSavepoint();
         try {

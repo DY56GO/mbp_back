@@ -1,7 +1,6 @@
 package com.yingwu.project.interceptor;
 
 import com.yingwu.project.common.ErrorCode;
-import com.yingwu.project.exception.BusinessException;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.web.servlet.HandlerInterceptor;
@@ -13,6 +12,7 @@ import java.util.concurrent.TimeUnit;
 
 import static com.yingwu.project.constant.RedisConstant.TOKEN_EXPIRATION_TIME;
 import static com.yingwu.project.constant.RedisConstant.USER_ID_EXPIRATION_TIME;
+import static com.yingwu.project.exception.ThrowUtils.throwIf;
 
 /**
  * 登录校验 拦截器
@@ -41,9 +41,7 @@ public class LoginInterceptor implements HandlerInterceptor {
         String token = request.getHeader("token");
 
         // 2. 判断是否登录
-        if (token == null || !redisTemplate.hasKey(token)) {
-            throw new BusinessException(ErrorCode.NOT_LOGIN_ERROR);
-        }
+        throwIf(token == null || !redisTemplate.hasKey(token),ErrorCode.NOT_LOGIN_ERROR);
 
         // 3.更新用户id和token的有效时间 (只要用户在这段时间内用户操作，那么就不会过期)
         String userKey = (String) redisTemplate.opsForValue().get(token);

@@ -17,6 +17,8 @@ import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.yingwu.project.exception.ThrowUtils.throwIf;
+
 /**
  * @author Dy56
  * @description 针对表【menu】的数据库操作Service实现
@@ -34,16 +36,11 @@ public class MenuServiceImpl extends ServiceImpl<MenuMapper, Menu> implements Me
      */
     @Override
     public void validMenuInfo(Menu menu) {
-        if (menu == null) {
-            throw new BusinessException(ErrorCode.PARAMS_ERROR);
-        }
+        throwIf(menu == null, ErrorCode.PARAMS_ERROR);
 
         String menuTitle = menu.getMenuTitle();
         String routePath = menu.getRoutePath();
-
-        if (StringUtils.isAnyBlank(menuTitle, routePath)) {
-            throw new BusinessException(ErrorCode.PARAMS_ERROR, "参数为空");
-        }
+        throwIf(StringUtils.isAnyBlank(menuTitle, routePath), ErrorCode.PARAMS_ERROR, "参数为空");
     }
 
     /**
@@ -60,9 +57,7 @@ public class MenuServiceImpl extends ServiceImpl<MenuMapper, Menu> implements Me
         menu.setParentId(menuId);
         QueryWrapper<Menu> queryWrapper = new QueryWrapper<>(menu);
         long count = count(queryWrapper);
-        if (count != 0) {
-            throw new BusinessException(ErrorCode.PARAMS_ERROR, "存在子菜单");
-        }
+        throwIf(count != 0, ErrorCode.PARAMS_ERROR, "存在子菜单");
 
         Object savePoint = TransactionAspectSupport.currentTransactionStatus().createSavepoint();
         try {

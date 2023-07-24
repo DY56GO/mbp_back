@@ -8,7 +8,6 @@ import com.yingwu.project.common.BaseResponse;
 import com.yingwu.project.common.DeleteRequest;
 import com.yingwu.project.common.ErrorCode;
 import com.yingwu.project.common.ResultUtils;
-import com.yingwu.project.exception.BusinessException;
 import com.yingwu.project.model.dto.userGroup.UserGroupAddRequest;
 import com.yingwu.project.model.dto.userGroup.UserGroupQueryRequest;
 import com.yingwu.project.model.dto.userGroup.UserGroupUpdateRequest;
@@ -22,6 +21,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static com.yingwu.project.constant.OrderConstant.SORT_ORDER_ASC;
+import static com.yingwu.project.exception.ThrowUtils.throwIf;
 import static com.yingwu.project.util.Utils.buildUserGroupTree;
 
 /**
@@ -48,18 +48,16 @@ public class UserGroupController {
     @PostMapping(value = "/add", name = "新增用户组")
     public BaseResponse<Long> addUserGroup(@RequestBody UserGroupAddRequest userGroupAddRequest, HttpServletRequest request) {
         // 校验
-        if (userGroupAddRequest == null) {
-            throw new BusinessException(ErrorCode.PARAMS_ERROR);
-        }
+        throwIf(userGroupAddRequest == null, ErrorCode.PARAMS_ERROR);
+
         UserGroup userGroup = new UserGroup();
         BeanUtil.copyProperties(userGroupAddRequest, userGroup);
         userGroupService.validUserGroupInfo(userGroup);
 
         // 新增
         boolean result = userGroupService.save(userGroup);
-        if (!result) {
-            throw new BusinessException(ErrorCode.OPERATION_ERROR);
-        }
+        throwIf(!result, ErrorCode.OPERATION_ERROR);
+
         return ResultUtils.success(userGroup.getId());
     }
 
@@ -72,9 +70,7 @@ public class UserGroupController {
      */
     @PostMapping(value = "/delete", name = "删除用户组")
     public BaseResponse<Boolean> deleteUserGroup(@RequestBody DeleteRequest deleteRequest, HttpServletRequest request) {
-        if (deleteRequest == null || deleteRequest.getId() <= 0) {
-            throw new BusinessException(ErrorCode.PARAMS_ERROR);
-        }
+        throwIf(deleteRequest == null || deleteRequest.getId() <= 0, ErrorCode.PARAMS_ERROR);
 
         // 删除
         boolean result = userGroupService.deleteUserGroup(deleteRequest.getId());
@@ -92,9 +88,8 @@ public class UserGroupController {
     @PostMapping(value = "/update", name = "更新用户组")
     public BaseResponse<Boolean> updateUserGroup(@RequestBody UserGroupUpdateRequest userGroupUpdateRequest, HttpServletRequest request) {
         // 校验
-        if (userGroupUpdateRequest == null) {
-            throw new BusinessException(ErrorCode.PARAMS_ERROR);
-        }
+        throwIf(userGroupUpdateRequest == null, ErrorCode.PARAMS_ERROR);
+
         UserGroup userGroup = new UserGroup();
         BeanUtil.copyProperties(userGroupUpdateRequest, userGroup);
         userGroupService.validUserGroupInfo(userGroup);

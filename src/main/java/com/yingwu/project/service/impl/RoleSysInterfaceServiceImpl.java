@@ -16,6 +16,8 @@ import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.yingwu.project.exception.ThrowUtils.throwIf;
+
 /**
  * @author Dy56
  * @description 针对表【role_sys_interface】的数据库操作Service实现
@@ -36,16 +38,13 @@ public class RoleSysInterfaceServiceImpl extends ServiceImpl<RoleSysInterfaceMap
     @Transactional(rollbackFor = Exception.class)
     public boolean updateRoleSysInterface(RoleSysInterfaceUpdateRequest roleSysInterfaceUpdateRequest) {
         // 1.校验
-        if (roleSysInterfaceUpdateRequest == null) {
-            throw new BusinessException(ErrorCode.PARAMS_ERROR);
-        }
+        throwIf(roleSysInterfaceUpdateRequest == null, ErrorCode.PARAMS_ERROR);
+
         Long roleId = roleSysInterfaceUpdateRequest.getId();
         List<Long> addSysInterfaceList = roleSysInterfaceUpdateRequest.getAddSysInterfaceList();
         List<Long> deleteSysInterfaceList = roleSysInterfaceUpdateRequest.getDeleteSysInterfaceList();
 
-        if (roleId == null || addSysInterfaceList == null || deleteSysInterfaceList == null) {
-            throw new BusinessException(ErrorCode.PARAMS_ERROR, "参数为空");
-        }
+        throwIf(roleId == null || addSysInterfaceList == null || deleteSysInterfaceList == null,ErrorCode.PARAMS_ERROR, "参数为空");
 
         // 2.组装新增角色系统接口列表和删除角色系统接口列表
         List<RoleSysInterface> addRoleSysInterfaceList = new ArrayList<>();
