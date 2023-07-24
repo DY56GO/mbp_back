@@ -168,6 +168,12 @@ public class TradeController {
         tradeQuery.setTsCode(null);
 
         QueryWrapper<Trade> queryWrapper = new QueryWrapper<>(tradeQuery);
+        if(tradeQueryRequest.getStartTradeDate() != null) {
+            queryWrapper.gt("trade_date", tradeQueryRequest.getStartTradeDate());
+        }
+        if(tradeQueryRequest.getEndTradeDate() != null) {
+            queryWrapper.lt("trade_date", tradeQueryRequest.getEndTradeDate());
+        }
         queryWrapper.like(StringUtils.isNotBlank(tsCode), "ts_code", tsCode);
 
         // 设置排序
