@@ -10,8 +10,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.concurrent.TimeUnit;
 
-import static com.yingwu.project.constant.RedisConstant.TOKEN_EXPIRATION_TIME;
-import static com.yingwu.project.constant.RedisConstant.USER_ID_EXPIRATION_TIME;
+import static com.yingwu.project.constant.RedisConstant.*;
 import static com.yingwu.project.exception.ThrowUtils.throwIf;
 
 /**
@@ -39,13 +38,14 @@ public class LoginInterceptor implements HandlerInterceptor {
 
         // 1. 获取请求头中的token
         String token = request.getHeader("token");
+        String tokenKey = TOKEN_KEY_REDIS + token;
 
         // 2. 判断是否登录
-        throwIf(token == null || !redisTemplate.hasKey(token),ErrorCode.NOT_LOGIN_ERROR);
+        throwIf(token == null || !redisTemplate.hasKey(tokenKey),ErrorCode.NOT_LOGIN_ERROR);
 
         // 3.更新用户id和token的有效时间 (只要用户在这段时间内用户操作，那么就不会过期)
-        String userKey = (String) redisTemplate.opsForValue().get(token);
-        redisTemplate.expire(token, TOKEN_EXPIRATION_TIME, TimeUnit.MINUTES);
+        String userKey = (String) redisTemplate.opsForValue().get(tokenKey);
+        redisTemplate.expire(tokenKey, TOKEN_EXPIRATION_TIME, TimeUnit.MINUTES);
         redisTemplate.expire(userKey, USER_ID_EXPIRATION_TIME, TimeUnit.MINUTES);
 
         // 4.放行

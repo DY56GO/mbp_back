@@ -13,6 +13,11 @@ public interface RedisConstant {
     String SYS_INTERFACE_AUTH_KEY_REDIS = "sys_interface_auth";
 
     /**
+     * token key前缀
+     */
+    String TOKEN_KEY_REDIS = "tk:";
+
+    /**
      * token过期时间（分钟）
      */
     long TOKEN_EXPIRATION_TIME = 30;

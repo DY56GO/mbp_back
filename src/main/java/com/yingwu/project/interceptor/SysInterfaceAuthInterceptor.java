@@ -70,17 +70,18 @@ public class SysInterfaceAuthInterceptor implements HandlerInterceptor {
 
         // 2.获取用户角色信息
         String token = request.getHeader("token");
-        String userKey = (String) redisTemplate.opsForValue().get(token);
+        String tokenKey = TOKEN_KEY_REDIS + token;
+        String userKey = (String) redisTemplate.opsForValue().get(tokenKey);
         Map userInfoMap = redisTemplate.opsForHash().entries(userKey);
 
         // 如果Redis中没有则去查询并重新写入Redis
         if (userInfoMap.size() == 0) {
             String userId = userKey.replaceAll(USER_ID_KEY_REDIS, "");
             UserInfoRedisVO userInfo = userService.createUserRedisData(Long.valueOf(userId));
-            userInfo.setToken(token);
+            userInfo.setTokenKey(tokenKey);
 
             // 将token和用户信息写入Redis
-            redisTemplate.opsForValue().set(token, userKey);
+            redisTemplate.opsForValue().set(tokenKey, userKey);
             userInfoMap = BeanUtil.beanToMap(userInfo);
             redisTemplate.opsForHash().putAll(userKey, userInfoMap);
             redisTemplate.expire(userKey, USER_ID_EXPIRATION_TIME, TimeUnit.MINUTES);

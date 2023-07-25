@@ -20,9 +20,9 @@ public class UserInfoRedisVO implements Serializable {
     private Long id;
 
     /**
-     * token
+     * tokenKey
      */
-    private String token;
+    private String tokenKey;
 
     /**
      * 用户名称
