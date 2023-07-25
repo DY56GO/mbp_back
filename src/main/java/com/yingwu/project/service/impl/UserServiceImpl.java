@@ -38,8 +38,7 @@ import static com.yingwu.project.constant.PasswordConstant.SALT;
 import static com.yingwu.project.constant.RedisConstant.*;
 import static com.yingwu.project.constant.UserConstant.*;
 import static com.yingwu.project.exception.ThrowUtils.throwIf;
-import static com.yingwu.project.util.Utils.buildUserRouter;
-import static com.yingwu.project.util.Utils.encryptPassword;
+import static com.yingwu.project.util.Utils.*;
 
 
 /**
@@ -150,7 +149,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         throwIf(hasUser == null, ErrorCode.PARAMS_ERROR, "用户不存在或密码错误");
 
         // 3.通过用户id为key，判断Redis中是否存在，存在为已登录，返回value中的token
-        String userKey = USER_ID_KEY_REDIS + hasUser.getId();
+        String userKey = buildUserIdRedisKey(String.valueOf(hasUser.getId()));
         String userToken = (String) redisTemplate.opsForHash().get(userKey, "tokenKey");
 
         if (userToken != null) {
@@ -164,7 +163,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         // datacenterId 为数据中心ID
         Snowflake snowflake = IdUtil.getSnowflake(workerId, datacenterId);
         String token = snowflake.nextIdStr();
-        String tokenKey = TOKEN_KEY_REDIS + token;
+        String tokenKey = buildTokenRedisKey(token);
 
         // 5.创建用户Redis数据
         UserInfoRedisVO userInfo = createUserRedisData(hasUser.getId());
@@ -208,14 +207,14 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     @Override
     public UserInfoRedisVO getLoginUser(HttpServletRequest request) {
         String token = request.getHeader("token");
-        String tokenKey = TOKEN_KEY_REDIS + token;
+        String tokenKey = buildTokenRedisKey(token);
         // 从Redis中获取用户数据
         String userKey = (String) redisTemplate.opsForValue().get(tokenKey);
         Map userInfoMap = redisTemplate.opsForHash().entries(userKey);
 
         // 如果Redis中没有则去查询并重新写入Redis
         if (userInfoMap.size() == 0) {
-            String userId = userKey.replaceAll(USER_ID_KEY_REDIS, "");
+            String userId = getUserIdByUserKey(userKey);
             UserInfoRedisVO userInfo = createUserRedisData(Long.valueOf(userId));
             userInfo.setTokenKey(tokenKey);
 
@@ -240,9 +239,9 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     @Override
     public boolean userLogout(HttpServletRequest request) {
         String token = request.getHeader("token");
-        String tokenKey = TOKEN_KEY_REDIS + token;
+        String tokenKey = buildTokenRedisKey(token);
         // 从Redis中延迟删除token
-        Long userId = Long.valueOf(redisTemplate.opsForValue().get(tokenKey).toString().replaceAll(USER_ID_KEY_REDIS, ""));
+        Long userId = Long.valueOf(getUserIdByUserKey(String.valueOf(redisTemplate.opsForValue().get(tokenKey))));
         deleteRedisUser(userId);
 
         return true;
@@ -415,7 +414,8 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
      */
     @Override
     public boolean updateRedisUser(Long userId) {
-        String userKey = USER_ID_KEY_REDIS + userId;
+        String userKey = buildUserIdRedisKey(String.valueOf(userId));
+        
         redisTemplate.expire(userKey, DELETE_KEY_TIME, TimeUnit.SECONDS);
 
         return true;
@@ -429,7 +429,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
      */
     @Override
     public boolean deleteRedisUser(Long userId) {
-        String userKey = USER_ID_KEY_REDIS + userId;
+        String userKey = buildUserIdRedisKey(String.valueOf(userId));
 
         if (!redisTemplate.hasKey(userKey)) {
             return true;

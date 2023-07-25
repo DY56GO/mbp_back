@@ -20,7 +20,10 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
-import static com.yingwu.project.constant.RedisConstant.*;
+import static com.yingwu.project.constant.RedisConstant.SYS_INTERFACE_AUTH_KEY_REDIS;
+import static com.yingwu.project.constant.RedisConstant.USER_ID_EXPIRATION_TIME;
+import static com.yingwu.project.util.Utils.buildTokenRedisKey;
+import static com.yingwu.project.util.Utils.getUserIdByUserKey;
 
 
 /**
@@ -70,13 +73,13 @@ public class SysInterfaceAuthInterceptor implements HandlerInterceptor {
 
         // 2.获取用户角色信息
         String token = request.getHeader("token");
-        String tokenKey = TOKEN_KEY_REDIS + token;
+        String tokenKey = buildTokenRedisKey(token);
         String userKey = (String) redisTemplate.opsForValue().get(tokenKey);
         Map userInfoMap = redisTemplate.opsForHash().entries(userKey);
 
         // 如果Redis中没有则去查询并重新写入Redis
         if (userInfoMap.size() == 0) {
-            String userId = userKey.replaceAll(USER_ID_KEY_REDIS, "");
+            String userId = getUserIdByUserKey(userKey);
             UserInfoRedisVO userInfo = userService.createUserRedisData(Long.valueOf(userId));
             userInfo.setTokenKey(tokenKey);
 

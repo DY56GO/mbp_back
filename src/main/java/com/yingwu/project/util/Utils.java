@@ -16,6 +16,8 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import static com.yingwu.project.constant.PasswordConstant.SALT;
+import static com.yingwu.project.constant.RedisConstant.TOKEN_KEY_REDIS;
+import static com.yingwu.project.constant.RedisConstant.USER_ID_KEY_REDIS;
 
 /**
  * 工具类
@@ -32,6 +34,36 @@ public class Utils {
      */
     public static String encryptPassword(String password) {
         return DigestUtils.md5DigestAsHex((SALT + password).getBytes());
+    }
+
+    /**
+     * 构建用户id 在Redis中的key
+     * 
+     * @param userId
+     * @return
+     */
+    public static String buildUserIdRedisKey(String userId) {
+        return USER_ID_KEY_REDIS + userId;
+    }
+
+    /**
+     * 通过用户Key获取用户id
+     * 
+     * @param userKey
+     * @return
+     */
+    public static String getUserIdByUserKey(String userKey) {
+        return userKey.replaceAll(USER_ID_KEY_REDIS, "");
+    }
+
+    /**
+     * 构建 Token 在Redis中的key
+     *
+     * @param token
+     * @return
+     */
+    public static String buildTokenRedisKey(String token) {
+        return TOKEN_KEY_REDIS + token;
     }
 
     /**
