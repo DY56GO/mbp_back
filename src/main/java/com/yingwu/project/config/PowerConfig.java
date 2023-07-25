@@ -14,5 +14,6 @@ import org.springframework.stereotype.Component;
 @Data
 public class PowerConfig {
     private boolean interfaceAuth;
+    private boolean logRecords;
 }
 

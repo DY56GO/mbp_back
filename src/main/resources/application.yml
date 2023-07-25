@@ -44,3 +44,4 @@ snowflake:
 # 系统功能
 powerconfig:
   interfaceAuth: true # 开启系统接口鉴权 true | false
+  logRecords: true # 开启日志记录 true | false
