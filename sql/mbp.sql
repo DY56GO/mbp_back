@@ -11,7 +11,7 @@
  Target Server Version : 80020
  File Encoding         : 65001
 
- Date: 13/07/2023 16:45:02
+ Date: 25/07/2023 18:49:27
 */
 
 SET NAMES utf8mb4;
@@ -22,8 +22,8 @@ SET FOREIGN_KEY_CHECKS = 0;
 -- ----------------------------
 DROP TABLE IF EXISTS `menu`;
 CREATE TABLE `menu`  (
-  `id` bigint NOT NULL AUTO_INCREMENT,
-  `parent_id` int NULL DEFAULT 0 COMMENT '父id',
+  `id` bigint NOT NULL AUTO_INCREMENT COMMENT 'id',
+  `parent_id` bigint NULL DEFAULT 0 COMMENT '父id',
   `menu_title` varchar(256) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '菜单标题',
   `menu_icon` varchar(256) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '菜单图标',
   `route_path` varchar(256) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '路由path',
@@ -39,7 +39,7 @@ CREATE TABLE `menu`  (
   PRIMARY KEY (`id`) USING BTREE,
   UNIQUE INDEX `pk_menu_id`(`id` ASC) USING BTREE,
   INDEX `idx_menu_menu_title`(`menu_title` ASC) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 12 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 13 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of menu
@@ -49,19 +49,20 @@ INSERT INTO `menu` VALUES (2, 1, '我的信息', 'el-icon-user-solid', 'account'
 INSERT INTO `menu` VALUES (3, 1, '修改密码', 'el-icon-lock', 'password', 'Password', '/user/password', '', '修改密码', 0, 2, '2023-06-02 13:16:47', '2023-06-02 13:16:47', 0);
 INSERT INTO `menu` VALUES (4, 0, '系统管理', 'el-icon-setting', '/settings', NULL, NULL, '/settings', '系统管理', 0, 3, '2023-06-02 13:16:47', '2023-07-13 07:14:25', 0);
 INSERT INTO `menu` VALUES (5, 4, '菜单管理', 'el-icon-menu', 'menu', 'Menu', '/settings/menu', '', '菜单管理', 0, 3, '2023-06-02 13:16:47', '2023-06-02 13:16:47', 0);
-INSERT INTO `menu` VALUES (6, 4, '角色管理', 'el-icon-s-custom', 'role', 'Role', '/settings/role', '', '角色管理', 0, 2, '2023-06-02 13:16:47', '2023-06-02 13:16:47', 0);
+INSERT INTO `menu` VALUES (6, 4, '角色管理', 'el-icon-s-custom', 'role', 'Role', '/settings/role', '', '角色管理', 0, 4, '2023-06-02 13:16:47', '2023-07-25 10:46:25', 0);
 INSERT INTO `menu` VALUES (7, 4, '用户管理', 'el-icon-notebook-1', 'user', 'User', '/settings/user', NULL, '用户管理', 0, 1, '2023-06-02 13:16:47', '2023-06-02 13:16:47', 0);
-INSERT INTO `menu` VALUES (8, 4, '接口管理', 'el-icon-link', 'sysInterface', 'SysInterface', '/settings/sysInterface', NULL, '接口管理', 0, 4, '2023-06-02 13:16:47', '2023-06-02 13:16:47', 0);
+INSERT INTO `menu` VALUES (8, 4, '接口管理', 'el-icon-link', 'sysInterface', 'SysInterface', '/settings/sysInterface', NULL, '接口管理', 0, 5, '2023-06-02 13:16:47', '2023-07-25 10:46:30', 0);
 INSERT INTO `menu` VALUES (9, 0, '样例功能', 'el-icon-s-platform', '/example', '', '', '/example', '样例功能', 0, 1, '2023-07-13 07:14:03', '2023-07-13 07:14:03', 0);
 INSERT INTO `menu` VALUES (10, 9, '交易列表', 'payment-method', 'trade', 'Trade', '/example/trade', '', '交易列表', 0, 1, '2023-07-13 07:14:50', '2023-07-13 07:14:50', 0);
 INSERT INTO `menu` VALUES (11, 9, '交易分析', 'el-icon-data-analysis', 'echarts', 'Echarts', '/example/echarts', '', '交易分析', 0, 2, '2023-07-13 07:15:14', '2023-07-13 07:15:14', 0);
+INSERT INTO `menu` VALUES (12, 4, '分组管理', 'branch-one', 'userGroup', 'UserGroup', '/settings/userGroup', '', '分组管理', 0, 2, '2023-07-25 10:45:03', '2023-07-25 10:46:10', 0);
 
 -- ----------------------------
 -- Table structure for role
 -- ----------------------------
 DROP TABLE IF EXISTS `role`;
 CREATE TABLE `role`  (
-  `id` bigint NOT NULL AUTO_INCREMENT,
+  `id` bigint NOT NULL AUTO_INCREMENT COMMENT 'id',
   `role_name` varchar(256) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '角色名称',
   `role_identity` varchar(256) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '角色标识',
   `is_using` tinyint NOT NULL DEFAULT 1 COMMENT '是否启用（0：否；1：是）',
@@ -86,7 +87,7 @@ INSERT INTO `role` VALUES (3, '其他', 'other', 1, '其他', '2023-06-02 13:16:
 -- ----------------------------
 DROP TABLE IF EXISTS `role_menu`;
 CREATE TABLE `role_menu`  (
-  `id` bigint NOT NULL AUTO_INCREMENT,
+  `id` bigint NOT NULL AUTO_INCREMENT COMMENT 'id',
   `role_id` bigint NOT NULL COMMENT '角色id',
   `menu_id` bigint NOT NULL COMMENT '菜单id',
   `gmt_create` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
@@ -94,7 +95,7 @@ CREATE TABLE `role_menu`  (
   PRIMARY KEY (`id`) USING BTREE,
   INDEX `idx_role_menu_role_id`(`role_id` ASC) USING BTREE,
   INDEX `idx_role_menu_menu_id`(`menu_id` ASC) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 18 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 19 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of role_menu
@@ -116,13 +117,14 @@ INSERT INTO `role_menu` VALUES (14, 1, 11, '2023-07-13 07:15:34', '2023-07-13 07
 INSERT INTO `role_menu` VALUES (15, 2, 9, '2023-07-13 07:15:38', '2023-07-13 07:15:38');
 INSERT INTO `role_menu` VALUES (16, 2, 10, '2023-07-13 07:15:38', '2023-07-13 07:15:38');
 INSERT INTO `role_menu` VALUES (17, 2, 11, '2023-07-13 07:15:38', '2023-07-13 07:15:38');
+INSERT INTO `role_menu` VALUES (18, 1, 12, '2023-07-25 10:46:51', '2023-07-25 10:46:51');
 
 -- ----------------------------
 -- Table structure for role_sys_interface
 -- ----------------------------
 DROP TABLE IF EXISTS `role_sys_interface`;
 CREATE TABLE `role_sys_interface`  (
-  `id` bigint NOT NULL AUTO_INCREMENT,
+  `id` bigint NOT NULL AUTO_INCREMENT COMMENT 'id',
   `role_id` bigint NOT NULL COMMENT '角色id',
   `interface_id` bigint NOT NULL COMMENT '接口id',
   `gmt_create` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
@@ -130,7 +132,7 @@ CREATE TABLE `role_sys_interface`  (
   PRIMARY KEY (`id`) USING BTREE,
   INDEX `idx_role_sys_interface_role_id`(`role_id` ASC) USING BTREE,
   INDEX `idx_role_sys_interface_interface_id`(`interface_id` ASC) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 50 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 55 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of role_sys_interface
@@ -182,13 +184,18 @@ INSERT INTO `role_sys_interface` VALUES (46, 2, 41, '2023-07-13 07:16:26', '2023
 INSERT INTO `role_sys_interface` VALUES (47, 2, 42, '2023-07-13 07:16:26', '2023-07-13 07:16:26');
 INSERT INTO `role_sys_interface` VALUES (48, 2, 40, '2023-07-13 07:16:26', '2023-07-13 07:16:26');
 INSERT INTO `role_sys_interface` VALUES (49, 2, 1, '2023-07-13 07:18:56', '2023-07-13 07:18:56');
+INSERT INTO `role_sys_interface` VALUES (50, 1, 44, '2023-07-25 10:47:21', '2023-07-25 10:47:21');
+INSERT INTO `role_sys_interface` VALUES (51, 1, 47, '2023-07-25 10:47:21', '2023-07-25 10:47:21');
+INSERT INTO `role_sys_interface` VALUES (52, 1, 45, '2023-07-25 10:47:21', '2023-07-25 10:47:21');
+INSERT INTO `role_sys_interface` VALUES (53, 1, 48, '2023-07-25 10:47:21', '2023-07-25 10:47:21');
+INSERT INTO `role_sys_interface` VALUES (54, 1, 46, '2023-07-25 10:47:21', '2023-07-25 10:47:21');
 
 -- ----------------------------
 -- Table structure for sys_interface
 -- ----------------------------
 DROP TABLE IF EXISTS `sys_interface`;
 CREATE TABLE `sys_interface`  (
-  `id` bigint NOT NULL AUTO_INCREMENT,
+  `id` bigint NOT NULL AUTO_INCREMENT COMMENT 'id',
   `interface_name` varchar(256) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '接口名称',
   `interface_method` varchar(256) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '接口方法',
   `interface_url` varchar(256) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '接口url',
@@ -199,7 +206,7 @@ CREATE TABLE `sys_interface`  (
   PRIMARY KEY (`id`) USING BTREE,
   UNIQUE INDEX `pk_sys_interface_id`(`id` ASC) USING BTREE,
   INDEX `idx_sys_interface_interface_name`(`interface_name` ASC) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 44 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 49 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of sys_interface
@@ -247,6 +254,11 @@ INSERT INTO `sys_interface` VALUES (40, '更新交易', 'POST', '/trade/update',
 INSERT INTO `sys_interface` VALUES (41, '获取交易列表', 'GET', '/trade/list', 1, '2023-07-13 07:15:23', '2023-07-13 07:15:23', 0);
 INSERT INTO `sys_interface` VALUES (42, '分页获取交易列表', 'GET', '/trade/list/page', 1, '2023-07-13 07:15:23', '2023-07-13 07:15:23', 0);
 INSERT INTO `sys_interface` VALUES (43, '交易数据导出', 'GET', '/trade/excel', 1, '2023-07-13 07:15:23', '2023-07-13 07:15:23', 0);
+INSERT INTO `sys_interface` VALUES (44, '新增用户组', 'POST', '/userGroup/add', 1, '2023-07-25 10:46:38', '2023-07-25 10:46:38', 0);
+INSERT INTO `sys_interface` VALUES (45, '获取用户组列表', 'GET', '/userGroup/list', 1, '2023-07-25 10:46:38', '2023-07-25 10:46:38', 0);
+INSERT INTO `sys_interface` VALUES (46, '更新用户组', 'POST', '/userGroup/update', 1, '2023-07-25 10:46:38', '2023-07-25 10:46:38', 0);
+INSERT INTO `sys_interface` VALUES (47, '删除用户组', 'POST', '/userGroup/delete', 1, '2023-07-25 10:46:38', '2023-07-25 10:46:38', 0);
+INSERT INTO `sys_interface` VALUES (48, '分页获取用户组列表', 'GET', '/userGroup/list/page', 1, '2023-07-25 10:46:38', '2023-07-25 10:46:38', 0);
 
 -- ----------------------------
 -- Table structure for trade
@@ -2228,12 +2240,13 @@ INSERT INTO `trade` VALUES (1946, 'TEST', '2023-06-30 00:00:00', 100.00, 10000.0
 -- ----------------------------
 DROP TABLE IF EXISTS `user`;
 CREATE TABLE `user`  (
-  `id` bigint NOT NULL AUTO_INCREMENT,
+  `id` bigint NOT NULL AUTO_INCREMENT COMMENT 'id',
   `user_name` varchar(256) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '用户名称',
   `user_account` varchar(256) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '用户账号',
   `user_avatar` varchar(1024) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '用户头像',
   `gender` tinyint NULL DEFAULT NULL COMMENT '性别（0：女；1：男）',
   `user_password` varchar(512) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '密码',
+  `user_group_id` bigint NULL DEFAULT NULL COMMENT '用户组id',
   `is_using` tinyint NOT NULL DEFAULT 0 COMMENT '是否启用（0：否；1：是）',
   `gmt_create` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
   `gmt_modified` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '修改时间',
@@ -2246,16 +2259,39 @@ CREATE TABLE `user`  (
 -- ----------------------------
 -- Records of user
 -- ----------------------------
-INSERT INTO `user` VALUES (1, '管理员', 'admin', '', 1, 'e559996f7d546db340035d754234ad22', 1, '2023-06-02 13:16:47', '2023-06-28 08:40:11', 0);
-INSERT INTO `user` VALUES (2, '用户', 'user', '', 1, 'e559996f7d546db340035d754234ad22', 1, '2023-06-02 13:16:47', '2023-06-28 08:47:57', 0);
-INSERT INTO `user` VALUES (3, '其他', 'other', '', 1, 'e559996f7d546db340035d754234ad22', 1, '2023-06-02 13:16:47', '2023-06-02 13:16:47', 0);
+INSERT INTO `user` VALUES (1, '管理员', 'admin', '', 1, 'e559996f7d546db340035d754234ad22', 15, 1, '2023-06-02 13:16:47', '2023-07-25 10:48:48', 0);
+INSERT INTO `user` VALUES (2, '用户', 'user', '', 1, 'e559996f7d546db340035d754234ad22', 15, 1, '2023-06-02 13:16:47', '2023-07-25 10:48:51', 0);
+INSERT INTO `user` VALUES (3, '其他', 'other', '', 1, 'e559996f7d546db340035d754234ad22', 15, 1, '2023-06-02 13:16:47', '2023-07-25 10:48:55', 0);
+
+-- ----------------------------
+-- Table structure for user_group
+-- ----------------------------
+DROP TABLE IF EXISTS `user_group`;
+CREATE TABLE `user_group`  (
+  `id` bigint NOT NULL AUTO_INCREMENT COMMENT 'id',
+  `parent_id` bigint NULL DEFAULT 0 COMMENT '父id',
+  `group_name` varchar(256) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '用户组名称',
+  `description` varchar(1024) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '描述',
+  `is_using` tinyint NOT NULL DEFAULT 1 COMMENT '是否启用（0：否；1：是）',
+  `group_sort` double NULL DEFAULT NULL COMMENT '用户组排序',
+  `gmt_create` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+  `gmt_modified` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '修改时间',
+  `is_delete` tinyint NOT NULL DEFAULT 0 COMMENT '是否删除（0：否；1：是）',
+  PRIMARY KEY (`id`) USING BTREE,
+  UNIQUE INDEX `pk_group_id`(`id` ASC) USING BTREE
+) ENGINE = InnoDB AUTO_INCREMENT = 16 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = DYNAMIC;
+
+-- ----------------------------
+-- Records of user_group
+-- ----------------------------
+INSERT INTO `user_group` VALUES (15, 0, '系统', '', 1, 1, '2023-07-25 10:48:39', '2023-07-25 10:48:39', 0);
 
 -- ----------------------------
 -- Table structure for user_role
 -- ----------------------------
 DROP TABLE IF EXISTS `user_role`;
 CREATE TABLE `user_role`  (
-  `id` bigint NOT NULL AUTO_INCREMENT,
+  `id` bigint NOT NULL AUTO_INCREMENT COMMENT 'id',
   `user_id` bigint NOT NULL COMMENT '用户id',
   `role_id` bigint NOT NULL COMMENT '角色id',
   `gmt_create` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
