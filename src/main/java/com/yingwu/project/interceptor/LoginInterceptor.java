@@ -43,7 +43,7 @@ public class LoginInterceptor implements HandlerInterceptor {
         String tokenKey = buildTokenRedisKey(token);
 
         // 2. 判断是否登录
-        throwIf(token == null || !redisTemplate.hasKey(tokenKey),ErrorCode.NOT_LOGIN_ERROR);
+        throwIf(token == null || !redisTemplate.hasKey(tokenKey), ErrorCode.NOT_LOGIN_ERROR);
 
         // 3.更新用户id和token的有效时间 (只要用户在这段时间内用户操作，那么就不会过期)
         String userKey = (String) redisTemplate.opsForValue().get(tokenKey);

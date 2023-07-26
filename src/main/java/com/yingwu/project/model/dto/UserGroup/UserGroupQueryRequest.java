@@ -1,4 +1,4 @@
-package com.yingwu.project.model.dto.userGroup;
+package com.yingwu.project.model.dto.usergroup;
 
 import com.yingwu.project.common.PageRequest;
 import lombok.Data;

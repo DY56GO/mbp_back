@@ -44,7 +44,7 @@ public class RoleSysInterfaceServiceImpl extends ServiceImpl<RoleSysInterfaceMap
         List<Long> addSysInterfaceList = roleSysInterfaceUpdateRequest.getAddSysInterfaceList();
         List<Long> deleteSysInterfaceList = roleSysInterfaceUpdateRequest.getDeleteSysInterfaceList();
 
-        throwIf(roleId == null || addSysInterfaceList == null || deleteSysInterfaceList == null,ErrorCode.PARAMS_ERROR, "参数为空");
+        throwIf(roleId == null || addSysInterfaceList == null || deleteSysInterfaceList == null, ErrorCode.PARAMS_ERROR, "参数为空");
 
         // 2.组装新增角色系统接口列表和删除角色系统接口列表
         List<RoleSysInterface> addRoleSysInterfaceList = new ArrayList<>();

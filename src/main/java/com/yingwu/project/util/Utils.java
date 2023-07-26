@@ -37,8 +37,8 @@ public class Utils {
     }
 
     /**
-     * 构建用户id 在Redis中的key
-     * 
+     * 构建用户id在Redis中的key
+     *
      * @param userId
      * @return
      */
@@ -48,7 +48,7 @@ public class Utils {
 
     /**
      * 通过用户Key获取用户id
-     * 
+     *
      * @param userKey
      * @return
      */
@@ -57,7 +57,7 @@ public class Utils {
     }
 
     /**
-     * 构建 Token 在Redis中的key
+     * 构建Token在Redis中的key
      *
      * @param token
      * @return

@@ -168,10 +168,10 @@ public class TradeController {
         tradeQuery.setTsCode(null);
 
         QueryWrapper<Trade> queryWrapper = new QueryWrapper<>(tradeQuery);
-        if(tradeQueryRequest.getStartTradeDate() != null) {
+        if (tradeQueryRequest.getStartTradeDate() != null) {
             queryWrapper.gt("trade_date", tradeQueryRequest.getStartTradeDate());
         }
-        if(tradeQueryRequest.getEndTradeDate() != null) {
+        if (tradeQueryRequest.getEndTradeDate() != null) {
             queryWrapper.lt("trade_date", tradeQueryRequest.getEndTradeDate());
         }
         queryWrapper.like(StringUtils.isNotBlank(tsCode), "ts_code", tsCode);
@@ -197,7 +197,7 @@ public class TradeController {
      * @param request
      */
     @GetMapping(value = "/excel", name = "交易数据导出")
-    public void TradeExcelExport(TradeQueryRequest tradeQueryRequest, HttpServletRequest request) {
+    public void tradeExcelExport(TradeQueryRequest tradeQueryRequest, HttpServletRequest request) {
 
         ServletRequestAttributes requestAttributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
         HttpServletResponse response = requestAttributes.getResponse();

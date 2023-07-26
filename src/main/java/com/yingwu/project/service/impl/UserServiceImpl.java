@@ -415,7 +415,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     @Override
     public boolean updateRedisUser(Long userId) {
         String userKey = buildUserIdRedisKey(String.valueOf(userId));
-        
+
         redisTemplate.expire(userKey, DELETE_KEY_TIME, TimeUnit.SECONDS);
 
         return true;

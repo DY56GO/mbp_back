@@ -3,6 +3,7 @@ package com.yingwu.project.controller;
 import cn.hutool.core.bean.BeanUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.yingwu.project.annotation.LoginLog;
 import com.yingwu.project.common.BaseResponse;
 import com.yingwu.project.common.DeleteRequest;
 import com.yingwu.project.common.ErrorCode;
@@ -81,6 +82,7 @@ public class UserController {
      * @param request
      * @return
      */
+    @LoginLog
     @PostMapping(value = "/login", name = "用户登录")
     public BaseResponse<String> userLogin(@RequestBody UserLoginRequest userLoginRequest, HttpServletRequest request) {
         // 校验
@@ -196,7 +198,7 @@ public class UserController {
             // 判断用户是否启用，如果非启用，则删除Redis中的用户，使其下线
             if (user.getUsingStart() == 0) {
                 userService.deleteRedisUser(user.getId());
-            }else {
+            } else {
                 // Redis数据同步
                 userService.updateRedisUser(user.getId());
             }
@@ -322,7 +324,7 @@ public class UserController {
         QueryWrapper<User> queryWrapper = new QueryWrapper<>(userQuery);
         queryWrapper.like(org.apache.commons.lang3.StringUtils.isNotBlank(userName), "user_name", userName);
         queryWrapper.like(org.apache.commons.lang3.StringUtils.isNotBlank(userAccount), "user_account", userAccount);
-        queryWrapper.in(!userQueryRequest.getUserGroupIdList().equals(""), "user_group_id", Arrays.asList(userQueryRequest.getUserGroupIdList().split(",")));
+        queryWrapper.in(!"".equals(userQueryRequest.getUserGroupIdList()), "user_group_id", Arrays.asList(userQueryRequest.getUserGroupIdList().split(",")));
         return queryWrapper;
     }
 
