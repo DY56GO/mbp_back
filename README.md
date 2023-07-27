@@ -59,6 +59,7 @@ mbp是一个管理系统的基础项目模板，其主要作用是提供管理�
 - MyBatis 2.2.2
 - MyBatis-Plus 3.5.1
 - Redis 6.05
+- RabbitMQ 3.8.5
 - Lombok 注解
 - Swagger + Knife4j 3.0.3 接口文档
 - HuTool 5.8.16 工具类库
@@ -85,6 +86,16 @@ git clone https://github.com/DY56GO/mbp_back.git
 
 6.点击 /src/main/java/com/yingwu/project/MyApplication.java 的启动按钮即可。
 
+7.可选功能中 “日志记录” 依赖与RabbitMQ，如果你的项目不需要RabbitMQ，请将pom文件中的引用删除或注释，需要将其关闭。
+
+```xml
+<!--RabbitMQy引入--->
+<dependency>
+	<groupId>org.springframework.boot</groupId>
+	<artifactId>spring-boot-starter-amqp</artifactId>
+</dependency>
+```
+
 ​	application.yml修改配置说明：
 
 ```yml
@@ -93,12 +104,26 @@ datasource:
     url: jdbc:mysql://192.168.10.22:3306/mbp # 数据库连接地址（3306为MySQL默认端口）
     username: root # 数据库用户
     password: 123456 # 数据库用户密码
-
+    
+# redis 配置
 redis:
     port: 6379 # Redis端口（6379为Redis默认端口）
     host: 192.168.10.22 # Redis访问地址
     database: 0 # 指定Redis的库
     password: 123456 # Redis密码
+    
+# mq配置
+rabbitmq:
+    host: 192.168.10.22 # RabbitMQ访问地址
+    port: 5672 # RabbitMQ端口（5672为RabbitMQ默认端口）
+    username: guest
+    password: 123456
+    listener:
+      simple:
+        retry:
+          enabled: true
+          max-attempts: 3 #最大重试次数
+          initial-interval: 3000 #重试间隔时间（单位毫秒）
     
 server:
   port: 7529 # 项目启动端口
@@ -111,6 +136,7 @@ snowflake:
 # 系统可选功能
 powerconfig: 
   interfaceAuth: true # 开启系统接口鉴权 true | false
+  logRecords: false # 开启日志记录 true | false (注意：该功能依赖RabbitMQ)
 ```
 
 

@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yingwu.project.mapper.SysRequestLogMapper">
+
+    <resultMap id="BaseResultMap" type="com.yingwu.project.model.entity.SysRequestLog">
+        <id property="id" column="id" jdbcType="BIGINT"/>
+        <result property="requestUrl" column="request_url" jdbcType="VARCHAR"/>
+        <result property="userId" column="user_id" jdbcType="BIGINT"/>
+        <result property="requestParm" column="request_parm" jdbcType="VARCHAR"/>
+        <result property="requestResult" column="request_result" jdbcType="TINYINT"/>
+        <result property="exeTime" column="exe_time" jdbcType="VARCHAR"/>
+        <result property="errorMessage" column="error_message" jdbcType="VARCHAR"/>
+        <result property="gmtCreate" column="gmt_create" jdbcType="TIMESTAMP"/>
+        <result property="gmtModified" column="gmt_modified" jdbcType="TIMESTAMP"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id,request_url,user_id,
+        request_parm,request_result,error_message,
+        exe_time,gmt_create,gmt_modified
+    </sql>
+</mapper>

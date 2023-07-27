@@ -5,6 +5,7 @@ spring:
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
     url: jdbc:mysql://192.168.10.22:3306/myBasicProject
+    # url: jdbc:mysql://192.168.10.22:3306/mbp
     username: root
     password: 123456
   mvc:
@@ -22,6 +23,18 @@ spring:
         max-idle: 8
         min-idle: 0
         max-wait: 100ms
+  # mq配置
+  rabbitmq:
+    host: 192.168.10.22
+    port: 5672
+    username: guest
+    password: 123456
+    listener:
+      simple:
+        retry:
+          enabled: true
+          max-attempts: 3 #最大重试次数
+          initial-interval: 3000 #重试间隔时间（单位毫秒）
   jackson:
     default-property-inclusion: non_null  # JSON处理时忽略非空字段
 server:
@@ -44,4 +57,4 @@ snowflake:
 # 系统功能
 powerconfig:
   interfaceAuth: true # 开启系统接口鉴权 true | false
-  logRecords: true # 开启日志记录 true | false
+  logRecords: false # 开启日志记录 true | false (注意：该功能依赖RabbitMQ)
