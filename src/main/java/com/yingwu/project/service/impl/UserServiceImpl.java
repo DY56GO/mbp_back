@@ -71,6 +71,19 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     private RedisTemplate redisTemplate;
 
     /**
+     * 验证码校验
+     *
+     * @param captchaId
+     * @param captcha
+     */
+    @Override
+    public void validCaptcha(Long captchaId, String captcha) {
+        String captchaIdKey = buildCaptchaIdRedisKey(captchaId);
+        throwIf(!redisTemplate.hasKey(captchaIdKey), ErrorCode.PARAMS_ERROR, "验证码失效");
+        throwIf(!redisTemplate.opsForValue().get(captchaIdKey).equals(captcha), ErrorCode.PARAMS_ERROR, "验证码错误");
+    }
+
+    /**
      * 用户注册
      *
      * @param user

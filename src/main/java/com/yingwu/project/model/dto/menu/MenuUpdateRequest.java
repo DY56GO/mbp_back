@@ -15,7 +15,7 @@ public class MenuUpdateRequest implements Serializable {
     /**
      * id
      */
-    private Integer id;
+    private Long id;
 
     /**
      * 菜单名称

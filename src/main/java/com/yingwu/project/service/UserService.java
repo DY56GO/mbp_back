@@ -17,6 +17,14 @@ import java.util.List;
 public interface UserService extends IService<User> {
 
     /**
+     * 验证码校验
+     *
+     * @param captchaId
+     * @param captcha
+     */
+    void validCaptcha(Long captchaId, String captcha);
+
+    /**
      * 用户注册
      *
      * @param user

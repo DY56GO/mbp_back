@@ -5,7 +5,7 @@ import lombok.Data;
 import java.io.Serializable;
 
 /**
- * 用户登录请求体
+ * 用户登录请求
  *
  * @author yupi
  */
@@ -21,6 +21,16 @@ public class UserLoginRequest implements Serializable {
      * 用户密码
      */
     private String userPassword;
+
+    /**
+     * 验证码id
+     */
+    private Long captchaId;
+
+    /**
+     * 验证码
+     */
+    private String captcha;
 
     private static final long serialVersionUID = 3191241716373120793L;
 

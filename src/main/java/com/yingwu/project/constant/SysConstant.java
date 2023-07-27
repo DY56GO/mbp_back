@@ -14,6 +14,8 @@ public interface SysConstant {
      * 拦截器白名单
      */
     List<String> INTERCEPTOR_WHITELIST = new ArrayList<String>() {{
+        add("/user/captchaId");
+        add("/user/captcha");
         add("/user/login");
         add("/user/register");
         add("/error");

@@ -1,6 +1,10 @@
 package com.yingwu.project.controller;
 
+import cn.hutool.captcha.CaptchaUtil;
+import cn.hutool.captcha.CircleCaptcha;
 import cn.hutool.core.bean.BeanUtil;
+import cn.hutool.core.lang.Snowflake;
+import cn.hutool.core.util.IdUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.yingwu.project.annotation.LoginLog;
@@ -9,6 +13,7 @@ import com.yingwu.project.common.DeleteRequest;
 import com.yingwu.project.common.ErrorCode;
 import com.yingwu.project.common.ResultUtils;
 import com.yingwu.project.exception.ThrowUtils;
+import com.yingwu.project.model.dto.captcha.CaptchaRequest;
 import com.yingwu.project.model.dto.user.*;
 import com.yingwu.project.model.entity.User;
 import com.yingwu.project.model.entity.UserGroup;
@@ -20,16 +25,27 @@ import com.yingwu.project.service.UserGroupService;
 import com.yingwu.project.service.UserRoleService;
 import com.yingwu.project.service.UserService;
 import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.http.MediaType;
 import org.springframework.util.DigestUtils;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.awt.*;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.util.List;
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 
 import static com.yingwu.project.constant.PasswordConstant.SALT;
+import static com.yingwu.project.constant.RedisConstant.CAPTCHA_EXPIRATION_TIME;
 import static com.yingwu.project.constant.SysConstant.MAX_PAGE_SIZE;
 import static com.yingwu.project.exception.ThrowUtils.throwIf;
+import static com.yingwu.project.util.Utils.buildCaptchaIdRedisKey;
 import static com.yingwu.project.util.Utils.encryptPassword;
 
 
@@ -44,6 +60,15 @@ import static com.yingwu.project.util.Utils.encryptPassword;
 @RequestMapping("/user")
 public class UserController {
 
+    @Value("${snowflake.workerId}")
+    private long workerId;
+
+    @Value("${snowflake.datacenterId}")
+    private long datacenterId;
+
+    @Resource
+    private RedisTemplate redisTemplate;
+
     @Resource
     private UserService userService;
 
@@ -54,6 +79,51 @@ public class UserController {
     private UserGroupService userGroupService;
 
     // region 登录相关
+
+    /**
+     * 获取验证码id
+     *
+     * @return
+     */
+    @GetMapping(value = "/captchaId", name = "获取验证码id")
+    public BaseResponse<Long> getCaptchaId() {
+        Snowflake snowflake = IdUtil.getSnowflake(workerId, datacenterId);
+        long captchaId = snowflake.nextId();
+        return ResultUtils.success(captchaId);
+    }
+
+    /**
+     * 获取验证码
+     *
+     * @return
+     */
+    @PostMapping(value = "/captcha", produces = MediaType.IMAGE_PNG_VALUE, name = "获取验证码")
+    public void getCaptcha(@RequestBody CaptchaRequest captchaRequest, HttpServletResponse response) throws IOException {
+        // 校验
+        throwIf(captchaRequest == null, ErrorCode.PARAMS_ERROR);
+        throwIf(captchaRequest.getCaptchaId() == null, ErrorCode.PARAMS_ERROR);
+
+        // 创建验证码对象
+        CircleCaptcha captcha = CaptchaUtil.createCircleCaptcha(250, 100, 4, 20);
+        captcha.setBackground(Color.decode("#E9E9E9"));
+
+        Long captchaId = captchaRequest.getCaptchaId();
+        String captchaCode = captcha.getCode();
+        String captchaIdKey = buildCaptchaIdRedisKey(captchaId);
+
+        // 将验证码写入Redis中
+        redisTemplate.opsForValue().set(captchaIdKey, captchaCode);
+        // 设置过期时间
+        redisTemplate.expire(captchaIdKey, CAPTCHA_EXPIRATION_TIME, TimeUnit.MINUTES);
+
+        // 将验证码图片以Blob形式返回给前端
+        response.setContentType("image/png");
+        OutputStream out = response.getOutputStream();
+        captcha.write(out);
+        out.flush();
+        out.close();
+        response.getWriter().write("captchaId");
+    }
 
     /**
      * 用户注册
@@ -87,6 +157,8 @@ public class UserController {
     public BaseResponse<String> userLogin(@RequestBody UserLoginRequest userLoginRequest, HttpServletRequest request) {
         // 校验
         throwIf(userLoginRequest == null, ErrorCode.PARAMS_ERROR);
+        throwIf(userLoginRequest.getCaptchaId() == null, ErrorCode.PARAMS_ERROR);
+        userService.validCaptcha(userLoginRequest.getCaptchaId(), userLoginRequest.getCaptcha());
 
         User user = new User();
         BeanUtils.copyProperties(userLoginRequest, user);

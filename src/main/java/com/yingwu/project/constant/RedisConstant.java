@@ -13,12 +13,22 @@ public interface RedisConstant {
     String SYS_INTERFACE_AUTH_KEY_REDIS = "sys_interface_auth";
 
     /**
-     * token key前缀
+     * 验证码key前缀
+     */
+    String CAPTCHA_KEY_REDIS = "tch:";
+
+    /**
+     * 验证码过期时间
+     */
+    long CAPTCHA_EXPIRATION_TIME = 1;
+
+    /**
+     * Token key前缀
      */
     String TOKEN_KEY_REDIS = "tk:";
 
     /**
-     * token过期时间（分钟）
+     * Token过期时间（分钟）
      */
     long TOKEN_EXPIRATION_TIME = 30;
 

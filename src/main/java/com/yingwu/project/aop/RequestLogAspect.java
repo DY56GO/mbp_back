@@ -21,8 +21,6 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 
-import java.util.Map;
-
 import static com.yingwu.project.constant.RabbitMQConstant.REQUEST_LOG_QUEUE;
 import static com.yingwu.project.util.Utils.buildTokenRedisKey;
 import static com.yingwu.project.util.Utils.getUserIdByUserKey;
