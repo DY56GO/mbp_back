@@ -30,7 +30,7 @@ import static com.yingwu.project.util.Utils.getUserIdByUserKey;
  */
 @Aspect
 @Component
-@Order(2)
+@Order(3)
 public class LoginLogAspect {
 
     @Resource

@@ -8,6 +8,7 @@ import cn.hutool.core.util.IdUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.yingwu.project.annotation.LoginLog;
+import com.yingwu.project.annotation.RateLimiter;
 import com.yingwu.project.common.BaseResponse;
 import com.yingwu.project.common.DeleteRequest;
 import com.yingwu.project.common.ErrorCode;
@@ -85,6 +86,7 @@ public class UserController {
      *
      * @return
      */
+    @RateLimiter(permitsPerSecond = 10, capacity = 1)
     @GetMapping(value = "/captchaId", name = "获取验证码id")
     public BaseResponse<Long> getCaptchaId() {
         Snowflake snowflake = IdUtil.getSnowflake(workerId, datacenterId);
@@ -97,6 +99,7 @@ public class UserController {
      *
      * @return
      */
+    @RateLimiter(permitsPerSecond = 10, capacity = 1)
     @PostMapping(value = "/captcha", produces = MediaType.IMAGE_PNG_VALUE, name = "获取验证码")
     public void getCaptcha(@RequestBody CaptchaRequest captchaRequest, HttpServletResponse response) throws IOException {
         // 校验
@@ -122,7 +125,6 @@ public class UserController {
         captcha.write(out);
         out.flush();
         out.close();
-        response.getWriter().write("captchaId");
     }
 
     /**
