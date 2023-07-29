@@ -10,9 +10,9 @@
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <groupId>com.yingwu</groupId>
-    <artifactId>mbp</artifactId>
+    <artifactId>mbp_back</artifactId>
     <version>1.0.0</version>
-    <name>mbp</name>
+    <name>mbp_back</name>
     <description>my basic project</description>
     <properties>
         <java.version>1.8</java.version>

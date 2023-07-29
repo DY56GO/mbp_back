@@ -12,6 +12,7 @@ docker pull mysql:8.0.20
 # MYSQL_ROOT_PASSWORD:tj2feMK8ppTyLlei
 
 docker run --restart=on-failure:5 \
+--privileged=true \
 --name mysql-mbp \
 -p 3306:3306 \
 -v /home/projects/mbp/mysql/conf/my.cnf:/etc/mysql/my.cnf \

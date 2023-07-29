@@ -11,6 +11,7 @@ docker pull redis:6.0
 
 
 docker run --restart=on-failure:5 \
+--privileged=true \
 --name redis-mbp \
 -p 6379:6379 \
 -v /home/projects/mbp/redis/conf/redis.conf:/etc/redis/redis.conf \

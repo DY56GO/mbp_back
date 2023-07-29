@@ -11,4 +11,4 @@ kill -9 pid
 cd /home/projects/mbp/code/mbp_back/
 
 # 启动 mbp_back 到后台，其中“--spring.profiles.active=prod”为指定profiles使用生产环境，“mbp_back.log”为日志文件
-nohup java -jar mbp_back-1.0.0.jar --spring.profiles.active=prod > mbp_back.log
+nohup java -jar mbp_back-1.0.0.jar --spring.profiles.active=prod >mbp_back.log  2>&1 &

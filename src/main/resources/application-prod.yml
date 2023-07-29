@@ -4,9 +4,10 @@ spring:
   # DataSource Config
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://1localhost:3306/mbp
+    # url: jdbc:mysql://192.168.10.22:3306/mbp_test
+    url: jdbc:mysql://localhost:3306/mbp
     username: root
-    password: 123456
+    password: 12345678
   mvc:
     pathmatch:
       matching-strategy: ANT_PATH_MATCHER
@@ -15,7 +16,7 @@ spring:
     port: 6379
     host: localhost
     database: 0
-    password: 123456
+    password: 12345678
     lettuce:
       pool:
         max-active: 8
@@ -27,7 +28,7 @@ spring:
     host: localhost
     port: 5672
     username: guest
-    password: 123456
+    password: 12345678
     listener:
       simple:
         retry:

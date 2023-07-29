@@ -1,7 +1,7 @@
 /*
  Navicat Premium Data Transfer
 
- Source Server         : 本地开发数据库
+ Source Server         : localServer
  Source Server Type    : MySQL
  Source Server Version : 80020
  Source Host           : 192.168.10.22:3306
@@ -11,7 +11,7 @@
  Target Server Version : 80020
  File Encoding         : 65001
 
- Date: 25/07/2023 18:49:27
+ Date: 29/07/2023 21:30:43
 */
 
 SET NAMES utf8mb4;
@@ -39,7 +39,7 @@ CREATE TABLE `menu`  (
   PRIMARY KEY (`id`) USING BTREE,
   UNIQUE INDEX `pk_menu_id`(`id` ASC) USING BTREE,
   INDEX `idx_menu_menu_title`(`menu_title` ASC) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 13 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 16 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of menu
@@ -56,6 +56,9 @@ INSERT INTO `menu` VALUES (9, 0, '样例功能', 'el-icon-s-platform', '/example
 INSERT INTO `menu` VALUES (10, 9, '交易列表', 'payment-method', 'trade', 'Trade', '/example/trade', '', '交易列表', 0, 1, '2023-07-13 07:14:50', '2023-07-13 07:14:50', 0);
 INSERT INTO `menu` VALUES (11, 9, '交易分析', 'el-icon-data-analysis', 'echarts', 'Echarts', '/example/echarts', '', '交易分析', 0, 2, '2023-07-13 07:15:14', '2023-07-13 07:15:14', 0);
 INSERT INTO `menu` VALUES (12, 4, '分组管理', 'branch-one', 'userGroup', 'UserGroup', '/settings/userGroup', '', '分组管理', 0, 2, '2023-07-25 10:45:03', '2023-07-25 10:46:10', 0);
+INSERT INTO `menu` VALUES (13, 0, '日志管理', 'el-icon-document', '/sysLog', '', '', '/sysLog', '日志管理', 0, 4, '2023-07-29 13:24:09', '2023-07-29 13:29:09', 0);
+INSERT INTO `menu` VALUES (14, 13, '登录日志', 'login', 'sysloginLog', 'SysLoginLog', '/sysLog/sysLoginLog', '', '登录日志', 0, 1, '2023-07-29 13:25:57', '2023-07-29 13:25:57', 0);
+INSERT INTO `menu` VALUES (15, 13, '请求日志', 'log', 'sysRequestLog', 'SysRequestLog', '/sysLog/sysRequestLog', '', '请求日志', 0, 2, '2023-07-29 13:27:04', '2023-07-29 13:27:13', 0);
 
 -- ----------------------------
 -- Table structure for role
@@ -95,7 +98,7 @@ CREATE TABLE `role_menu`  (
   PRIMARY KEY (`id`) USING BTREE,
   INDEX `idx_role_menu_role_id`(`role_id` ASC) USING BTREE,
   INDEX `idx_role_menu_menu_id`(`menu_id` ASC) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 19 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 22 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of role_menu
@@ -118,6 +121,9 @@ INSERT INTO `role_menu` VALUES (15, 2, 9, '2023-07-13 07:15:38', '2023-07-13 07:
 INSERT INTO `role_menu` VALUES (16, 2, 10, '2023-07-13 07:15:38', '2023-07-13 07:15:38');
 INSERT INTO `role_menu` VALUES (17, 2, 11, '2023-07-13 07:15:38', '2023-07-13 07:15:38');
 INSERT INTO `role_menu` VALUES (18, 1, 12, '2023-07-25 10:46:51', '2023-07-25 10:46:51');
+INSERT INTO `role_menu` VALUES (19, 1, 13, '2023-07-29 13:27:20', '2023-07-29 13:27:20');
+INSERT INTO `role_menu` VALUES (20, 1, 14, '2023-07-29 13:27:20', '2023-07-29 13:27:20');
+INSERT INTO `role_menu` VALUES (21, 1, 15, '2023-07-29 13:27:20', '2023-07-29 13:27:20');
 
 -- ----------------------------
 -- Table structure for role_sys_interface
@@ -132,7 +138,7 @@ CREATE TABLE `role_sys_interface`  (
   PRIMARY KEY (`id`) USING BTREE,
   INDEX `idx_role_sys_interface_role_id`(`role_id` ASC) USING BTREE,
   INDEX `idx_role_sys_interface_interface_id`(`interface_id` ASC) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 55 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 59 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of role_sys_interface
@@ -189,6 +195,10 @@ INSERT INTO `role_sys_interface` VALUES (51, 1, 47, '2023-07-25 10:47:21', '2023
 INSERT INTO `role_sys_interface` VALUES (52, 1, 45, '2023-07-25 10:47:21', '2023-07-25 10:47:21');
 INSERT INTO `role_sys_interface` VALUES (53, 1, 48, '2023-07-25 10:47:21', '2023-07-25 10:47:21');
 INSERT INTO `role_sys_interface` VALUES (54, 1, 46, '2023-07-25 10:47:21', '2023-07-25 10:47:21');
+INSERT INTO `role_sys_interface` VALUES (55, 1, 52, '2023-07-29 13:23:02', '2023-07-29 13:23:02');
+INSERT INTO `role_sys_interface` VALUES (56, 1, 54, '2023-07-29 13:23:02', '2023-07-29 13:23:02');
+INSERT INTO `role_sys_interface` VALUES (57, 1, 53, '2023-07-29 13:23:02', '2023-07-29 13:23:02');
+INSERT INTO `role_sys_interface` VALUES (58, 1, 50, '2023-07-29 13:23:02', '2023-07-29 13:23:02');
 
 -- ----------------------------
 -- Table structure for sys_interface
@@ -206,7 +216,7 @@ CREATE TABLE `sys_interface`  (
   PRIMARY KEY (`id`) USING BTREE,
   UNIQUE INDEX `pk_sys_interface_id`(`id` ASC) USING BTREE,
   INDEX `idx_sys_interface_interface_name`(`interface_name` ASC) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 49 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 55 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of sys_interface
@@ -259,6 +269,92 @@ INSERT INTO `sys_interface` VALUES (45, '获取用户组列表', 'GET', '/userGr
 INSERT INTO `sys_interface` VALUES (46, '更新用户组', 'POST', '/userGroup/update', 1, '2023-07-25 10:46:38', '2023-07-25 10:46:38', 0);
 INSERT INTO `sys_interface` VALUES (47, '删除用户组', 'POST', '/userGroup/delete', 1, '2023-07-25 10:46:38', '2023-07-25 10:46:38', 0);
 INSERT INTO `sys_interface` VALUES (48, '分页获取用户组列表', 'GET', '/userGroup/list/page', 1, '2023-07-25 10:46:38', '2023-07-25 10:46:38', 0);
+INSERT INTO `sys_interface` VALUES (49, '获取验证码', 'POST', '/user/captcha', 1, '2023-07-29 13:22:47', '2023-07-29 13:22:47', 0);
+INSERT INTO `sys_interface` VALUES (50, '分页获取系统请求日志列表', 'GET', '/sysRequestLog/list/page', 1, '2023-07-29 13:22:47', '2023-07-29 13:22:47', 0);
+INSERT INTO `sys_interface` VALUES (51, '获取验证码id', 'GET', '/user/captchaId', 1, '2023-07-29 13:22:47', '2023-07-29 13:22:47', 0);
+INSERT INTO `sys_interface` VALUES (52, '获取系统登录日志列表', 'GET', '/sysLoginLog/list', 1, '2023-07-29 13:22:47', '2023-07-29 13:22:47', 0);
+INSERT INTO `sys_interface` VALUES (53, '获取系统请求日志列表', 'GET', '/sysRequestLog/list', 1, '2023-07-29 13:22:47', '2023-07-29 13:22:47', 0);
+INSERT INTO `sys_interface` VALUES (54, '分页获取系统登录日志列表', 'GET', '/sysLoginLog/list/page', 1, '2023-07-29 13:22:47', '2023-07-29 13:22:47', 0);
+
+-- ----------------------------
+-- Table structure for sys_login_log
+-- ----------------------------
+DROP TABLE IF EXISTS `sys_login_log`;
+CREATE TABLE `sys_login_log`  (
+  `id` bigint NOT NULL AUTO_INCREMENT COMMENT 'id',
+  `user_id` bigint NOT NULL COMMENT '用户id',
+  `request_ip` varchar(256) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL COMMENT '请求ip',
+  `request_area` varchar(256) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL COMMENT '请求地区',
+  `request_result` tinyint NOT NULL DEFAULT 1 COMMENT '请求结果（0：失败，1：成功）',
+  `error_message` varchar(1024) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL COMMENT '失败信息',
+  `gmt_create` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+  `gmt_modified` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '修改时间',
+  PRIMARY KEY (`id`) USING BTREE
+) ENGINE = InnoDB AUTO_INCREMENT = 24 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = DYNAMIC;
+
+-- ----------------------------
+-- Records of sys_login_log
+-- ----------------------------
+INSERT INTO `sys_login_log` VALUES (19, -1, '172.17.0.5', NULL, 0, '验证码错误', '2023-07-29 13:21:01', '2023-07-29 13:21:01');
+INSERT INTO `sys_login_log` VALUES (20, 1, '172.17.0.5', NULL, 1, NULL, '2023-07-29 13:21:10', '2023-07-29 13:21:10');
+INSERT INTO `sys_login_log` VALUES (21, 1, '172.17.0.5', NULL, 1, NULL, '2023-07-29 13:22:40', '2023-07-29 13:22:40');
+INSERT INTO `sys_login_log` VALUES (22, 1, '172.17.0.5', NULL, 1, NULL, '2023-07-29 13:27:30', '2023-07-29 13:27:30');
+INSERT INTO `sys_login_log` VALUES (23, 1, '172.17.0.5', NULL, 1, NULL, '2023-07-29 13:29:20', '2023-07-29 13:29:20');
+
+-- ----------------------------
+-- Table structure for sys_request_log
+-- ----------------------------
+DROP TABLE IF EXISTS `sys_request_log`;
+CREATE TABLE `sys_request_log`  (
+  `id` bigint NOT NULL AUTO_INCREMENT COMMENT 'id',
+  `request_url` varchar(256) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL COMMENT '请求路径',
+  `user_id` bigint NOT NULL COMMENT '用户id',
+  `request_parm` varchar(256) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL COMMENT '请求参数',
+  `request_result` tinyint NOT NULL DEFAULT 1 COMMENT '请求结果（0：失败，1：成功）',
+  `exe_time` varchar(256) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL COMMENT '执行时间',
+  `error_message` varchar(256) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL COMMENT '失败信息',
+  `gmt_create` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+  `gmt_modified` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '修改时间',
+  PRIMARY KEY (`id`) USING BTREE,
+  UNIQUE INDEX `pk_sys_request_log_id`(`id` ASC) USING BTREE
+) ENGINE = InnoDB AUTO_INCREMENT = 119 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = DYNAMIC;
+
+-- ----------------------------
+-- Records of sys_request_log
+-- ----------------------------
+INSERT INTO `sys_request_log` VALUES (86, '/api/user/info', 1, '[org.apache.catalina.connector.RequestFacade@2c6ff428]', 1, '37ms', NULL, '2023-07-29 13:21:11', '2023-07-29 13:21:11');
+INSERT INTO `sys_request_log` VALUES (87, '/api/sysInterface/list/page', 1, '[SysInterfaceQueryRequest(interfaceName=, interfaceMethod=null, interfaceUrl=null, usingStart=null), org.apache.catalina.connector.RequestFacade@2c6ff428]', 1, '248ms', NULL, '2023-07-29 13:21:19', '2023-07-29 13:21:19');
+INSERT INTO `sys_request_log` VALUES (88, '/api/user/logout', 1, '[org.apache.catalina.connector.RequestFacade@4f02a4ae]', 1, '92ms', NULL, '2023-07-29 13:22:25', '2023-07-29 13:22:25');
+INSERT INTO `sys_request_log` VALUES (89, '/api/user/info', 1, '[org.apache.catalina.connector.RequestFacade@4f02a4ae]', 1, '44ms', NULL, '2023-07-29 13:22:40', '2023-07-29 13:22:40');
+INSERT INTO `sys_request_log` VALUES (90, '/api/sysInterface/list/page', 1, '[SysInterfaceQueryRequest(interfaceName=, interfaceMethod=null, interfaceUrl=null, usingStart=null), org.apache.catalina.connector.RequestFacade@4f02a4ae]', 1, '274ms', NULL, '2023-07-29 13:22:47', '2023-07-29 13:22:47');
+INSERT INTO `sys_request_log` VALUES (91, '/api/sysInterface/refresh', 1, '[org.apache.catalina.connector.RequestFacade@4f02a4ae]', 1, '148ms', NULL, '2023-07-29 13:22:47', '2023-07-29 13:22:47');
+INSERT INTO `sys_request_log` VALUES (92, '/api/sysInterface/list/page', 1, '[SysInterfaceQueryRequest(interfaceName=, interfaceMethod=null, interfaceUrl=null, usingStart=null), org.apache.catalina.connector.RequestFacade@4f02a4ae]', 1, '29ms', NULL, '2023-07-29 13:22:47', '2023-07-29 13:22:47');
+INSERT INTO `sys_request_log` VALUES (93, '/api/role/list/page', 1, '[RoleQueryRequest(id=null, roleName=, roleIdentity=, usingStart=null, description=null, gmtCreate=null), org.apache.catalina.connector.RequestFacade@4f02a4ae]', 1, '71ms', NULL, '2023-07-29 13:22:55', '2023-07-29 13:22:55');
+INSERT INTO `sys_request_log` VALUES (94, '/api/sysInterface/list', 1, '[SysInterfaceQueryRequest(interfaceName=null, interfaceMethod=null, interfaceUrl=null, usingStart=1), org.apache.catalina.connector.RequestFacade@4f02a4ae]', 1, '38ms', NULL, '2023-07-29 13:22:56', '2023-07-29 13:22:56');
+INSERT INTO `sys_request_log` VALUES (95, '/api/role/sysInterface', 1, '[RoleSysInterfaceQueryRequest(id=1), org.apache.catalina.connector.RequestFacade@4f02a4ae]', 1, '43ms', NULL, '2023-07-29 13:22:57', '2023-07-29 13:22:57');
+INSERT INTO `sys_request_log` VALUES (96, '/api/role/updateSysInterface', 1, '[RoleSysInterfaceUpdateRequest(id=1, addSysInterfaceList=[52, 54, 53, 50], deleteSysInterfaceList=[]), org.apache.catalina.connector.RequestFacade@4f02a4ae]', 1, '100ms', NULL, '2023-07-29 13:23:02', '2023-07-29 13:23:02');
+INSERT INTO `sys_request_log` VALUES (97, '/api/menu/list/page', 1, '[MenuQueryRequest(id=null, parentId=null, menuTitle=, menuIcon=null, routePath=null, componentName=null, componentPath=null, redirect=null, description=null, hidden=null, menuSort=null), org.apache.catalina.connector.RequestFacade@4f02a4ae]', 1, '93ms', NULL, '2023-07-29 13:23:06', '2023-07-29 13:23:06');
+INSERT INTO `sys_request_log` VALUES (98, '/api/menu/add', 1, '[MenuAddRequest(parentId=0, menuTitle=日志管理, menuIcon=log, routePath=/sysLog, componentName=, componentPath=, redirect=/sysLog, description=日志管理, hidden=0, menuSort=4.0), org.apache.catalina.connector.RequestFacade@4f02a4ae]', 1, '76ms', NULL, '2023-07-29 13:24:09', '2023-07-29 13:24:09');
+INSERT INTO `sys_request_log` VALUES (99, '/api/menu/list/page', 1, '[MenuQueryRequest(id=null, parentId=null, menuTitle=, menuIcon=null, routePath=null, componentName=null, componentPath=null, redirect=null, description=null, hidden=null, menuSort=null), org.apache.catalina.connector.RequestFacade@4f02a4ae]', 1, '64ms', NULL, '2023-07-29 13:24:09', '2023-07-29 13:24:09');
+INSERT INTO `sys_request_log` VALUES (100, '/api/menu/add', 1, '[MenuAddRequest(parentId=13, menuTitle=登录日志, menuIcon=login, routePath=sysloginLog, componentName=SysLoginLog, componentPath=/sysLog/sysLoginLog, redirect=, description=登录日志, hidden=0, menuSort=1.0), org.apache.catalina.connector.RequestFacade@4f02a4ae]', 1, '26ms', NULL, '2023-07-29 13:25:57', '2023-07-29 13:25:57');
+INSERT INTO `sys_request_log` VALUES (101, '/api/menu/list/page', 1, '[MenuQueryRequest(id=null, parentId=null, menuTitle=, menuIcon=null, routePath=null, componentName=null, componentPath=null, redirect=null, description=null, hidden=null, menuSort=null), org.apache.catalina.connector.RequestFacade@4f02a4ae]', 1, '29ms', NULL, '2023-07-29 13:25:57', '2023-07-29 13:25:57');
+INSERT INTO `sys_request_log` VALUES (102, '/api/menu/list/page', 1, '[MenuQueryRequest(id=null, parentId=null, menuTitle=, menuIcon=null, routePath=null, componentName=null, componentPath=null, redirect=null, description=null, hidden=null, menuSort=null), org.apache.catalina.connector.RequestFacade@4f02a4ae]', 1, '46ms', NULL, '2023-07-29 13:27:11', '2023-07-29 13:27:11');
+INSERT INTO `sys_request_log` VALUES (103, '/api/menu/update', 1, '[MenuUpdateRequest(id=15, menuTitle=请求日志, menuIcon=log, routePath=sysRequestLog, componentName=SysRequestLog, componentPath=/sysLog/sysRequestLog, redirect=, description=请求日志, hidden=0, menuSort=2.0), org.apache.catalina.connector.RequestFacade@4f02a4ae]', 1, '48ms', NULL, '2023-07-29 13:27:13', '2023-07-29 13:27:13');
+INSERT INTO `sys_request_log` VALUES (104, '/api/menu/list/page', 1, '[MenuQueryRequest(id=null, parentId=null, menuTitle=, menuIcon=null, routePath=null, componentName=null, componentPath=null, redirect=null, description=null, hidden=null, menuSort=null), org.apache.catalina.connector.RequestFacade@4f02a4ae]', 1, '30ms', NULL, '2023-07-29 13:27:13', '2023-07-29 13:27:13');
+INSERT INTO `sys_request_log` VALUES (105, '/api/menu/list', 1, '[MenuQueryRequest(id=null, parentId=null, menuTitle=null, menuIcon=null, routePath=null, componentName=null, componentPath=null, redirect=null, description=null, hidden=0, menuSort=null), org.apache.catalina.connector.RequestFacade@4f02a4ae]', 1, '35ms', NULL, '2023-07-29 13:27:18', '2023-07-29 13:27:18');
+INSERT INTO `sys_request_log` VALUES (106, '/api/role/menu', 1, '[RoleSysInterfaceQueryRequest(id=1), org.apache.catalina.connector.RequestFacade@4f02a4ae]', 1, '21ms', NULL, '2023-07-29 13:27:18', '2023-07-29 13:27:18');
+INSERT INTO `sys_request_log` VALUES (107, '/api/role/updateMenu', 1, '[RoleMenuUpdateRequest(id=1, addMenuList=[13, 14, 15], deleteMenuList=[]), org.apache.catalina.connector.RequestFacade@4f02a4ae]', 1, '35ms', NULL, '2023-07-29 13:27:20', '2023-07-29 13:27:20');
+INSERT INTO `sys_request_log` VALUES (108, '/api/user/logout', 1, '[org.apache.catalina.connector.RequestFacade@4f02a4ae]', 1, '9ms', NULL, '2023-07-29 13:27:22', '2023-07-29 13:27:22');
+INSERT INTO `sys_request_log` VALUES (109, '/api/user/info', 1, '[org.apache.catalina.connector.RequestFacade@4f02a4ae]', 1, '2ms', NULL, '2023-07-29 13:27:30', '2023-07-29 13:27:30');
+INSERT INTO `sys_request_log` VALUES (110, '/api/sysLoginLog/list/page', 1, '[SysLoginLogQueryRequest(id=null, userId=null, requestIp=, requestArea=null, requestResult=null, errorMessage=null, gmtCreate=null), org.apache.catalina.connector.RequestFacade@4f02a4ae]', 1, '123ms', NULL, '2023-07-29 13:27:36', '2023-07-29 13:27:36');
+INSERT INTO `sys_request_log` VALUES (111, '/api/sysRequestLog/list/page', 1, '[SysRequestLogQueryRequest(id=null, requestUrl=null, userId=null, requestParm=null, requestResult=null, exeTime=null, errorMessage=null, gmtCreate=null), org.apache.catalina.connector.RequestFacade@4f02a4ae]', 1, '89ms', NULL, '2023-07-29 13:27:46', '2023-07-29 13:27:46');
+INSERT INTO `sys_request_log` VALUES (112, '/api/sysRequestLog/list/page', 1, '[SysRequestLogQueryRequest(id=null, requestUrl=null, userId=null, requestParm=null, requestResult=null, exeTime=null, errorMessage=null, gmtCreate=null), org.apache.catalina.connector.RequestFacade@4f02a4ae]', 1, '79ms', NULL, '2023-07-29 13:27:53', '2023-07-29 13:27:53');
+INSERT INTO `sys_request_log` VALUES (113, '/api/sysRequestLog/list/page', 1, '[SysRequestLogQueryRequest(id=null, requestUrl=null, userId=null, requestParm=null, requestResult=null, exeTime=null, errorMessage=null, gmtCreate=null), org.apache.catalina.connector.RequestFacade@4f02a4ae]', 1, '78ms', NULL, '2023-07-29 13:27:58', '2023-07-29 13:27:58');
+INSERT INTO `sys_request_log` VALUES (114, '/api/menu/list/page', 1, '[MenuQueryRequest(id=null, parentId=null, menuTitle=, menuIcon=null, routePath=null, componentName=null, componentPath=null, redirect=null, description=null, hidden=null, menuSort=null), org.apache.catalina.connector.RequestFacade@4f02a4ae]', 1, '25ms', NULL, '2023-07-29 13:29:04', '2023-07-29 13:29:04');
+INSERT INTO `sys_request_log` VALUES (115, '/api/menu/update', 1, '[MenuUpdateRequest(id=13, menuTitle=日志管理, menuIcon=el-icon-document, routePath=/sysLog, componentName=, componentPath=, redirect=/sysLog, description=日志管理, hidden=0, menuSort=4.0), org.apache.catalina.connector.RequestFacade@4f02a4ae]', 1, '15ms', NULL, '2023-07-29 13:29:09', '2023-07-29 13:29:09');
+INSERT INTO `sys_request_log` VALUES (116, '/api/menu/list/page', 1, '[MenuQueryRequest(id=null, parentId=null, menuTitle=, menuIcon=null, routePath=null, componentName=null, componentPath=null, redirect=null, description=null, hidden=null, menuSort=null), org.apache.catalina.connector.RequestFacade@4f02a4ae]', 1, '21ms', NULL, '2023-07-29 13:29:09', '2023-07-29 13:29:09');
+INSERT INTO `sys_request_log` VALUES (117, '/api/user/logout', 1, '[org.apache.catalina.connector.RequestFacade@4f02a4ae]', 1, '2ms', NULL, '2023-07-29 13:29:11', '2023-07-29 13:29:11');
+INSERT INTO `sys_request_log` VALUES (118, '/api/user/info', 1, '[org.apache.catalina.connector.RequestFacade@4f02a4ae]', 1, '11ms', NULL, '2023-07-29 13:29:20', '2023-07-29 13:29:20');
 
 -- ----------------------------
 -- Table structure for trade

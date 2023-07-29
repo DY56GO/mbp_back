@@ -12,6 +12,7 @@ docker pull nginx
 # - /home/projects/mbp/nginx/html:/usr/share/nginx/html
 
 docker run --restart=on-failure:5 \
+--privileged=true \
 --name nginx-mbp \
 -p 80:80 \
 -p 443:443 \
