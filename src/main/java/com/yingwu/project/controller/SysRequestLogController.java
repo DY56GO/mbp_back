@@ -48,8 +48,8 @@ public class SysRequestLogController {
     @GetMapping(value = "/list", name = "获取系统请求日志列表")
     public BaseResponse<List<SysRequestLog>> listSysRequestLog(SysRequestLogQueryRequest sysRequestLogServiceQueryRequest, HttpServletRequest request) {
         QueryWrapper<SysRequestLog> queryWrapper = buildSysRequestLogQueryWrapper(sysRequestLogServiceQueryRequest);
-        List<SysRequestLog> tradeList = sysRequestLogService.list(queryWrapper);
-        return ResultUtils.success(tradeList);
+        List<SysRequestLog> sysRequestLogList = sysRequestLogService.list(queryWrapper);
+        return ResultUtils.success(sysRequestLogList);
     }
 
     /**
@@ -71,9 +71,9 @@ public class SysRequestLogController {
         }
         QueryWrapper<SysRequestLog> queryWrapper = buildSysRequestLogQueryWrapper(sysRequestLogServiceQueryRequest);
 
-        Page<SysRequestLog> tradeListPage = sysRequestLogService.page(new Page<>(current, size), queryWrapper);
+        Page<SysRequestLog> sysRequestLogListPage = sysRequestLogService.page(new Page<>(current, size), queryWrapper);
 
-        return ResultUtils.success(tradeListPage);
+        return ResultUtils.success(sysRequestLogListPage);
     }
 
     /**

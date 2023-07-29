@@ -101,20 +101,20 @@ git clone https://github.com/DY56GO/mbp_back.git
 ```yml
 datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver	# 数据库连接驱动，这里使用的是MySQL
-    url: jdbc:mysql://192.168.10.22:3306/mbp # 数据库连接地址（3306为MySQL默认端口）
+    url: jdbc:mysql://localhost:3306/mbp # 数据库连接地址（3306为MySQL默认端口）
     username: root # 数据库用户
     password: 123456 # 数据库用户密码
     
 # redis 配置
 redis:
     port: 6379 # Redis端口（6379为Redis默认端口）
-    host: 192.168.10.22 # Redis访问地址
+    host: localhost # Redis访问地址
     database: 0 # 指定Redis的库
     password: 123456 # Redis密码
     
 # mq配置
 rabbitmq:
-    host: 192.168.10.22 # RabbitMQ访问地址
+    host: localhost # RabbitMQ访问地址
     port: 5672 # RabbitMQ端口（5672为RabbitMQ默认端口）
     username: guest
     password: 123456
