@@ -42,6 +42,11 @@ public class LoginLogAspect {
     @Resource
     private RedisTemplate redisTemplate;
 
+    public static Gson gson = null;
+    static  {
+        gson = new Gson();
+    }
+
     @AfterReturning(pointcut = "@annotation(com.yingwu.project.annotation.LoginLog)", returning = "result")
     public void afterReturning(JoinPoint joinPoint, Object result) {
         if (powerConfig.isLogRecords()) {
@@ -52,7 +57,6 @@ public class LoginLogAspect {
             SysLoginLog sysLoginLog = buildSysLoginLog(httpServletRequest, result, null);
 
             // 写入登录日志消息队列
-            Gson gson = new Gson();
             rabbitTemplate.convertAndSend(LONGIN_LOG_QUEUE, gson.toJson(sysLoginLog));
         }
     }
@@ -67,7 +71,6 @@ public class LoginLogAspect {
             SysLoginLog sysLoginLog = buildSysLoginLog(httpServletRequest, null, exception);
 
             // 写入登录日志消息队列
-            Gson gson = new Gson();
             rabbitTemplate.convertAndSend(LONGIN_LOG_QUEUE, gson.toJson(sysLoginLog));
         }
     }

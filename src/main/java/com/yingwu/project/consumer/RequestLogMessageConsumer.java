@@ -23,9 +23,13 @@ public class RequestLogMessageConsumer {
     @Resource
     private SysRequestLogService sysRequestLogService;
 
+    public static Gson gson = null;
+    static  {
+        gson = new Gson();
+    }
+
     @RabbitHandler
     public void handlerRequestLogMessage(String message) {
-        Gson gson = new Gson();
         SysRequestLog sysRequestLog = gson.fromJson(message, SysRequestLog.class);
 
         // 日志信息写入数据库库

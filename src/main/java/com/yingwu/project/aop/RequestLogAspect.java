@@ -44,6 +44,11 @@ public class RequestLogAspect {
     @Resource
     private RedisTemplate redisTemplate;
 
+    public static Gson gson = null;
+    static  {
+        gson = new Gson();
+    }
+
     @Around("execution(* com.yingwu.project.controller.*.*(..))")
     public Object requestLog(ProceedingJoinPoint point) throws Throwable {
         Object result = null;
@@ -83,7 +88,6 @@ public class RequestLogAspect {
                 sysRequestLog.setRequestParm(reqParam);
                 sysRequestLog.setExeTime(totalTimeMillis + "ms");
 
-                Gson gson = new Gson();
                 rabbitTemplate.convertAndSend(REQUEST_LOG_QUEUE, gson.toJson(sysRequestLog));
             } else {
                 result = point.proceed();
@@ -122,7 +126,6 @@ public class RequestLogAspect {
                 sysRequestLog.setRequestResult(0);
                 sysRequestLog.setErrorMessage(exception.getMessage());
 
-                Gson gson = new Gson();
                 rabbitTemplate.convertAndSend(REQUEST_LOG_QUEUE, gson.toJson(sysRequestLog));
             }
         }
