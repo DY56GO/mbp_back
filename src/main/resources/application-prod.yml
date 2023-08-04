@@ -1,5 +1,4 @@
 spring:
-  profiles: prod
   application:
     name: springboot-mbp
   # DataSource Config
@@ -57,10 +56,14 @@ server:
   port: 7529
   servlet:
     context-path: /api
+# 不使用Mybaits-Plus的日志，使用当前的日志框架进行打印，减少不必要的结果打印
+logging:
+  level:
+    com.yingwu.project.mapper: debug
 mybatis-plus:
   configuration:
     map-underscore-to-camel-case: true
-    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+    log-impl: org.apache.ibatis.logging.slf4j.Slf4jImpl
   global-config:
     db-config:
       logic-delete-field: delete # 全局逻辑删除的实体字段名(since 3.3.0,配置后可以忽略不配置步骤2)
@@ -81,5 +84,5 @@ snowflake:
   datacenterId: 1 # 数据中心ID
 # 系统功能
 powerconfig:
-  interfaceAuth: true # 开启系统接口鉴权 true | false
-  logRecords: true # 开启日志记录 true | false (注意：该功能依赖RabbitMQ)
+  interfaceAuth: false # 开启系统接口鉴权 true | false
+  logRecords: false # 开启日志记录 true | false (注意：该功能依赖RabbitMQ)
