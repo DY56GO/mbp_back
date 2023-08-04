@@ -30,7 +30,7 @@ public class RabbitMQConfig {
      */
     @Bean
     public Queue loginLogQueue() {
-        if (powerConfig.isLogRecords()) {
+        if (powerConfig.isLoginLogRecords()) {
             return new Queue(LONGIN_LOG_QUEUE, true);
         } else {
             return null;
@@ -39,7 +39,7 @@ public class RabbitMQConfig {
 
     @Bean
     public FanoutExchange loginLogExchange() {
-        if (powerConfig.isLogRecords()) {
+        if (powerConfig.isLoginLogRecords()) {
             return new FanoutExchange(LONGIN_LOG_QUEUE, true, false);
         } else {
             return null;
@@ -48,7 +48,7 @@ public class RabbitMQConfig {
 
     @Bean
     public Binding bindingLoginLogDirect() {
-        if (powerConfig.isLogRecords()) {
+        if (powerConfig.isLoginLogRecords()) {
             return BindingBuilder.bind(loginLogQueue()).to(loginLogExchange());
         } else {
             return null;
@@ -62,7 +62,7 @@ public class RabbitMQConfig {
      */
     @Bean
     public Queue requestLogQueue() {
-        if (powerConfig.isLogRecords()) {
+        if (powerConfig.isRequestLogRecords()) {
             return new Queue(REQUEST_LOG_QUEUE, true);
         } else {
             return null;
@@ -71,7 +71,7 @@ public class RabbitMQConfig {
 
     @Bean
     public FanoutExchange requestExchange() {
-        if (powerConfig.isLogRecords()) {
+        if (powerConfig.isRequestLogRecords()) {
             return new FanoutExchange(REQUEST_LOG_QUEUE, true, false);
         } else {
             return null;
@@ -80,7 +80,7 @@ public class RabbitMQConfig {
 
     @Bean
     public Binding bindingRequestDirect() {
-        if (powerConfig.isLogRecords()) {
+        if (powerConfig.isRequestLogRecords()) {
             return BindingBuilder.bind(requestLogQueue()).to(requestExchange());
         } else {
             return null;

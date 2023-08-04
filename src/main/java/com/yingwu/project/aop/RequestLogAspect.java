@@ -52,7 +52,7 @@ public class RequestLogAspect {
     @Around("execution(* com.yingwu.project.controller.*.*(..))")
     public Object requestLog(ProceedingJoinPoint point) throws Throwable {
         Object result = null;
-        if (powerConfig.isLogRecords()) {
+        if (powerConfig.isRequestLogRecords()) {
             RequestAttributes requestAttributes = RequestContextHolder.currentRequestAttributes();
             HttpServletRequest httpServletRequest = ((ServletRequestAttributes) requestAttributes).getRequest();
             String token = httpServletRequest.getHeader("token");
@@ -100,7 +100,7 @@ public class RequestLogAspect {
 
     @AfterThrowing(pointcut = "execution(* com.yingwu.project.controller.*.*(..))", throwing = "exception")
     public void afterThrowingAdvice(JoinPoint joinPoint, Exception exception) {
-        if (powerConfig.isLogRecords()) {
+        if (powerConfig.isRequestLogRecords()) {
             RequestAttributes requestAttributes = RequestContextHolder.currentRequestAttributes();
             HttpServletRequest httpServletRequest = ((ServletRequestAttributes) requestAttributes).getRequest();
             String token = httpServletRequest.getHeader("token");

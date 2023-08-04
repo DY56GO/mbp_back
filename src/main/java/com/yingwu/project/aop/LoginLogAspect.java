@@ -49,7 +49,7 @@ public class LoginLogAspect {
 
     @AfterReturning(pointcut = "@annotation(com.yingwu.project.annotation.LoginLog)", returning = "result")
     public void afterReturning(JoinPoint joinPoint, Object result) {
-        if (powerConfig.isLogRecords()) {
+        if (powerConfig.isLoginLogRecords()) {
             RequestAttributes requestAttributes = RequestContextHolder.currentRequestAttributes();
             HttpServletRequest httpServletRequest = ((ServletRequestAttributes) requestAttributes).getRequest();
 
@@ -63,7 +63,7 @@ public class LoginLogAspect {
 
     @AfterThrowing(pointcut = "@annotation(com.yingwu.project.annotation.LoginLog)", throwing = "exception")
     public void afterThrowing(JoinPoint joinPoint, Exception exception) {
-        if (powerConfig.isLogRecords()) {
+        if (powerConfig.isLoginLogRecords()) {
             RequestAttributes requestAttributes = RequestContextHolder.currentRequestAttributes();
             HttpServletRequest httpServletRequest = ((ServletRequestAttributes) requestAttributes).getRequest();
 

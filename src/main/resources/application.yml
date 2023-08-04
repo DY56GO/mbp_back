@@ -75,4 +75,6 @@ snowflake:
 # 系统功能
 powerconfig:
   interfaceAuth: true # 开启系统接口鉴权 true | false
-  logRecords: true # 开启日志记录 true | false (注意：该功能依赖RabbitMQ)
+  # 注意：日志功能依赖RabbitMQ
+  loginLogRecords: true # 开启登录日志记录 true | false
+  requestLogRecords: false # 开启请求日志记录 true | false （不建议开启，线上的请求过多）
