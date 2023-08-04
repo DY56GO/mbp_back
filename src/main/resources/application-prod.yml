@@ -1,13 +1,11 @@
 spring:
-  profiles:
-    active: prod
+  profiles: prod
   application:
     name: springboot-mbp
   # DataSource Config
   datasource:
     type: com.zaxxer.hikari.HikariDataSource
     driver-class-name: com.mysql.cj.jdbc.Driver
-    # url: jdbc:mysql://192.168.10.22:3306/mbp_test
     url: jdbc:mysql://localhost:3306/mbp
     username: root
     password: 12345678
@@ -71,6 +69,13 @@ mybatis-plus:
       where-strategy: not_empty
       insert-strategy: not_null
       update-strategy: not_null
+#禁用springfox
+springfox:
+  documentation:
+    enabled: false
+# 如果禁用springfox，则不能开启knife4j增强，否则项目启动会报错
+knife4j:
+  enable: false
 snowflake:
   workerId: 1 # 参数1为终端ID
   datacenterId: 1 # 数据中心ID
