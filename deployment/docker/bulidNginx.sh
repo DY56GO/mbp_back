@@ -20,4 +20,5 @@ docker run --restart=on-failure:5 \
 -v /home/projects/mbp/nginx/conf/nginx.conf:/etc/nginx/nginx.conf \
 -v /home/projects/mbp/nginx/logs:/var/log/nginx \
 -v /home/projects/mbp/code/mbp_front:/usr/share/nginx/html \
+-v /etc/localtime:/etc/localtime:ro \
 -d nginx \

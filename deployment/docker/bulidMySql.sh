@@ -17,5 +17,6 @@ docker run --restart=on-failure:5 \
 -p 3306:3306 \
 -v /home/projects/mbp/mysql/conf/my.cnf:/etc/mysql/my.cnf \
 -v /home/projects/mbp/mysql/data:/var/lib/mysql \
+-v /etc/localtime:/etc/localtime:ro \
 -e MYSQL_ROOT_PASSWORD=12345678 \
 -d mysql:8.0.20 \
