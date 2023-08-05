@@ -17,7 +17,7 @@ import static com.yingwu.project.constant.RabbitMQConstant.LONGIN_LOG_QUEUE;
  * @author Dy56
  */
 @Component
-@RabbitListener(queues = LONGIN_LOG_QUEUE)
+@RabbitListener(queues = LONGIN_LOG_QUEUE, autoStartup="${powerconfig.loginLogRecords}")
 public class LoginLogMessageConsumer {
 
     @Resource

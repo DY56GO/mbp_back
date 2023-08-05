@@ -17,7 +17,7 @@ import static com.yingwu.project.constant.RabbitMQConstant.REQUEST_LOG_QUEUE;
  * @author Dy56
  */
 @Component
-@RabbitListener(queues = REQUEST_LOG_QUEUE)
+@RabbitListener(queues = REQUEST_LOG_QUEUE, autoStartup="${powerconfig.requestLogRecords}")
 public class RequestLogMessageConsumer {
 
     @Resource
