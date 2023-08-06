@@ -6,9 +6,12 @@ mbp是一个管理系统的基础项目模板，其主要作用是提供管理�
 
 采用前后端分离的方案，这里为**后端项目**，前往[前端项目](https://github.com/DY56GO/mbp_front)。
 
-| ![SHOW-1](img/SHOW-1.png) | ![SHOW-2](img/SHOW-2.png) |
+![SHOW-1](img/SHOW-1.png)
+
+![SHOW-3](img/SHOW-3.png)
+
+| ![SHOW-2](img/SHOW-2.png) | ![SHOW-4](img/SHOW-4.png) |
 | ------------------------- | ------------------------- |
-| ![SHOW-3](img/SHOW-3.png) | ![SHOW-4](img/SHOW-4.png) |
 | ![SHOW-5](img/SHOW-5.png) | ![SHOW-6](img/SHOW-6.png) |
 
 
