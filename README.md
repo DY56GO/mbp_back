@@ -87,15 +87,7 @@ git clone https://github.com/DY56GO/mbp_back.git
 
 6.点击 /src/main/java/com/yingwu/project/MyApplication.java 的启动按钮即可。
 
-7.可选功能中 “日志管理” 依赖与RabbitMQ，如果你的项目不需要RabbitMQ，请将pom文件中的引用删除或注释，然后将项目中错误的（涉及到RabiitMQ）代码文件删除即可。
-
-```xml
-<!--RabbitMQy引入--->
-<dependency>
-	<groupId>org.springframework.boot</groupId>
-	<artifactId>spring-boot-starter-amqp</artifactId>
-</dependency>
-```
+7.可选功能中 “日志管理” 依赖与RabbitMQ，如果你的项目不需要RabbitMQ，可以将application.yml中的spring.rabbitmq.enabled修改为false。
 
 ​	application.yml修改配置说明：
 
@@ -115,6 +107,8 @@ redis:
     
 # mq配置
 rabbitmq:
+	# 配置rabbitMq启用开关
+    enabled: true
     host: localhost # RabbitMQ访问地址
     port: 5672 # RabbitMQ端口（5672为RabbitMQ默认端口）
     username: guest

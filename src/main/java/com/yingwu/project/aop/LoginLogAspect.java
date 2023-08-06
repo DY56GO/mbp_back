@@ -9,6 +9,7 @@ import org.aspectj.lang.annotation.AfterReturning;
 import org.aspectj.lang.annotation.AfterThrowing;
 import org.aspectj.lang.annotation.Aspect;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.core.annotation.Order;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Component;
@@ -31,6 +32,7 @@ import static com.yingwu.project.util.Utils.getUserIdByUserKey;
 @Aspect
 @Component
 @Order(3)
+@ConditionalOnProperty(prefix = "spring.rabbitmq", name = "enabled", havingValue = "true")
 public class LoginLogAspect {
 
     @Resource
@@ -43,40 +45,56 @@ public class LoginLogAspect {
     private RedisTemplate redisTemplate;
 
     public static Gson gson = null;
-    static  {
+
+    static {
         gson = new Gson();
     }
 
+    /**
+     * 登录成功日志消息推送
+     *
+     * @param joinPoint
+     * @param result
+     */
     @AfterReturning(pointcut = "@annotation(com.yingwu.project.annotation.LoginLog)", returning = "result")
     public void afterReturning(JoinPoint joinPoint, Object result) {
         if (powerConfig.isLoginLogRecords()) {
-            RequestAttributes requestAttributes = RequestContextHolder.currentRequestAttributes();
-            HttpServletRequest httpServletRequest = ((ServletRequestAttributes) requestAttributes).getRequest();
-
             // 构建登录日志
-            SysLoginLog sysLoginLog = buildSysLoginLog(httpServletRequest, result, null);
+            SysLoginLog sysLoginLog = buildSysLoginLog(result, null);
 
             // 写入登录日志消息队列
             rabbitTemplate.convertAndSend(LONGIN_LOG_QUEUE, gson.toJson(sysLoginLog));
         }
     }
 
+    /**
+     * 登录失败日志消息推送
+     *
+     * @param joinPoint
+     * @param exception
+     */
     @AfterThrowing(pointcut = "@annotation(com.yingwu.project.annotation.LoginLog)", throwing = "exception")
     public void afterThrowing(JoinPoint joinPoint, Exception exception) {
         if (powerConfig.isLoginLogRecords()) {
-            RequestAttributes requestAttributes = RequestContextHolder.currentRequestAttributes();
-            HttpServletRequest httpServletRequest = ((ServletRequestAttributes) requestAttributes).getRequest();
-
             // 构建登录日志
-            SysLoginLog sysLoginLog = buildSysLoginLog(httpServletRequest, null, exception);
+            SysLoginLog sysLoginLog = buildSysLoginLog(null, exception);
 
             // 写入登录日志消息队列
             rabbitTemplate.convertAndSend(LONGIN_LOG_QUEUE, gson.toJson(sysLoginLog));
         }
     }
 
-    private SysLoginLog buildSysLoginLog(HttpServletRequest httpServletRequest, Object result, Exception exception) {
+    /**
+     * 构建登录日志
+     *
+     * @param result
+     * @param exception
+     * @return
+     */
+    private SysLoginLog buildSysLoginLog(Object result, Exception exception) {
         Long userId = -1L;
+        RequestAttributes requestAttributes = RequestContextHolder.currentRequestAttributes();
+        HttpServletRequest httpServletRequest = ((ServletRequestAttributes) requestAttributes).getRequest();
 
         // 从Redis中获取用户id
         if (result != null) {

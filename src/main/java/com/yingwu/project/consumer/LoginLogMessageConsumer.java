@@ -17,14 +17,15 @@ import static com.yingwu.project.constant.RabbitMQConstant.LONGIN_LOG_QUEUE;
  * @author Dy56
  */
 @Component
-@RabbitListener(queues = LONGIN_LOG_QUEUE, autoStartup="${powerconfig.loginLogRecords}")
+@RabbitListener(queues = LONGIN_LOG_QUEUE, autoStartup = "${powerconfig.loginLogRecords}")
 public class LoginLogMessageConsumer {
 
     @Resource
     private SysLoginLogService sysLoginLogService;
 
     public static Gson gson = null;
-    static  {
+
+    static {
         gson = new Gson();
     }
 

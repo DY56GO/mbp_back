@@ -41,6 +41,8 @@ spring:
         max-wait: 100ms
   # mq配置
   rabbitmq:
+    # 配置rabbitMq启用开关
+    enabled: false
     host: 192.168.10.22
     port: 5672
     username: guest

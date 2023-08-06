@@ -4,6 +4,7 @@ import org.springframework.amqp.core.Binding;
 import org.springframework.amqp.core.BindingBuilder;
 import org.springframework.amqp.core.FanoutExchange;
 import org.springframework.amqp.core.Queue;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -13,15 +14,17 @@ import static com.yingwu.project.constant.RabbitMQConstant.LONGIN_LOG_QUEUE;
 import static com.yingwu.project.constant.RabbitMQConstant.REQUEST_LOG_QUEUE;
 
 /**
- * RabbitMQ配置
+ * RabbitMQ消息队列配置
  *
  * @author Dy56
  */
 @Configuration
-public class RabbitMQConfig {
+@ConditionalOnProperty(prefix = "spring.rabbitmq", name = "enabled", havingValue = "true")
+public class RabbitMessageConfig {
 
     @Resource
     private PowerConfig powerConfig;
+
 
     /**
      * 创建登录日志队列
