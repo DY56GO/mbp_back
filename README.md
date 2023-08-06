@@ -107,7 +107,7 @@ redis:
     
 # mq配置
 rabbitmq:
-	# 配置rabbitMq启用开关
+    # 配置rabbitMq启用开关
     enabled: true
     host: localhost # RabbitMQ访问地址
     port: 5672 # RabbitMQ端口（5672为RabbitMQ默认端口）
