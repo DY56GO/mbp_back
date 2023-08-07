@@ -44,6 +44,7 @@ import java.util.concurrent.TimeUnit;
 
 import static com.yingwu.project.constant.PasswordConstant.SALT;
 import static com.yingwu.project.constant.RedisConstant.CAPTCHA_EXPIRATION_TIME;
+import static com.yingwu.project.constant.RedisConstant.DELETE_KEY_TIME;
 import static com.yingwu.project.constant.SysConstant.MAX_PAGE_SIZE;
 import static com.yingwu.project.exception.ThrowUtils.throwIf;
 import static com.yingwu.project.util.Utils.buildCaptchaIdRedisKey;
@@ -137,6 +138,9 @@ public class UserController {
     public BaseResponse<Long> userRegister(@RequestBody UserRegisterRequest userRegisterRequest) {
         // 校验
         throwIf(userRegisterRequest == null, ErrorCode.PARAMS_ERROR);
+        Long captchaId = userRegisterRequest.getCaptchaId();
+        throwIf(captchaId == null, ErrorCode.PARAMS_ERROR);
+        userService.validCaptcha(captchaId, userRegisterRequest.getCaptcha());
 
         User user = new User();
         BeanUtils.copyProperties(userRegisterRequest, user);
@@ -144,6 +148,8 @@ public class UserController {
 
         // 注册
         long result = userService.userRegister(user);
+        String captchaIdKey = buildCaptchaIdRedisKey(captchaId);
+        redisTemplate.expire(captchaIdKey, DELETE_KEY_TIME, TimeUnit.SECONDS);
         return ResultUtils.success(result);
     }
 
@@ -159,8 +165,9 @@ public class UserController {
     public BaseResponse<String> userLogin(@RequestBody UserLoginRequest userLoginRequest, HttpServletRequest request) {
         // 校验
         throwIf(userLoginRequest == null, ErrorCode.PARAMS_ERROR);
-        throwIf(userLoginRequest.getCaptchaId() == null, ErrorCode.PARAMS_ERROR);
-        userService.validCaptcha(userLoginRequest.getCaptchaId(), userLoginRequest.getCaptcha());
+        Long captchaId = userLoginRequest.getCaptchaId();
+        throwIf(captchaId == null, ErrorCode.PARAMS_ERROR);
+        userService.validCaptcha(captchaId, userLoginRequest.getCaptcha());
 
         User user = new User();
         BeanUtils.copyProperties(userLoginRequest, user);
@@ -168,6 +175,8 @@ public class UserController {
 
         // 登陆 返回token
         String token = userService.userLogin(user, request);
+        String captchaIdKey = buildCaptchaIdRedisKey(captchaId);
+        redisTemplate.expire(captchaIdKey, DELETE_KEY_TIME, TimeUnit.SECONDS);
         return ResultUtils.success(token);
     }
 

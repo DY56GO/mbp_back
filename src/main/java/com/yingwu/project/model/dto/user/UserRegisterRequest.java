@@ -27,6 +27,16 @@ public class UserRegisterRequest implements Serializable {
      */
     private String checkPassword;
 
+    /**
+     * 验证码id
+     */
+    private Long captchaId;
+
+    /**
+     * 验证码
+     */
+    private String captcha;
+
     private static final long serialVersionUID = 3191241716373120793L;
 
 }
