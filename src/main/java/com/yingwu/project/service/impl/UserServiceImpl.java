@@ -49,11 +49,8 @@ import static com.yingwu.project.util.Utils.*;
 @Service
 public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements UserService {
 
-    @Value("${snowflake.workerId}")
-    private long workerId;
-
-    @Value("${snowflake.datacenterId}")
-    private long datacenterId;
+    @Resource
+    private Snowflake snowflake;
 
     @Resource
     private UserMapper userMapper;
@@ -174,7 +171,6 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         // 4.生成token
         // workerId 为终端ID
         // datacenterId 为数据中心ID
-        Snowflake snowflake = IdUtil.getSnowflake(workerId, datacenterId);
         String token = snowflake.nextIdStr();
         String tokenKey = buildTokenRedisKey(token);
 
