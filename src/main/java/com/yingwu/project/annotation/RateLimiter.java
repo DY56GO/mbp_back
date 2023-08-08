@@ -15,5 +15,5 @@ import java.lang.annotation.Target;
 public @interface RateLimiter {
     int permitsPerSecond();    // 每秒允许通过的请求数
 
-    int capacity();            // 桶的容量
+    int permits();            // 消耗令牌数
 }

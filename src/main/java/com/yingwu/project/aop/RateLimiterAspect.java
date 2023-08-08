@@ -44,7 +44,7 @@ public class RateLimiterAspect {
         RateLimiter rateLimiter = method.getAnnotation(RateLimiter.class);
 
         int permitsPerSecond = rateLimiter.permitsPerSecond();
-        int permits = rateLimiter.capacity();
+        int permits = rateLimiter.permits();
 
         rRateLimiter.trySetRate(RateType.OVERALL, permitsPerSecond, 1, RateIntervalUnit.SECONDS);
         if (rRateLimiter.tryAcquire(permits)) {

@@ -87,7 +87,7 @@ public class UserController {
      *
      * @return
      */
-    @RateLimiter(permitsPerSecond = 10, capacity = 1)
+    @RateLimiter(permitsPerSecond = 10, permits = 1)
     @GetMapping(value = "/captchaId", name = "获取验证码id")
     public BaseResponse<Long> getCaptchaId() {
         Snowflake snowflake = IdUtil.getSnowflake(workerId, datacenterId);
@@ -100,7 +100,7 @@ public class UserController {
      *
      * @return
      */
-    @RateLimiter(permitsPerSecond = 10, capacity = 1)
+    @RateLimiter(permitsPerSecond = 10, permits = 1)
     @PostMapping(value = "/captcha", produces = MediaType.IMAGE_PNG_VALUE, name = "获取验证码")
     public void getCaptcha(@RequestBody CaptchaRequest captchaRequest, HttpServletResponse response) throws IOException {
         // 校验
