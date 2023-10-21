@@ -1,10 +1,10 @@
-# 生产环境配置
+# 开发环境配置
 spring:
   # DataSource Config
   datasource:
     type: com.zaxxer.hikari.HikariDataSource
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://localhost:3306/mbp
+    url: jdbc:mysql://192.168.121.136:3306/mbp_test
     username: root
     password: 12345678
     hikari:
@@ -28,7 +28,7 @@ spring:
   # redis 配置
   redis:
     port: 6379
-    host: localhost
+    host: 192.168.121.136
     database: 0
     password: 12345678
     lettuce:
@@ -40,8 +40,8 @@ spring:
   # mq配置
   rabbitmq:
     # 配置rabbitMq启用开关
-    enable: false
-    host: localhost
+    enabled: false
+    host: 192.168.10.22
     port: 5672
     username: guest
     password: 12345678
@@ -51,18 +51,16 @@ spring:
           enabled: true
           max-attempts: 3 #最大重试次数
           initial-interval: 3000 #重试间隔时间（单位毫秒）
+  jackson:
+    default-property-inclusion: non_null  # JSON处理时忽略非空字段
 server:
   port: 7529
   servlet:
     context-path: /api
-# 不使用Mybaits-Plus的日志，使用当前的日志框架进行打印，减少不必要的结果打印
-logging:
-  level:
-    com.yingwu.project.mapper: debug
 mybatis-plus:
   configuration:
     map-underscore-to-camel-case: true
-    log-impl: org.apache.ibatis.logging.slf4j.Slf4jImpl
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
   global-config:
     db-config:
       logic-delete-field: delete # 全局逻辑删除的实体字段名(since 3.3.0,配置后可以忽略不配置步骤2)
@@ -71,19 +69,12 @@ mybatis-plus:
       where-strategy: not_empty
       insert-strategy: not_null
       update-strategy: not_null
-#禁用springfox
-springfox:
-  documentation:
-    enabled: false
-# 如果禁用springfox，则不能开启knife4j增强，否则项目启动会报错
-knife4j:
-  enable: false
 snowflake:
   workerId: 1 # 参数1为终端ID
   datacenterId: 1 # 数据中心ID
 # 系统功能
 powerconfig:
-  interfaceAuth: false # 开启系统接口鉴权 true | false
+  interfaceAuth: true # 开启系统接口鉴权 true | false
   # 注意：日志功能依赖RabbitMQ
   loginLogRecords: true # 开启登录日志记录 true | false
   requestLogRecords: false # 开启请求日志记录 true | false （不建议开启，线上的请求过多）
