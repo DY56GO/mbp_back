@@ -1,6 +1,5 @@
+# 生产环境配置
 spring:
-  application:
-    name: springboot-mbp
   # DataSource Config
   datasource:
     type: com.zaxxer.hikari.HikariDataSource
@@ -41,7 +40,7 @@ spring:
   # mq配置
   rabbitmq:
     # 配置rabbitMq启用开关
-    enable: true
+    enable: false
     host: localhost
     port: 5672
     username: guest
@@ -52,8 +51,6 @@ spring:
           enabled: true
           max-attempts: 3 #最大重试次数
           initial-interval: 3000 #重试间隔时间（单位毫秒）
-  jackson:
-    default-property-inclusion: non_null  # JSON处理时忽略非空字段
 server:
   port: 7529
   servlet:
